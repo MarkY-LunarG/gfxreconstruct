@@ -218,7 +218,29 @@ class OpenXrApiCallEncodersBodyGenerator(BaseGenerator):
         has_outputs = self.has_outputs(return_type, values)
         arg_list = self.make_arg_list(values)
 
+        capture_manager = 'manager'
+        if name == "xrCreateApiLayerInstance":
+            capture_manager = 'OpenXrCaptureManager::Get()'
         body = ''
+        if name != "xrCreateApiLayerInstance":
+            body += indent + 'OpenXrCaptureManager* manager = OpenXrCaptureManager::Get();\n'
+            body += indent + 'GFXRECON_ASSERT(manager != nullptr);\n'
+        if name == "xrCreateApiLayerInstance":
+            body += indent + 'auto api_call_lock = OpenXrCaptureManager::AcquireExclusiveApiCallLock();\n'
+        else:
+            body += indent + 'auto force_command_serialization = manager->GetForceCommandSerialization();\n'
+            body += indent + 'std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock;\n'
+            body += indent + 'std::unique_lock<CommonCaptureManager::ApiCallMutexT> exclusive_api_call_lock;\n'
+            body += indent + 'if (force_command_serialization)\n'
+            body += indent + '{\n'
+            body += indent + '    exclusive_api_call_lock = OpenXrCaptureManager::AcquireExclusiveApiCallLock();\n'
+            body += indent + '}\n'
+            body += indent + 'else\n'
+            body += indent + '{\n'
+            body += indent + '    shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();\n'
+            body += indent + '}\n'
+
+        body += '\n'
 
         if has_outputs or (return_type and return_type != 'void'):
             encode_after = True
@@ -230,33 +252,26 @@ class OpenXrApiCallEncodersBodyGenerator(BaseGenerator):
 
         top_indent = indent
 
-        if name == "xrCreateApiLayerInstance":
-            capture_manager = 'OpenXrCaptureManager::Get()'
-            body += indent + 'auto api_call_lock = OpenXrCaptureManager::AcquireExclusiveApiCallLock();\n'
-        else:
-            capture_manager = 'manager'
-            body += indent + 'OpenXrCaptureManager* manager = OpenXrCaptureManager::Get();\n'
-            body += indent + 'GFXRECON_ASSERT(manager != nullptr);\n'
-            if not is_override:
-                # Declare for handles that need unwrapping.
-                unwrapped_arg_list, unwrap_list = self.make_handle_unwrapping(
-                    name, values
+        if not is_override:
+            # Declare for handles that need unwrapping.
+            unwrapped_arg_list, unwrap_list = self.make_handle_unwrapping(
+                name, values
+            )
+            if unwrap_list:
+                body += indent + f'HandleUnwrapMemory* handle_unwrap_memory = nullptr;\n'
+                body += '\n'.join(
+                    [
+                        indent
+                        + '{type} {wrap_name} = nullptr;\n'.format(**unwrap)
+                        for unwrap in unwrap_list
+                    ]
                 )
-                if unwrap_list:
-                    body += indent + f'HandleUnwrapMemory* handle_unwrap_memory = nullptr;\n'
-                    body += '\n'.join(
-                        [
-                            indent +
-                            '{type} {wrap_name} = nullptr;\n'.format(**unwrap)
-                            for unwrap in unwrap_list
-                        ]
-                    )
 
-                top_indent = indent + ' ' * self.INDENT_SIZE
-                body += indent + '{\n'
+            top_indent = indent + ' ' * self.INDENT_SIZE
+            body += indent + '{\n'
 
-                lock_call = 'auto call_lock = manager->AcquireCallLock();\n'
-                body += top_indent + lock_call
+            lock_call = 'auto call_lock = manager->AcquireCallLock();\n'
+            body += top_indent + lock_call
 
         body += '\n'
 

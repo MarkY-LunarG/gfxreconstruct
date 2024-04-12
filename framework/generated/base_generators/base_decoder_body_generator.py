@@ -32,9 +32,14 @@ class BaseDecoderBodyGenerator():
         # Generation is deferred until endFile
         self.cmd_names = []
         self.cmd_info = dict()
+
         # Names of any commands whose decoders are manually generated
         self.MANUALLY_GENERATED_COMMANDS = [
         ]
+
+        # Map of base header struct names to lists of child struct names
+        self.base_header_structs = dict(
+        )
 
     def generate_commands(self):
         platform_type = self.get_api_prefix()
@@ -149,7 +154,7 @@ class BaseDecoderBodyGenerator():
         if has_base_header_to_peek:
             main_body += '    bool     peek_is_null    = false;\n'
             main_body += '    bool     peek_is_struct  = false;\n'
-            v += '    bool     peek_has_length = false;\n'
+            main_body += '    bool     peek_has_length = false;\n'
             main_body += '    size_t   peek_length{};\n'
             main_body += '    uint32_t peek_structure_type = 0;\n'
 

@@ -63,6 +63,8 @@ class OpenXrDecoderBodyGenerator(BaseDecoderBodyGenerator, BaseGenerator):
     def __init__(
         self, err_file=sys.stderr, warn_file=sys.stderr, diag_file=sys.stdout
     ):
+        BaseDecoderBodyGenerator.__init__(self)
+
         BaseGenerator.__init__(
             self,
             process_cmds=True,
@@ -73,18 +75,10 @@ class OpenXrDecoderBodyGenerator(BaseDecoderBodyGenerator, BaseGenerator):
             diag_file=diag_file
         )
 
-        # Names of all OpenXR commands processed by the generator.
-        self.cmd_names = []
-        self.cmd_info = dict()
-
         # Names of any OpenXR commands whose decoders are manually generated
         self.MANUALLY_GENERATED_COMMANDS = [
             'xrEnumerateSwapchainImages',
         ]
-
-        # Not used for Vulkan
-        self.base_header_structs = dict(
-        )  # Map of base header struct names to lists of child struct names
 
     def beginFile(self, gen_opts):
         """Method override."""

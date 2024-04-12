@@ -1150,22 +1150,22 @@ size_t OpenXrDecoder::Decode_xrApplyHapticFeedback(const ApiCallInfo& call_info,
     StructPointerDecoder<Decoded_XrHapticPcmVibrationFB> haptic_pcm_vibration_fb;
     XrResult return_value;
 
-    bool     peak_is_null    = false;
-    bool     peak_is_struct  = false;
-    bool     peak_has_length = false;
-    size_t   peak_length{};
-    uint32_t peak_structure_type = 0;
+    bool     peek_is_null    = false;
+    bool     peek_is_struct  = false;
+    bool     peek_has_length = false;
+    size_t   peek_length{};
+    uint32_t peek_structure_type = 0;
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += hapticActionInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     if (PointerDecoderBase::PeekAttributesAndType((parameter_buffer + bytes_read),
                                                    (buffer_size - bytes_read),
-                                                   peak_is_null,
-                                                   peak_is_struct,
-                                                   peak_has_length,
-                                                   peak_length,
-                                                   peak_structure_type))
+                                                   peek_is_null,
+                                                   peek_is_struct,
+                                                   peek_has_length,
+                                                   peek_length,
+                                                   peek_structure_type))
      {
-         XrStructureType xr_type = static_cast<XrStructureType>(peak_structure_type);
+         XrStructureType xr_type = static_cast<XrStructureType>(peek_structure_type);
          switch (xr_type)
          {
              case XR_TYPE_HAPTIC_VIBRATION:
@@ -1613,20 +1613,20 @@ size_t OpenXrDecoder::Decode_xrInitializeLoaderKHR(const ApiCallInfo& call_info,
     StructPointerDecoder<Decoded_XrLoaderInitInfoAndroidKHR> loader_init_info_android_khr;
     XrResult return_value;
 
-    bool     peak_is_null    = false;
-    bool     peak_is_struct  = false;
-    bool     peak_has_length = false;
-    size_t   peak_length{};
-    uint32_t peak_structure_type = 0;
+    bool     peek_is_null    = false;
+    bool     peek_is_struct  = false;
+    bool     peek_has_length = false;
+    size_t   peek_length{};
+    uint32_t peek_structure_type = 0;
     if (PointerDecoderBase::PeekAttributesAndType((parameter_buffer + bytes_read),
                                                    (buffer_size - bytes_read),
-                                                   peak_is_null,
-                                                   peak_is_struct,
-                                                   peak_has_length,
-                                                   peak_length,
-                                                   peak_structure_type))
+                                                   peek_is_null,
+                                                   peek_is_struct,
+                                                   peek_has_length,
+                                                   peek_length,
+                                                   peek_structure_type))
      {
-         XrStructureType xr_type = static_cast<XrStructureType>(peak_structure_type);
+         XrStructureType xr_type = static_cast<XrStructureType>(peek_structure_type);
          switch (xr_type)
          {
              case XR_TYPE_LOADER_INIT_INFO_ANDROID_KHR:
@@ -2486,21 +2486,21 @@ size_t OpenXrDecoder::Decode_xrUpdateSwapchainFB(const ApiCallInfo& call_info, c
     StructPointerDecoder<Decoded_XrSwapchainStateSamplerVulkanFB> swapchain_state_sampler_vulkan_fb;
     XrResult return_value;
 
-    bool     peak_is_null    = false;
-    bool     peak_is_struct  = false;
-    bool     peak_has_length = false;
-    size_t   peak_length{};
-    uint32_t peak_structure_type = 0;
+    bool     peek_is_null    = false;
+    bool     peek_is_struct  = false;
+    bool     peek_has_length = false;
+    size_t   peek_length{};
+    uint32_t peek_structure_type = 0;
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &swapchain);
     if (PointerDecoderBase::PeekAttributesAndType((parameter_buffer + bytes_read),
                                                    (buffer_size - bytes_read),
-                                                   peak_is_null,
-                                                   peak_is_struct,
-                                                   peak_has_length,
-                                                   peak_length,
-                                                   peak_structure_type))
+                                                   peek_is_null,
+                                                   peek_is_struct,
+                                                   peek_has_length,
+                                                   peek_length,
+                                                   peek_structure_type))
      {
-         XrStructureType xr_type = static_cast<XrStructureType>(peak_structure_type);
+         XrStructureType xr_type = static_cast<XrStructureType>(peek_structure_type);
          switch (xr_type)
          {
              case XR_TYPE_SWAPCHAIN_STATE_FOVEATION_FB:
@@ -2548,21 +2548,21 @@ size_t OpenXrDecoder::Decode_xrGetSwapchainStateFB(const ApiCallInfo& call_info,
     StructPointerDecoder<Decoded_XrSwapchainStateSamplerVulkanFB> swapchain_state_sampler_vulkan_fb;
     XrResult return_value;
 
-    bool     peak_is_null    = false;
-    bool     peak_is_struct  = false;
-    bool     peak_has_length = false;
-    size_t   peak_length{};
-    uint32_t peak_structure_type = 0;
+    bool     peek_is_null    = false;
+    bool     peek_is_struct  = false;
+    bool     peek_has_length = false;
+    size_t   peek_length{};
+    uint32_t peek_structure_type = 0;
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &swapchain);
     if (PointerDecoderBase::PeekAttributesAndType((parameter_buffer + bytes_read),
                                                    (buffer_size - bytes_read),
-                                                   peak_is_null,
-                                                   peak_is_struct,
-                                                   peak_has_length,
-                                                   peak_length,
-                                                   peak_structure_type))
+                                                   peek_is_null,
+                                                   peek_is_struct,
+                                                   peek_has_length,
+                                                   peek_length,
+                                                   peek_structure_type))
      {
-         XrStructureType xr_type = static_cast<XrStructureType>(peak_structure_type);
+         XrStructureType xr_type = static_cast<XrStructureType>(peek_structure_type);
          switch (xr_type)
          {
              case XR_TYPE_SWAPCHAIN_STATE_FOVEATION_FB:
@@ -4496,21 +4496,21 @@ size_t OpenXrDecoder::Decode_xrQuerySpacesFB(const ApiCallInfo& call_info, const
     HandlePointerDecoder<XrAsyncRequestIdFB> requestId;
     XrResult return_value;
 
-    bool     peak_is_null    = false;
-    bool     peak_is_struct  = false;
-    bool     peak_has_length = false;
-    size_t   peak_length{};
-    uint32_t peak_structure_type = 0;
+    bool     peek_is_null    = false;
+    bool     peek_is_struct  = false;
+    bool     peek_has_length = false;
+    size_t   peek_length{};
+    uint32_t peek_structure_type = 0;
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     if (PointerDecoderBase::PeekAttributesAndType((parameter_buffer + bytes_read),
                                                    (buffer_size - bytes_read),
-                                                   peak_is_null,
-                                                   peak_is_struct,
-                                                   peak_has_length,
-                                                   peak_length,
-                                                   peak_structure_type))
+                                                   peek_is_null,
+                                                   peek_is_struct,
+                                                   peek_has_length,
+                                                   peek_length,
+                                                   peek_structure_type))
      {
-         XrStructureType xr_type = static_cast<XrStructureType>(peak_structure_type);
+         XrStructureType xr_type = static_cast<XrStructureType>(peek_structure_type);
          switch (xr_type)
          {
              case XR_TYPE_SPACE_QUERY_INFO_FB:
