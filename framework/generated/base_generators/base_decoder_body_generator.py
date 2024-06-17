@@ -202,6 +202,8 @@ class BaseDecoderBodyGenerator():
             preamble += '\n'
         body = preamble + main_body + epilogue
 
+        body += post_expr
+
         return body
 
     def make_decode_invocation(self, value, preamble, main_body, epilogue):
