@@ -81,7 +81,7 @@ class BaseDecoderBodyGenerator():
         main_body = ''
         epilogue = ''
         arg_names = []
-        has_base_header_to_peak = False
+        has_base_header_to_peek = False
 
         # Declarations for decoded types.
         for value in values:
@@ -89,7 +89,7 @@ class BaseDecoderBodyGenerator():
             # If the value is a base header type, we need to do some work to read the actual
             # structure that is used, and then pass the information down.
             if value.base_type in self.base_header_structs.keys():
-                has_base_header_to_peak = True
+                has_base_header_to_peek = True
                 is_base_header_value    = True
                 decode_type = self.make_decoded_param_type(value)
                 main_body += '    {}* {};\n'.format(decode_type, value.name)
@@ -146,19 +146,12 @@ class BaseDecoderBodyGenerator():
         if values or return_type:
             main_body += '\n'
 
-        if has_base_header_to_peak:
-            main_body += '    bool     peak_is_null    = false;\n'
-            main_body += '    bool     peak_is_struct  = false;\n'
-            main_body += '    bool     peak_has_length = false;\n'
-            main_body += '    size_t   peak_length{};\n'
-            main_body += '    uint32_t peak_structure_type = 0;\n'
-
-        if has_base_header_to_peak:
-            body += '    bool     peak_is_null    = false;\n'
-            body += '    bool     peak_is_struct  = false;\n'
-            body += '    bool     peak_has_length = false;\n'
-            body += '    size_t   peak_length{};\n'
-            body += '    uint32_t peak_structure_type = 0;\n'
+        if has_base_header_to_peek:
+            main_body += '    bool     peek_is_null    = false;\n'
+            main_body += '    bool     peek_is_struct  = false;\n'
+            v += '    bool     peek_has_length = false;\n'
+            main_body += '    size_t   peek_length{};\n'
+            main_body += '    uint32_t peek_structure_type = 0;\n'
 
         post_expr = ''
         # Decode() method calls for pointer decoder wrappers.
@@ -203,8 +196,6 @@ class BaseDecoderBodyGenerator():
         if len(preamble) > 0:
             preamble += '\n'
         body = preamble + main_body + epilogue
-
-        body += post_expr
 
         return body
 
@@ -255,13 +246,13 @@ class BaseDecoderBodyGenerator():
                         base_type_name = self.gen_child_var_name(value.base_type)
                         main_body += '    if (PointerDecoderBase::PeekAttributesAndType((parameter_buffer + bytes_read),\n'
                         main_body += '                                                   (buffer_size - bytes_read),\n'
-                        main_body += '                                                   peak_is_null,\n'
-                        main_body += '                                                   peak_is_struct,\n'
-                        main_body += '                                                   peak_has_length,\n'
-                        main_body += '                                                   peak_length,\n'
-                        main_body += '                                                   peak_structure_type))\n'
+                        main_body += '                                                   peek_is_null,\n'
+                        main_body += '                                                   peek_is_struct,\n'
+                        main_body += '                                                   peek_has_length,\n'
+                        main_body += '                                                   peek_length,\n'
+                        main_body += '                                                   peek_structure_type))\n'
                         main_body += '     {\n'
-                        main_body += '         XrStructureType xr_type = static_cast<XrStructureType>(peak_structure_type);\n'
+                        main_body += '         XrStructureType xr_type = static_cast<XrStructureType>(peek_structure_type);\n'
                         main_body += '         switch (xr_type)\n'
                         main_body += '         {\n'
                         for child in self.base_header_structs[value.base_type]:
