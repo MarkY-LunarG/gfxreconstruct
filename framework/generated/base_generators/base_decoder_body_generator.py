@@ -153,6 +153,14 @@ class BaseDecoderBodyGenerator():
             main_body += '    size_t   peak_length{};\n'
             main_body += '    uint32_t peak_structure_type = 0;\n'
 
+        if has_base_header_to_peak:
+            body += '    bool     peak_is_null    = false;\n'
+            body += '    bool     peak_is_struct  = false;\n'
+            body += '    bool     peak_has_length = false;\n'
+            body += '    size_t   peak_length{};\n'
+            body += '    uint32_t peak_structure_type = 0;\n'
+
+        post_expr = ''
         # Decode() method calls for pointer decoder wrappers.
         for value in values:
             preamble, main_body, epilogue = BaseDecoderBodyGenerator.make_decode_invocation(
@@ -195,6 +203,8 @@ class BaseDecoderBodyGenerator():
         if len(preamble) > 0:
             preamble += '\n'
         body = preamble + main_body + epilogue
+
+        body += post_expr
 
         return body
 
