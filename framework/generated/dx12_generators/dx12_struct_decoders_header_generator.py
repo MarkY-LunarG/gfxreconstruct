@@ -87,6 +87,10 @@ class Dx12StructDecodersHeaderGenerator(
     def endFile(self):
         """Method override."""
         self.newline()
+        code = self.generate_struct_info()
+        write(code, file=self.outFile)
+
+        self.newline()
         code = format_cpp_code('''
             GFXRECON_END_NAMESPACE(decode)
             GFXRECON_END_NAMESPACE(gfxrecon)
