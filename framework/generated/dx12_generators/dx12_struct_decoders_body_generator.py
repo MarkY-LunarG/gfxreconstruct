@@ -62,3 +62,18 @@ class Dx12StructDecodersBodyGenerator(
     def generate_feature(self):
         Dx12BaseGenerator.generate_feature(self)
         BaseStructDecodersBodyGenerator.generate_feature(self)
+
+    def endFile(self):
+        """Method override."""
+        self.newline()
+        code = self.generate_struct_info()
+        write(code, file=self.outFile)
+
+        self.newline()
+        write('GFXRECON_END_NAMESPACE(decode)', file=self.outFile)
+        write('GFXRECON_END_NAMESPACE(gfxrecon)', file=self.outFile)
+        self.newline()
+        write('#endif // defined(D3D12_SUPPORT) || defined(ENABLE_OPENXR_SUPPORT)', file=self.outFile)
+
+        # Finish processing in superclass
+        BaseGenerator.endFile(self)
