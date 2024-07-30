@@ -94,6 +94,14 @@ void MapStructHandles(Decoded_XrCompositionLayerBaseHeader* wrapper, const Commo
     }
 }
 
+void MapStructHandles(Decoded_XrFrameEndInfo* wrapper, const CommonObjectInfoTable& object_info_table)
+{
+    if (wrapper != nullptr)
+    {
+        MapStructPtrArrayHandles<Decoded_XrCompositionLayerBaseHeader*>(wrapper->layers->GetMetaStructPointer(), wrapper->layers->GetLength(), object_info_table);
+    }
+}
+
 void MapStructHandles(Decoded_XrViewLocateInfo* wrapper, const CommonObjectInfoTable& object_info_table)
 {
     if ((wrapper != nullptr) && (wrapper->decoded_value != nullptr))
@@ -438,6 +446,14 @@ void MapStructHandles(Decoded_XrHandJointsLocateInfoEXT* wrapper, const CommonOb
         XrHandJointsLocateInfoEXT* value = wrapper->decoded_value;
 
         value->baseSpace = handle_mapping::MapHandle<OpenXrSpaceInfo>(wrapper->baseSpace, object_info_table, &CommonObjectInfoTable::GetXrSpaceInfo);
+    }
+}
+
+void MapStructHandles(Decoded_XrSecondaryViewConfigurationLayerInfoMSFT* wrapper, const CommonObjectInfoTable& object_info_table)
+{
+    if (wrapper != nullptr)
+    {
+        MapStructPtrArrayHandles<Decoded_XrCompositionLayerBaseHeader*>(wrapper->layers->GetMetaStructPointer(), wrapper->layers->GetLength(), object_info_table);
     }
 }
 

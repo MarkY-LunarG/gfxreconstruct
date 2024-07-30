@@ -21,7 +21,7 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-import sys
+import base_utils, re, sys
 from base_generator import BaseGenerator, BaseGeneratorOptions, write
 
 
@@ -259,6 +259,26 @@ class OpenXrStructHandleWrappersBodyGenerator(BaseGenerator):
                 body += '{\n'
                 body += '    if (value != nullptr)\n'
                 body += '    {\n'
+
+                if struct in self.base_header_structs.keys():
+                    body += '        switch (value->type)\n'
+                    body += '        {\n'
+                    body += '            default:\n'
+                    body += '                // Handle as base-type below\n'
+                    body += '                break;\n'
+
+                    for child in self.base_header_structs[struct]:
+                        switch_type = base_utils.GenerateStructureType(child)
+
+                        body += f'            case {switch_type}:\n'
+                        body += f'                UnwrapStructHandles(reinterpret_cast<{child}*>(wrapper),\n'
+                        body += f'                                 unwrap_memory);\n'
+                        body += '                // Return here because we processed the appropriate data in\n'
+                        body += '                // the correct structure type\n'
+                        body += '                return;\n'
+                    body += '        }\n'
+                    body += '\n'
+
                 body += self.make_struct_handle_unwrappings(
                     struct, handle_members, generic_handle_members
                 )
@@ -282,9 +302,25 @@ class OpenXrStructHandleWrappersBodyGenerator(BaseGenerator):
             elif self.is_struct(member.base_type):
                 # This is a struct that includes handles.
                 if member.is_array:
-                    body += '        value->{name} = UnwrapStructArrayHandles(value->{name}, value->{}, unwrap_memory);\n'.format(
-                        member.array_length, name=member.name
-                    )
+                    if 'const' in member.full_type:
+                        temp_type = member.full_type
+                        full_type_non_const = re.sub(' const ', '', temp_type)
+                        full_type_non_const = re.sub('const ', '', full_type_non_const)
+                        full_type_non_const = re.sub(' const', '', full_type_non_const)
+                        variable_name = f'const_cast<{full_type_non_const}>(value->{member.name})'
+                    else:
+                        variable_name = f'value->{member.name}'
+
+                    length_exprs = member.array_length.split(',')
+                    length_count = len(length_exprs)
+
+                    if member.pointer_count > 1 and length_count < member.pointer_count:
+                        unwrap_function = 'UnwrapStructPtrArrayHandles'
+                    else:
+                        unwrap_function = 'UnwrapStructArrayHandles'
+
+                    body += f'        value->{member.name} = {unwrap_function}({variable_name}, value->{member.array_length}, unwrap_memory);\n'
+
                 elif member.is_pointer:
                     body += '        value->{name} = UnwrapStructPtrHandles(value->{name}, unwrap_memory);\n'.format(
                         name=member.name
