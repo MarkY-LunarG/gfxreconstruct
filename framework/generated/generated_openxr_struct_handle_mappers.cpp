@@ -85,6 +85,25 @@ void MapStructHandles(Decoded_XrCompositionLayerBaseHeader* wrapper, const Commo
     {
         XrCompositionLayerBaseHeader* value = wrapper->decoded_value;
 
+        switch (value->type)
+        {
+            default:
+                // Handle as base-type below
+                break;
+            case XR_TYPE_COMPOSITION_LAYER_PROJECTION:
+                MapStructHandles(reinterpret_cast<Decoded_XrCompositionLayerProjection*>(wrapper),
+                                 object_info_table);
+                // Return here because we processed the appropriate data in
+                // the correct structure type
+                return;
+            case XR_TYPE_COMPOSITION_LAYER_QUAD:
+                MapStructHandles(reinterpret_cast<Decoded_XrCompositionLayerQuad*>(wrapper),
+                                 object_info_table);
+                // Return here because we processed the appropriate data in
+                // the correct structure type
+                return;
+        }
+
         if (wrapper->next)
         {
             MapNextStructHandles(wrapper->next->GetPointer(), wrapper->next->GetMetaStructPointer(), object_info_table);

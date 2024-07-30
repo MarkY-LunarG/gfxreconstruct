@@ -23,6 +23,7 @@
 
 import base_utils, re, sys
 from base_generator import BaseGenerator, BaseGeneratorOptions, write
+from collections import OrderedDict
 
 
 class OpenXrStructHandleWrappersBodyGeneratorOptions(BaseGeneratorOptions):
@@ -83,6 +84,12 @@ class OpenXrStructHandleWrappersBodyGenerator(BaseGenerator):
         self.output_structs = [
         ]  # Output structures that retrieve handles, which need to be wrapped.
 
+        # Names of all OpenXR commands processed by the generator.
+        self.cmd_names = []
+        self.cmd_info = OrderedDict()
+        self.all_structs = []
+        self.all_struct_members = OrderedDict()
+
     def beginFile(self, gen_opts):
         """Method override."""
         BaseGenerator.beginFile(self, gen_opts)
@@ -98,6 +105,64 @@ class OpenXrStructHandleWrappersBodyGenerator(BaseGenerator):
 
     def endFile(self):
         """Method override."""
+
+        # Check for output structures, which retrieve handles that need to be wrapped.
+        for cmd in self.cmd_names:
+            info = self.cmd_info[cmd]
+            values = info[2]
+
+            for value in values:
+                if self.is_output_parameter(value) and self.is_struct(
+                    value.base_type
+                ) and (value.base_type in self.structs_with_handles
+                       ) and (value.base_type not in self.output_structs):
+                    self.output_structs.append(value.base_type)
+                    for member in self.all_struct_members[value.base_type]:
+                        if self.is_struct(
+                            member.base_type
+                        ) and (member.base_type not in self.output_structs):
+                            self.output_structs.append(member.base_type)
+
+        for struct in self.all_structs:
+            if (
+                (struct in self.structs_with_handles)
+                or (struct in self.GENERIC_HANDLE_STRUCTS)
+            ):
+                body = '\n'
+                body += 'void UnwrapStructHandles({}* value, HandleUnwrapMemory* unwrap_memory)\n'.format(
+                    struct
+                )
+                body += '{\n'
+                body += '    if (value != nullptr)\n'
+                body += '    {\n'
+
+                if struct in self.base_header_structs.keys():
+                    body += '        switch (value->type)\n'
+                    body += '        {\n'
+                    body += '            default:\n'
+                    body += '                // Handle as base-type below\n'
+                    body += '                break;\n'
+
+                    for child in self.base_header_structs[struct]:
+                        switch_type = base_utils.GenerateStructureType(child)
+
+                        body += f'            case {switch_type}:\n'
+                        body += f'                UnwrapStructHandles(reinterpret_cast<{child}*>(value),\n'
+                        body += f'                                 unwrap_memory);\n'
+                        body += '                // Return here because we processed the appropriate data in\n'
+                        body += '                // the correct structure type\n'
+                        body += '                return;\n'
+                    body += '        }\n'
+                    body += '\n'
+
+                body += self.make_struct_handle_unwrappings(
+                    struct, self.structs_with_handles[struct]
+                )
+                body += '    }\n'
+                body += '}'
+
+                write(body, file=self.outFile)
+
         # Generate the next shallow copy code, for next structs that don't have handles, but need to be preserved in the overall copy for handle wrapping.
         self.newline()
         write(
@@ -221,75 +286,16 @@ class OpenXrStructHandleWrappersBodyGenerator(BaseGenerator):
 
     def generate_feature(self):
         """Performs C++ code generation for the feature."""
-        # Check for output structures, which retrieve handles that need to be wrapped.
-        for cmd in self.feature_cmd_params:
-            info = self.feature_cmd_params[cmd]
-            values = info[2]
-
-            for value in values:
-                if self.is_output_parameter(value) and self.is_struct(
-                    value.base_type
-                ) and (value.base_type in self.structs_with_handles
-                       ) and (value.base_type not in self.output_structs):
-                    self.output_structs.append(value.base_type)
-                    for member in self.feature_struct_members[value.base_type]:
-                        if self.is_struct(
-                            member.base_type
-                        ) and (member.base_type not in self.output_structs):
-                            self.output_structs.append(member.base_type)
+        for cmd in self.get_filtered_cmd_names():
+            self.cmd_names.append(cmd)
+            self.cmd_info[cmd] = self.feature_cmd_params[cmd]
 
         for struct in self.get_filtered_struct_names():
-            if (
-                (struct in self.structs_with_handles)
-                or (struct in self.GENERIC_HANDLE_STRUCTS)
-            ):
-                handle_members = dict()
-                generic_handle_members = dict()
+            self.all_structs.append(struct)
+            self.all_struct_members[struct] = self.feature_struct_members[
+                struct]
 
-                if struct in self.structs_with_handles:
-                    handle_members = self.structs_with_handles[struct]
-                if struct in self.GENERIC_HANDLE_STRUCTS:
-                    generic_handle_members = self.GENERIC_HANDLE_STRUCTS[struct
-                                                                         ]
-
-                body = '\n'
-                body += 'void UnwrapStructHandles({}* value, HandleUnwrapMemory* unwrap_memory)\n'.format(
-                    struct
-                )
-                body += '{\n'
-                body += '    if (value != nullptr)\n'
-                body += '    {\n'
-
-                if struct in self.base_header_structs.keys():
-                    body += '        switch (value->type)\n'
-                    body += '        {\n'
-                    body += '            default:\n'
-                    body += '                // Handle as base-type below\n'
-                    body += '                break;\n'
-
-                    for child in self.base_header_structs[struct]:
-                        switch_type = base_utils.GenerateStructureType(child)
-
-                        body += f'            case {switch_type}:\n'
-                        body += f'                UnwrapStructHandles(reinterpret_cast<{child}*>(wrapper),\n'
-                        body += f'                                 unwrap_memory);\n'
-                        body += '                // Return here because we processed the appropriate data in\n'
-                        body += '                // the correct structure type\n'
-                        body += '                return;\n'
-                    body += '        }\n'
-                    body += '\n'
-
-                body += self.make_struct_handle_unwrappings(
-                    struct, handle_members, generic_handle_members
-                )
-                body += '    }\n'
-                body += '}'
-
-                write(body, file=self.outFile)
-
-    def make_struct_handle_unwrappings(
-        self, name, handle_members, generic_handle_members
-    ):
+    def make_struct_handle_unwrappings(self, name, handle_members):
         """Generating expressions for unwrapping struct handles before an API call."""
         body = ''
 
@@ -305,8 +311,12 @@ class OpenXrStructHandleWrappersBodyGenerator(BaseGenerator):
                     if 'const' in member.full_type:
                         temp_type = member.full_type
                         full_type_non_const = re.sub(' const ', '', temp_type)
-                        full_type_non_const = re.sub('const ', '', full_type_non_const)
-                        full_type_non_const = re.sub(' const', '', full_type_non_const)
+                        full_type_non_const = re.sub(
+                            'const ', '', full_type_non_const
+                        )
+                        full_type_non_const = re.sub(
+                            ' const', '', full_type_non_const
+                        )
                         variable_name = f'const_cast<{full_type_non_const}>(value->{member.name})'
                     else:
                         variable_name = f'value->{member.name}'

@@ -187,6 +187,7 @@ class BaseStructHandleMappersBodyGenerator():
                     )
 
                     if struct in self.base_header_structs.keys():
+                        body += '\n'
                         body += '        switch (value->type)\n'
                         body += '        {\n'
                         body += '            default:\n'
@@ -203,7 +204,6 @@ class BaseStructHandleMappersBodyGenerator():
                             body += '                // the correct structure type\n'
                             body += '                return;\n'
                         body += '        }\n'
-                        body += '\n'
 
                 body += self.make_struct_handle_mappings(
                     struct, handle_members, generic_handle_members

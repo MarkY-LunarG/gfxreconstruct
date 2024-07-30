@@ -24,6 +24,7 @@
 import sys
 from base_generator import BaseGenerator, BaseGeneratorOptions, write
 from base_decoder_body_generator import BaseDecoderBodyGenerator
+from collections import OrderedDict
 
 
 class OpenXrDecoderBodyGeneratorOptions(BaseGeneratorOptions):
