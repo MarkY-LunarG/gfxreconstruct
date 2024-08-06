@@ -88,6 +88,7 @@ from openxr_struct_decoders_forward_generator import OpenXrStructDecodersForward
 from openxr_struct_decoders_header_generator import OpenXrStructDecodersHeaderGenerator, OpenXrStructDecodersHeaderGeneratorOptions
 from openxr_struct_decoders_body_generator import OpenXrStructDecodersBodyGenerator, OpenXrStructDecodersBodyGeneratorOptions
 from openxr_struct_next_decoders_generator import OpenXrStructNextDecodersGenerator, OpenXrStructNextDecodersGeneratorOptions
+from openxr_struct_next_init_generator import OpenXrStructNextInitGenerator, OpenXrStructNextInitGeneratorOptions
 
 # Mappers
 from openxr_struct_handle_mappers_header_generator import OpenXrStructHandleMappersHeaderGenerator, OpenXrStructHandleMappersHeaderGeneratorOptions
@@ -719,6 +720,20 @@ def make_gen_opts(args):
             platform_types=platform_types,
             prefix_text=prefix_strings + xr_prefix_strings,
             protect_file=False,
+            protect_feature=False,
+            extraOpenXrHeaders=extraOpenXrHeaders
+        )
+    ]
+
+    gen_opts['generated_openxr_struct_init_next_chain.h'] = [
+        OpenXrStructNextInitGenerator,
+        OpenXrStructNextInitGeneratorOptions(
+            filename='generated_openxr_struct_init_next_chain.h',
+            directory=directory,
+            blacklists=blacklists,
+            platform_types=platform_types,
+            prefix_text=prefix_strings + xr_prefix_strings,
+            protect_file=True,
             protect_feature=False,
             extraOpenXrHeaders=extraOpenXrHeaders
         )

@@ -74,6 +74,7 @@ generate_targets = [
     'generated_openxr_struct_handle_mappers.cpp',
     'generated_openxr_struct_handle_wrappers.h',
     'generated_openxr_struct_handle_wrappers.cpp',
+    'generated_openxr_struct_init_next_chain.h',
     'generated_openxr_struct_next_decoder.cpp',
     'generated_openxr_struct_next_encoder.cpp',
     'generated_openxr_struct_to_json.h',

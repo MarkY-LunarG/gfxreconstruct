@@ -139,6 +139,7 @@ target_sources(gfxrecon_decode
                    ${GFXRECON_SOURCE_DIR}/framework/generated/generated_openxr_struct_decoders_forward.h
                    ${GFXRECON_SOURCE_DIR}/framework/generated/generated_openxr_struct_handle_mappers.h
                    ${GFXRECON_SOURCE_DIR}/framework/generated/generated_openxr_struct_handle_mappers.cpp
+                   ${GFXRECON_SOURCE_DIR}/framework/generated/generated_openxr_struct_init_next_chain.h
                    ${GFXRECON_SOURCE_DIR}/framework/generated/generated_openxr_struct_next_decoder.cpp
                    ${GFXRECON_SOURCE_DIR}/framework/generated/generated_vulkan_consumer.h
                    ${GFXRECON_SOURCE_DIR}/framework/generated/generated_vulkan_decoder.h

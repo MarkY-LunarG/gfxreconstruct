@@ -143,86 +143,9 @@ class OpenXrReplayConsumerBodyGenerator(
         self.newline()
         write('GFXRECON_BEGIN_NAMESPACE(gfxrecon)', file=self.outFile)
         write('GFXRECON_BEGIN_NAMESPACE(decode)', file=self.outFile)
-        self.newline()
-        write('template <typename T>', file=self.outFile)
-        write(
-            'void InitializeOutputStructNext(StructPointerDecoder<T> *decoder);',
-            file=self.outFile
-        )
 
     def endFile(self):
         """Method override."""
-        self.newline()
-        write(
-            'static void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutStructure* output_struct)',
-            file=self.outFile
-        )
-        write('{', file=self.outFile)
-        write('    while(in_next)', file=self.outFile)
-        write('    {', file=self.outFile)
-        write('        switch(in_next->type)', file=self.outFile)
-        write('        {', file=self.outFile)
-        for struct in self.type_values:
-            struct_type = self.type_values[struct]
-            if not struct_type in self.SKIP_NEXT_STRUCT_TYPES:
-                write(
-                    '            case {}:'.format(struct_type),
-                    file=self.outFile
-                )
-                write('            {', file=self.outFile)
-                write(
-                    '                output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<{}>());'
-                    .format(struct),
-                    file=self.outFile
-                )
-                write('                break;', file=self.outFile)
-                write('            }', file=self.outFile)
-        write('            default:', file=self.outFile)
-        write('                break;', file=self.outFile)
-        write('        }', file=self.outFile)
-        write(
-            '        output_struct = output_struct->next;', file=self.outFile
-        )
-        write(
-            '        output_struct->type = in_next->type;', file=self.outFile
-        )
-        write('        in_next = in_next->next;', file=self.outFile)
-        write('    }', file=self.outFile)
-        write('}', file=self.outFile)
-
-        self.newline()
-        write('template <typename T>', file=self.outFile)
-        write(
-            'void InitializeOutputStructNext(StructPointerDecoder<T> *decoder)',
-            file=self.outFile
-        )
-        write('{', file=self.outFile)
-        write('    if(decoder->IsNull()) return;', file=self.outFile)
-        write(
-            '    size_t len = decoder->GetOutputLength();', file=self.outFile
-        )
-        write('    auto input = decoder->GetPointer();', file=self.outFile)
-        write(
-            '    auto output = decoder->GetOutputPointer();',
-            file=self.outFile
-        )
-        write('    for( size_t i = 0 ; i < len; ++i )', file=self.outFile)
-        write('    {', file=self.outFile)
-        write(
-            '        const auto* in_next = reinterpret_cast<const XrBaseInStructure*>(input[i].next);',
-            file=self.outFile
-        )
-        write('        if( in_next == nullptr ) continue;', file=self.outFile)
-        write(
-            '        auto* output_struct = reinterpret_cast<XrBaseOutStructure*>(&output[i]);',
-            file=self.outFile
-        )
-        write(
-            '        InitializeOutputStructNextImpl(in_next, output_struct);',
-            file=self.outFile
-        )
-        write('    }', file=self.outFile)
-        write('}', file=self.outFile)
 
         self.newline()
         write('GFXRECON_END_NAMESPACE(decode)', file=self.outFile)

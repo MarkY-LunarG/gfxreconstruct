@@ -256,6 +256,7 @@ target_sources(gfxrecon_decode
                     ${CMAKE_SOURCE_DIR}/framework/generated/generated_openxr_struct_decoders_forward.h
                     ${CMAKE_SOURCE_DIR}/framework/generated/generated_openxr_struct_handle_mappers.h
                     ${CMAKE_SOURCE_DIR}/framework/generated/generated_openxr_struct_handle_mappers.cpp
+                    ${CMAKE_SOURCE_DIR}/framework/generated/generated_openxr_struct_init_next_chain.h
                     ${CMAKE_SOURCE_DIR}/framework/generated/generated_openxr_struct_next_decoder.cpp
                     ${CMAKE_SOURCE_DIR}/framework/generated/generated_openxr_struct_to_json.h
                     ${CMAKE_SOURCE_DIR}/framework/generated/generated_openxr_struct_to_json.cpp
