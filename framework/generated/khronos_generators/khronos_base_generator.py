@@ -613,6 +613,19 @@ class KhronosBaseGenerator(BaseGeneratorDefines, OutputGenerator):
             return True
         return False
 
+    def isInputAndOutputParameter(self, value):
+        """Determine if a pointer parameter requires both input and output content."""
+        if self.is_output_parameter(value) and value.base_type in self.struct_enum_value:
+            # Not just an input and it has a base type, usually that means we have to fill
+            # in at least the base_type
+            return True
+        return False
+
+    def generateStructureTypeFromStructName(self, name):
+        if name in self.struct_enum_value:
+            return self.struct_enum_value[name]
+
+
     def get_array_len(self, param):
         """Retrieve the length of an array defined by a <param> or <member> element."""
         result = None

@@ -695,10 +695,6 @@ def make_gen_opts(args):
                 'xrCreateSwapchain',
                 'xrReleaseSwapchainImage',
                 'xrEndFrame',
-                'xrLocateSpaces',
-                'xrLocateHandJointsEXT',
-                'xrGetHandMeshFB',
-                'xrLocateBodyJointsFB',
                 'xrCreateVulkanInstanceKHR',
                 'xrCreateVulkanDeviceKHR',
             ]

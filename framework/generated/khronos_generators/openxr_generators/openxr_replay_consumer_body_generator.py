@@ -109,11 +109,7 @@ class OpenXrReplayConsumerBodyGenerator(
             'xrCreateSwapchain',
             'xrReleaseSwapchainImage',
             'xrEndFrame',
-            'xrLocateSpaces',
             'xrInitializeLoaderKHR',
-            'xrLocateHandJointsEXT',
-            'xrGetHandMeshFB',
-            'xrLocateBodyJointsFB',
             'xrCreateVulkanInstanceKHR',
             'xrCreateVulkanDeviceKHR',
         ]
@@ -367,6 +363,16 @@ class OpenXrReplayConsumerBodyGenerator(
                 need_temp_value = True
                 expr = ''
 
+                # If a structure is both an input and output, we need to allocate memory and initialize
+                # the content appropriately so it will be filled in
+                need_internal_struct_array_expansion = False
+                if self.is_struct(value.base_type) and self.isInputAndOutputParameter(value):
+                    # If the structure has an array, we need to do special work
+                    for member in self.all_struct_members[value.base_type]:
+                        if member.is_array and member.is_dynamic:
+                            need_internal_struct_array_expansion = True
+                            break
+
                 if (
                     value.base_type in self.EXTERNAL_OBJECT_TYPES
                 ) and not value.is_array:
@@ -414,6 +420,8 @@ class OpenXrReplayConsumerBodyGenerator(
                     # Generate temporary variable to reference a pointer value that is encapsulated within a PointerDecoder object.
                     if is_input:
                         arg_name = 'in_' + value.name
+                    elif need_internal_struct_array_expansion:
+                        arg_name = 'inout_' + value.name
                     else:
                         arg_name = 'out_' + value.name
 
@@ -781,8 +789,40 @@ class OpenXrReplayConsumerBodyGenerator(
                                 expr += '{paramname}->IsNull() ? nullptr : {paramname}->AllocateOutputData(1, static_cast<{}>(0));'.format(
                                     value.base_type, paramname=value.name
                                 )
+
                 if expr:
-                    preexpr.append(expr)
+                    if need_internal_struct_array_expansion:
+                        expr += '\n'
+                        preexpr.append(expr)
+
+                        preexpr.append(f'// We have to create allocated space for the {value.name} data to be written to, otherwise,')
+                        preexpr.append('// it will try to write  to a non-existent output location.')
+                        preexpr.append(f'if ({arg_name} != nullptr)')
+                        preexpr.append('{')
+                        preexpr.append(f'    {value.base_type}* in_{value.name} = {value.name}->GetPointer();')
+                        preexpr.append(f'    Decoded_{value.base_type}* meta_{value.name} = {value.name}->GetMetaStructPointer();')
+                        array_length_vars_initialized = []
+                        for member in self.all_struct_members[value.base_type]:
+                            if member.is_array and member.is_dynamic and member.array_length is not None:
+                                preexpr.append(' ')
+                                if member.array_length not in array_length_vars_initialized:
+                                    array_length_vars_initialized.append(member.array_length)
+                                    preexpr.append(f'    inout_{value.name}->{member.array_length} = in_{value.name}->{member.array_length};')
+                                if 'char' not in member.base_type:
+                                    preexpr.append(f'    if (in_{value.name}->{member.array_length} > 0 && in_{value.name}->{member.name} != nullptr)')
+                                    preexpr.append('    {')
+                                    deref = '->'
+                                    if not self.is_struct(member.base_type):
+                                        deref = '.'
+                                    preexpr.append(f'        inout_{value.name}->{member.name} = meta_{value.name}->{member.name}{deref}AllocateOutputData(in_{value.name}->{member.array_length});')
+                                    preexpr.append('    }')
+                                    preexpr.append('    else')
+                                    preexpr.append('    {')
+                                    preexpr.append(f'        inout_{value.name}->{member.name} = nullptr;')
+                                    preexpr.append('    }')
+                        preexpr.append('}')
+                    else:
+                        preexpr.append(expr)
             elif self.is_handle_like(value.base_type):
                 # Handles need to be mapped.
                 arg_name = 'in_' + value.name
