@@ -21,7 +21,7 @@
 # IN THE SOFTWARE.
 
 import sys
-from base_generator import write
+from base_generator_defines import BaseGeneratorDefines, write
 from dx12_base_generator import Dx12BaseGenerator
 from dx12_decoder_header_generator import Dx12DecoderHeaderGenerator
 from base_struct_decoders_body_generator import BaseStructDecodersBodyGenerator
@@ -56,12 +56,13 @@ class Dx12DecoderBodyGenerator(
         )
         write(code, file=self.outFile)
 
+
     def generate_feature(self):
         """Method override."""
         self.method_names = []
         Dx12BaseGenerator.generate_feature(self)
         self.write_function_call()
-        BaseDecoderBodyGenerator.generate_feature(self)
+        BaseGeneratorDefines.generate_feature(self)
         BaseDecoderBodyGenerator.generate_commands(self) # Dx12 only has one "feature", so no need to push this to endFile
         self.newline()
         self.generate_dx12_method_feature()
@@ -83,7 +84,7 @@ class Dx12DecoderBodyGenerator(
             cmddef += '{\n'
             cmddef += '    size_t bytes_read = 0;\n'
             cmddef += '\n'
-            cmddef += self.make_cmd_body(return_type, method, values, True)
+            cmddef += self.make_cmd_body(return_type, method, values)
             cmddef += '\n'
             cmddef += '    return bytes_read;\n'
             cmddef += '}'

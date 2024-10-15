@@ -23,7 +23,7 @@
 
 import sys
 import json
-from base_generator import write
+from base_generator_defines import write
 from dx12_base_generator import Dx12BaseGenerator, Dx12GeneratorOptions
 
 
@@ -214,8 +214,8 @@ class Dx12WrapperBodyGenerator(Dx12BaseGenerator):
             union_members = self.get_union_members(member.base_type)
             for union_info in union_members:
                 if self.is_struct(union_info.base_type):
-                    umembers = self.feature_struct_members[union_info.base_type
-                                                           ]
+                    umembers = self.all_struct_members[union_info.base_type
+                                                       ]
                     for umember in umembers:
                         if self.is_struct_object_member(umember):
                             return True

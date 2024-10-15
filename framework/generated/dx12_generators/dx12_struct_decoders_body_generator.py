@@ -21,15 +21,14 @@
 # IN THE SOFTWARE.
 
 import sys
-from base_generator import write
-from dx12_base_generator import Dx12BaseGenerator
-from dx12_decoder_header_generator import Dx12DecoderHeaderGenerator
-from base_struct_decoders_body_generator import BaseStructDecodersBodyGenerator
+from base_generator_defines import write
 from base_decoder_body_generator import BaseDecoderBodyGenerator
+from base_struct_decoders_body_generator import BaseStructDecodersBodyGenerator
+from dx12_base_generator import Dx12BaseGenerator
 
 
 class Dx12StructDecodersBodyGenerator(
-    Dx12DecoderHeaderGenerator, BaseStructDecodersBodyGenerator,
+    Dx12BaseGenerator, BaseStructDecodersBodyGenerator,
     BaseDecoderBodyGenerator
 ):
     """Generates C++ functions responsible for decoding Dx12 API calls."""
@@ -42,11 +41,19 @@ class Dx12StructDecodersBodyGenerator(
         warn_file=sys.stderr,
         diag_file=sys.stdout
     ):
-        Dx12DecoderHeaderGenerator.__init__(
+        Dx12BaseGenerator.__init__(
             self, source_dict, dx12_prefix_strings, err_file, warn_file,
             diag_file
         )
         self.check_blacklist = True
+
+    def beginFile(self, gen_opts):
+        """Method override."""
+        Dx12BaseGenerator.beginFile(self, gen_opts)
+
+        self.write_include()
+        write('GFXRECON_BEGIN_NAMESPACE(gfxrecon)', file=self.outFile)
+        write('GFXRECON_BEGIN_NAMESPACE(decode)', file=self.outFile)
 
     def write_include(self):
         """Method override."""
@@ -61,4 +68,15 @@ class Dx12StructDecodersBodyGenerator(
     # Met#include "util/defines.h"hod override
     def generate_feature(self):
         Dx12BaseGenerator.generate_feature(self)
-        BaseStructDecodersBodyGenerator.generate_feature(self)
+
+    def endFile(self):
+        """Method override."""
+        self.newline()
+        code = self.generate_struct_info()
+        write(code, file=self.outFile)
+
+        write('GFXRECON_END_NAMESPACE(decode)', file=self.outFile)
+        write('GFXRECON_END_NAMESPACE(gfxrecon)', file=self.outFile)
+
+        # Finish processing in superclass
+        Dx12BaseGenerator.endFile(self)

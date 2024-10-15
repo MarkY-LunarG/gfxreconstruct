@@ -23,10 +23,10 @@
 import json
 import sys
 import re
-from base_generator import write
+from base_generator_defines import write
+from base_replay_consumer_body_generator import BaseReplayConsumerBodyGenerator
 from dx12_base_generator import Dx12BaseGenerator, Dx12GeneratorOptions
 from dx12_replay_consumer_header_generator import Dx12ReplayConsumerHeaderGenerator, Dx12ReplayConsumerHeaderGeneratorOptions
-from base_replay_consumer_body_generator import BaseReplayConsumerBodyGenerator
 
 
 class Dx12ReplayConsumerBodyGeneratorOptions(
@@ -76,8 +76,6 @@ class Dx12ReplayConsumerBodyGenerator(
             **self.CUSTOM_STRUCT_HANDLE_MAP, 'D3D12_CPU_DESCRIPTOR_HANDLE':
             ['ptr']
         }
-        self.structs_with_handle_ptrs = []
-        self.structs_with_map_data = dict()
 
     def beginFile(self, gen_opts):
         """Method override."""
@@ -110,7 +108,7 @@ class Dx12ReplayConsumerBodyGenerator(
         """Method override."""
         Dx12BaseGenerator.genStruct(self, typeinfo, typename, alias)
         if not alias:
-            for struct_name in self.get_filtered_struct_names():
+            for struct_name in self.get_all_filtered_struct_names():
                 self.check_struct_member_handles(
                     struct_name, self.structs_with_handles,
                     self.structs_with_handle_ptrs, True,
@@ -124,7 +122,6 @@ class Dx12ReplayConsumerBodyGenerator(
             header_dict
         )
         Dx12BaseGenerator.generate_feature(self)
-        BaseReplayConsumerBodyGenerator.generate_feature(self)
         self.generate_dx12_method_feature()
 
     def generate_dx12_method_feature(self):
@@ -136,8 +133,7 @@ class Dx12ReplayConsumerBodyGenerator(
 
             cmddef = '' if first else '\n'
             cmddef += self.make_consumer_func_decl(
-                return_type, 'Dx12ReplayConsumer::Process_' + method, values,
-                True
+                return_type, 'Dx12ReplayConsumer::Process_' + method, values
             ) + '\n'
             cmddef += '{\n'
 

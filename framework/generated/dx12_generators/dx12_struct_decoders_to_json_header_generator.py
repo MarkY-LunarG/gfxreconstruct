@@ -21,9 +21,10 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 import sys, inspect
-from base_generator import write
+from base_generator_defines import write
 from dx12_base_generator import Dx12BaseGenerator
 from reformat_code import format_cpp_code, indent_cpp_code, remove_trailing_empty_lines
+
 
 class Dx12StructDecodersToJsonHeaderGenerator(Dx12BaseGenerator):
     """Convert Struct Decoders to JSON."""
@@ -97,4 +98,3 @@ class Dx12StructDecodersToJsonHeaderGenerator(Dx12BaseGenerator):
 
         # Finish processing in superclass
         Dx12BaseGenerator.endFile(self)
-
