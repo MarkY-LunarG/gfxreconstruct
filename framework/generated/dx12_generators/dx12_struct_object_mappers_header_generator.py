@@ -79,8 +79,6 @@ class Dx12StructObjectMappersHeaderGenerator(
         self.structs_with_objects = self.collect_struct_with_objects(
             header_dict
         )
-        self.newline()
-        self.write_struct_member_def()
 
     def endFile(self):
         """Method override."""
@@ -109,6 +107,8 @@ class Dx12StructObjectMappersHeaderGenerator(
                 )
                 write(body, file=self.outFile)
 
+        self.newline()
+        self.write_struct_member_def()
         self.newline()
 
         write('template <typename T>', file=self.outFile)
@@ -204,8 +204,8 @@ class Dx12StructObjectMappersHeaderGenerator(
         write('        }', file=self.outFile)
         write('    }', file=self.outFile)
         write('}', file=self.outFile)
-        self.newline()
 
+        self.newline()
         write('GFXRECON_END_NAMESPACE(decode)', file=self.outFile)
         write('GFXRECON_END_NAMESPACE(gfxrecon)', file=self.outFile)
 

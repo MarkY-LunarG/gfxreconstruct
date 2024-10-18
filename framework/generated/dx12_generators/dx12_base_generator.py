@@ -89,7 +89,7 @@ class Dx12GeneratorOptions():
         self.apientry = ''
         self.apientryp = ''
         self.indent_func_proto = ''
-        self.align_func_param = ''
+        self.align_func_param = 48
         self.code_generator = True
         self.conventions = None
         self.apiname = 'Dx12',
@@ -594,7 +594,7 @@ class Dx12BaseGenerator(BaseGeneratorDefines):
                         )
                     )
 
-    def make_consumer_func_decl(self, return_type, name, values):
+    def make_consumer_func_decl(self, return_type, name, values, dump_object_id=True):
         """make_consumer_decl - return OpenXrConsumer class member function declaration.
         Generate OpenXrConsumer class member function declaration.
         """
@@ -605,15 +605,18 @@ class Dx12BaseGenerator(BaseGeneratorDefines):
         )
         param_decls.append(param_decl)
 
-        param_decl = self.make_aligned_param_decl(
-            'format::HandleId', 'object_id', self.INDENT_SIZE,
-            self.genOpts.align_func_param
-        )
-        param_decls.append(param_decl)
+        if dump_object_id:
+            param_decl = self.make_aligned_param_decl(
+                'format::HandleId', 'object_id', self.INDENT_SIZE,
+                self.genOpts.align_func_param
+            )
+            param_decls.append(param_decl)
 
         if return_type != 'void':
             method_name = name[name.find('::Process_') + 10:]
-            return_value = self.get_return_value_info(return_type, method_name)
+            return_value = self.get_return_value_info(
+                return_type, method_name
+            )
             rtn_type1 = self.make_decoded_param_type(return_value)
             if rtn_type1.find('Decoder') != -1:
                 rtn_type1 += '*'
@@ -621,6 +624,7 @@ class Dx12BaseGenerator(BaseGeneratorDefines):
                 rtn_type1, 'return_value', self.INDENT_SIZE,
                 self.genOpts.align_func_param
             )
+            param_decls.append(param_decl)
 
         for value in values:
             param_type = self.make_decoded_param_type(value)
@@ -903,10 +907,10 @@ class Dx12BaseGenerator(BaseGeneratorDefines):
                 return m[2]
         return ''
 
-    def is_enum(self, type):
+    def is_enum(self, base_type):
         """Method override."""
         enum_dict = self.source_dict['enum_dict']
-        return type in enum_dict
+        return base_type in enum_dict
 
     def get_enum_members(self, type):
         enum_dict = self.source_dict['enum_dict']
@@ -942,7 +946,7 @@ class Dx12BaseGenerator(BaseGeneratorDefines):
                     return e[1]
         return type
 
-    def make_invocation_type_name(self, base_type):
+    def make_dx_invocation_type_name(self, base_type):
         """Method override."""
         type = self.convert_function(base_type)
         if type == 'Function':
@@ -1040,36 +1044,9 @@ class Dx12BaseGenerator(BaseGeneratorDefines):
             type
         ) or type.base_type in self.MAP_STRUCT_TYPE
 
-    def decodeApiCallNonVoidReturnType(self, return_type, value_name):
-        self.dx12_return_value = self.get_return_value_info(
-            return_type, value_name
-        )
-        self.dx12_return_decode_type = self.make_decoded_param_type(
-            self.dx12_return_value
-        )
-        body = '    {} return_value;\n'.format(self.dx12_return_decode_type)
-
-        if self.dx12_return_decode_type == 'Decoded_{}'.format(return_type):
-            body += '    {} value_returned;\n'.format(return_type)
-            body += '    return_value.decoded_value = &value_returned;\n'
-        return body
-
     def decodeInvokeNonVoidReturnApiCall(
         self, base_decoder_call, return_type, preamble, main_body, epilogue
     ):
         return base_decoder_call(
             self, self.dx12_return_value, preamble, main_body, epilogue
         )
-
-    def decodeAddApiSpecificArguments(self, name, return_type, arglist):
-        new_arglist = arglist
-        if return_type and return_type != 'void':
-            if self.dx12_return_decode_type.find('Decoder') != -1:
-                new_arglist = ', '.join(['&return_value', arglist])
-            else:
-                new_arglist = ', '.join(['return_value', arglist])
-
-        if name in self.get_filtered_method_names():
-            new_arglist = 'object_id, ' + new_arglist
-
-        return new_arglist

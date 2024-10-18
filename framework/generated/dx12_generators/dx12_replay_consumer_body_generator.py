@@ -24,7 +24,6 @@ import json
 import sys
 import re
 from base_generator_defines import write
-from base_replay_consumer_body_generator import BaseReplayConsumerBodyGenerator
 from dx12_base_generator import Dx12BaseGenerator, Dx12GeneratorOptions
 from dx12_replay_consumer_header_generator import Dx12ReplayConsumerHeaderGenerator, Dx12ReplayConsumerHeaderGeneratorOptions
 
@@ -53,9 +52,7 @@ class Dx12ReplayConsumerBodyGeneratorOptions(
         self.replay_overrides = replay_overrides
 
 
-class Dx12ReplayConsumerBodyGenerator(
-    BaseReplayConsumerBodyGenerator, Dx12ReplayConsumerHeaderGenerator
-):
+class Dx12ReplayConsumerBodyGenerator(Dx12ReplayConsumerHeaderGenerator):
     """Generates C++ functions responsible for consuming Dx12 API calls."""
 
     REPLAY_OVERRIDES = {}
@@ -108,7 +105,7 @@ class Dx12ReplayConsumerBodyGenerator(
         """Method override."""
         Dx12BaseGenerator.genStruct(self, typeinfo, typename, alias)
         if not alias:
-            for struct_name in self.get_all_filtered_struct_names():
+            for struct_name in self.get_filtered_struct_names():
                 self.check_struct_member_handles(
                     struct_name, self.structs_with_handles,
                     self.structs_with_handle_ptrs, True,
@@ -117,12 +114,44 @@ class Dx12ReplayConsumerBodyGenerator(
 
     def generate_feature(self):
         """Method override."""
+        Dx12BaseGenerator.generate_feature(self)
         header_dict = self.source_dict['header_dict']
         self.structs_with_objects = self.collect_struct_with_objects(
             header_dict
         )
-        Dx12BaseGenerator.generate_feature(self)
+
+        platform_type = self.get_api_prefix()
+        first = True
+        for cmd in self.get_filtered_cmd_names():
+
+            if self.is_resource_dump_class() and cmd[:5] != "vkCmd":
+                continue
+
+            info = self.feature_cmd_params[cmd]
+            return_type = info[0]
+            values = info[2]
+
+            cmddef = '' if first else '\n'
+            if self.is_resource_dump_class():
+                cmddef += self.make_dump_resources_func_decl(
+                    return_type,
+                    '{}ReplayDumpResources::Process_'.format(platform_type) + cmd,
+                    values, cmd in self.DUMP_RESOURCES_OVERRIDES
+                ) + '\n'
+            else:
+                cmddef += self.make_consumer_func_decl(
+                    return_type,
+                    '{}ReplayConsumer::Process_'.format(platform_type) + cmd,
+                    values, False
+                ) + '\n'
+            cmddef += '{\n'
+            cmddef += self.make_consumer_func_body(return_type, cmd, values)
+            cmddef += '}'
+
+            write(cmddef, file=self.outFile)
+            first = False
         self.generate_dx12_method_feature()
+
 
     def generate_dx12_method_feature(self):
         first = True
@@ -133,7 +162,7 @@ class Dx12ReplayConsumerBodyGenerator(
 
             cmddef = '' if first else '\n'
             cmddef += self.make_consumer_func_decl(
-                return_type, 'Dx12ReplayConsumer::Process_' + method, values
+                return_type, 'Dx12ReplayConsumer::Process_' + method, values, True
             ) + '\n'
             cmddef += '{\n'
 
