@@ -119,10 +119,6 @@ class BaseStructDecodersBodyGenerator():
 
                 if is_static_array:
                     array_dimension = ''
-                    # dx12 treats 2d array as 1d array. EX: [8][2] -> [16], so dx12's 2d array needs *. 
-                    # But vk keeps 2d array.
-                    if self.is_dx12_class() and value.array_dimension and value.array_dimension > 0:
-                        array_dimension = '*'
                     # The pointer decoder will write directly to the struct member's memory.
                     body += '    wrapper->{name}{}SetExternalMemory({}value->{name}, {arraylen});\n'.format(
                         access_op,
