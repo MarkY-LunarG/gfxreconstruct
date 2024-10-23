@@ -23,12 +23,12 @@
 import sys
 from base_generator import Dx12BaseGenerator, write
 from dx12_decoder_header_generator import Dx12DecoderHeaderGenerator
-from base_struct_decoders_body_generator import BaseStructDecodersBodyGenerator
+from dx12_base_struct_decoders_body_generator import Dx12BaseStructDecodersBodyGenerator
 from dx12_base_decoder_body_generator import Dx12BaseDecoderBodyGenerator
 
 
 class Dx12StructDecodersBodyGenerator(
-    Dx12DecoderHeaderGenerator, BaseStructDecodersBodyGenerator,
+    Dx12DecoderHeaderGenerator, Dx12BaseStructDecodersBodyGenerator,
     Dx12BaseDecoderBodyGenerator
 ):
     """Generates C++ functions responsible for decoding Dx12 API calls."""
@@ -60,4 +60,4 @@ class Dx12StructDecodersBodyGenerator(
     # Met#include "util/defines.h"hod override
     def generate_feature(self):
         Dx12BaseGenerator.generate_feature(self)
-        BaseStructDecodersBodyGenerator.generate_feature(self)
+        Dx12BaseStructDecodersBodyGenerator.generate_feature(self)
