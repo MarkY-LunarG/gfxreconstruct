@@ -21,7 +21,7 @@
 # IN THE SOFTWARE.
 
 import sys
-from base_generator import Dx12BaseGenerator, Dx12GeneratorOptions, write
+from dx12_base_generator import Dx12BaseGenerator, Dx12GeneratorOptions, write
 
 
 class Dx12ConsumerHeaderGeneratorOptions(Dx12GeneratorOptions):

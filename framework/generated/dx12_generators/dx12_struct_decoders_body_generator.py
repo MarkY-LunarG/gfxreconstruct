@@ -21,7 +21,7 @@
 # IN THE SOFTWARE.
 
 import sys
-from base_generator import Dx12BaseGenerator, write
+from dx12_base_generator import Dx12BaseGenerator, write
 from dx12_decoder_header_generator import Dx12DecoderHeaderGenerator
 from dx12_base_struct_decoders_body_generator import Dx12BaseStructDecodersBodyGenerator
 from dx12_base_decoder_body_generator import Dx12BaseDecoderBodyGenerator

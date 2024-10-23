@@ -21,7 +21,7 @@
 # IN THE SOFTWARE.
 
 import sys
-from base_generator import Dx12BaseGenerator, write
+from dx12_base_generator import Dx12BaseGenerator, write
 
 
 class Dx12StructWrapperBodyGenerator(Dx12BaseGenerator):
