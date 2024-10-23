@@ -527,6 +527,33 @@ class Dx12BaseGenerator():
                 os.remove(self.outFile.name)
         self.genOpts = None
 
+    def beginFeature(self, interface, emit):
+        """Write interface for a feature and tag generated features as having been done.
+
+        - interface - element for the `<version>` / `<extension>` to generate
+        - emit - actually write to the header only when True"""
+
+        # Reset feature specific data sets
+        self.feature_struct_members = OrderedDict()
+        self.feature_struct_aliases = OrderedDict()
+        self.feature_cmd_params = OrderedDict()
+
+        self.emit = emit
+        if interface is not None:
+            self.featureName = interface.get('name')
+            # If there is an additional 'protect' attribute in the feature, save it
+            self.featureExtraProtect = interface.get('protect')
+        else:
+            self.featureName = None
+            self.featureExtraProtect = None
+
+    def endFeature(self):
+        """Finish an interface file, closing it when done.
+
+        Derived classes responsible for emitting feature"""
+        self.featureName = None
+        self.featureExtraProtect = None
+
     #
     # Indicates that the current feature has C++ code to generate.
     # The subclass should override this method.
@@ -1018,33 +1045,6 @@ class Dx12BaseGenerator():
             return 'void {}(\n{})'.format(name, ',\n'.join(param_decls))
 
         return 'void {}()'.format(name)
-
-    def beginFeature(self, interface, emit):
-        """Write interface for a feature and tag generated features as having been done.
-
-        - interface - element for the `<version>` / `<extension>` to generate
-        - emit - actually write to the header only when True"""
-
-        # Reset feature specific data sets
-        self.feature_struct_members = OrderedDict()
-        self.feature_struct_aliases = OrderedDict()
-        self.feature_cmd_params = OrderedDict()
-
-        self.emit = emit
-        if interface is not None:
-            self.featureName = interface.get('name')
-            # If there is an additional 'protect' attribute in the feature, save it
-            self.featureExtraProtect = interface.get('protect')
-        else:
-            self.featureName = None
-            self.featureExtraProtect = None
-
-    def endFeature(self):
-        """Finish an interface file, closing it when done.
-
-        Derived classes responsible for emitting feature"""
-        self.featureName = None
-        self.featureExtraProtect = None
 
     def get_api_prefix(self):
         return 'Dx12'
