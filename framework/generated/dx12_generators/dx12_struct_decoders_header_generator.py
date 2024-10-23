@@ -22,11 +22,11 @@
 
 import sys
 from base_generator import Dx12BaseGenerator, write
-from base_struct_decoders_header_generator import BaseStructDecodersHeaderGenerator
+from dx12_base_struct_decoders_header_generator import Dx12BaseStructDecodersHeaderGenerator
 
 
 class Dx12StructDecodersHeaderGenerator(
-    Dx12BaseGenerator, BaseStructDecodersHeaderGenerator
+    Dx12BaseGenerator, Dx12BaseStructDecodersHeaderGenerator
 ):
     """Generates C++ functions responsible for decoding Dx12 API calls."""
 
@@ -56,7 +56,7 @@ class Dx12StructDecodersHeaderGenerator(
     def generate_feature(self):
         """Method override."""
         Dx12BaseGenerator.generate_feature(self)
-        BaseStructDecodersHeaderGenerator.generate_feature(self)
+        Dx12BaseStructDecodersHeaderGenerator.generate_feature(self)
 
     def write_include(self):
         """Method override."""

@@ -22,11 +22,11 @@
 
 import sys
 from base_generator import Dx12BaseGenerator, write
-from base_struct_decoders_header_generator import BaseStructDecodersHeaderGenerator
+from dx12_base_struct_decoders_header_generator import Dx12BaseStructDecodersHeaderGenerator
 
 
 class Dx12DecoderHeaderGenerator(
-    Dx12BaseGenerator, BaseStructDecodersHeaderGenerator
+    Dx12BaseGenerator, Dx12BaseStructDecodersHeaderGenerator
 ):
     """Generates C++ functions responsible for decoding Dx12 API calls."""
 
