@@ -21,7 +21,7 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-from dx12_base_generator import Dx12BaseGenerator, Dx12GeneratorOptions
+from base_generator import Dx12BaseGenerator, Dx12GeneratorOptions
 from dx12_enum_to_string_header_generator import Dx12EnumToStringHeaderGenerator # For the list of substrings in bitflag enums.
 
 # returns true if any of the strings in the list appear at the end of the string.
