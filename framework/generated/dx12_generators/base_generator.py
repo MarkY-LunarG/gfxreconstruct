@@ -777,10 +777,7 @@ class Dx12BaseGenerator():
             count = value.pointer_count
 
             if self.is_struct(type_name):
-                if (
-                    self.is_dx12_class() and
-                    (value.array_dimension and value.array_dimension == 1)
-                ) or (not self.is_dx12_class() and count > 1):
+                if (value.array_dimension and value.array_dimension == 1):
                     type_name = 'StructPointerDecoder<Decoded_{}*>'.format(
                         type_name
                     )
@@ -805,7 +802,7 @@ class Dx12BaseGenerator():
                     type_name = 'StringDecoder'
             elif type_name == 'void':
                 if value.is_array:
-                    if (self.is_dx12_class() and count > 1):
+                    if (count > 1):
                         # If this was a pointer to memory (void**) allocated internally by the implementation, it was encoded as
                         # an array of bytes but must be retrieved as a pointer to a memory allocation. For this case, the array
                         # length value defines the size of the memory referenced by the single retrieved pointer.
@@ -945,23 +942,17 @@ class Dx12BaseGenerator():
             param_decls.append(param_decl)
 
         if return_type != 'void':
-            if self.is_dx12_class():
-                method_name = name[name.find('::Process_') + 10:]
-                return_value = self.get_return_value_info(
-                    return_type, method_name
-                )
-                rtn_type1 = self.make_decoded_param_type(return_value)
-                if rtn_type1.find('Decoder') != -1:
-                    rtn_type1 += '*'
-                param_decl = self.make_aligned_param_decl(
-                    rtn_type1, 'return_value', self.INDENT_SIZE,
-                    self.genOpts.align_func_param
-                )
-            else:
-                param_decl = self.make_aligned_param_decl(
-                    return_type, 'returnValue', self.INDENT_SIZE,
-                    self.genOpts.align_func_param
-                )
+            method_name = name[name.find('::Process_') + 10:]
+            return_value = self.get_return_value_info(
+                return_type, method_name
+            )
+            rtn_type1 = self.make_decoded_param_type(return_value)
+            if rtn_type1.find('Decoder') != -1:
+                rtn_type1 += '*'
+            param_decl = self.make_aligned_param_decl(
+                rtn_type1, 'return_value', self.INDENT_SIZE,
+                self.genOpts.align_func_param
+            )
             param_decls.append(param_decl)
 
         for value in values:
@@ -1054,9 +1045,6 @@ class Dx12BaseGenerator():
 
     def get_wrapper_prefix_from_type(self):
         return 'object_wrappers'
-
-    def is_dx12_class(self):
-        return True if ('Dx12' in self.__class__.__name__) else False
 
     def is_resource_dump_class(self):
         return True if ('ReplayDumpResources' in self.__class__.__name__) else False
