@@ -21,10 +21,8 @@
 # IN THE SOFTWARE.
 
 import sys
-from base_generator import BaseGenerator, write
-from dx12_base_generator import Dx12BaseGenerator
+from base_generator import Dx12BaseGenerator, write
 from base_struct_decoders_header_generator import BaseStructDecodersHeaderGenerator
-from reformat_code import format_cpp_code
 
 class Dx12StructDecodersHeaderGenerator(
     Dx12BaseGenerator, BaseStructDecodersHeaderGenerator
@@ -88,14 +86,11 @@ class Dx12StructDecodersHeaderGenerator(
         self.newline()
         code = self.generate_struct_info()
         write(code, file=self.outFile)
+        write('GFXRECON_END_NAMESPACE(decode)', file=self.outFile)
+        write('GFXRECON_END_NAMESPACE(gfxrecon)', file=self.outFile)
 
-        code = format_cpp_code('''
-            GFXRECON_END_NAMESPACE(decode)
-            GFXRECON_END_NAMESPACE(gfxrecon)
-
-            #endif // defined(D3D12_SUPPORT) || defined(ENABLE_OPENXR_SUPPORT)
-        ''')
-        write(code, file=self.outFile)
+        self.newline()
+        write('#endif // defined(D3D12_SUPPORT) || defined(ENABLE_OPENXR_SUPPORT)', file=self.outFile)
 
         # Finish processing in superclass
         Dx12BaseGenerator.endFile(self)

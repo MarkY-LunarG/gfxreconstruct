@@ -23,8 +23,7 @@
 import json
 import sys
 import re
-from base_generator import write
-from dx12_base_generator import Dx12BaseGenerator, Dx12GeneratorOptions
+from base_generator import Dx12BaseGenerator, Dx12GeneratorOptions, write
 from dx12_replay_consumer_header_generator import Dx12ReplayConsumerHeaderGenerator, Dx12ReplayConsumerHeaderGeneratorOptions
 from base_replay_consumer_body_generator import BaseReplayConsumerBodyGenerator
 

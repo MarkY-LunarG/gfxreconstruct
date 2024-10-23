@@ -22,9 +22,7 @@
 # IN THE SOFTWARE.
 
 import sys, inspect
-from base_generator import write
-from dx12_base_generator import Dx12BaseGenerator
-from reformat_code import format_cpp_code
+from base_generator import Dx12BaseGenerator, write
 
 class Dx12EnumToStringHeaderGenerator(Dx12BaseGenerator):
     """TODO : Generates C++ functions responsible for Convert to texts."""
