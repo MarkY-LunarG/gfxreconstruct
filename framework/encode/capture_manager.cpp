@@ -221,7 +221,7 @@ void CommonCaptureManager::DestroyInstance(ApiCaptureManager* api_capture_manage
 int32_t CommonCaptureManager::GetPidFromPackageName(const char* progress_name)
 {
     int32_t pid = -1;
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
     int            id            = 0;
     DIR*           dir           = nullptr;
     FILE*          fp            = nullptr;

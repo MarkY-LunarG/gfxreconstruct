@@ -48,7 +48,7 @@
 #include <vector>
 #include "util/file_path.h"
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
 #include <dirent.h>
 #else
 #include <windows.h>
@@ -74,7 +74,7 @@ class CommonCaptureManager
     static bool IsCaptureApp()
     {
         int32_t pid = -1;
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
         pid = getpid();
 #else
         pid = GetCurrentProcessId();
