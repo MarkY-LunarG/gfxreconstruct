@@ -12236,6 +12236,24 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_PIPELINE_CREATION_FEEDBACK_CREATE_INFO:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkPipelineCreationFeedbackCreateInfo>());
+
+                // We have to create allocated space for the pPipelineStageCreationFeedbacks data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkPipelineCreationFeedbackCreateInfo* out_cast = reinterpret_cast<VkPipelineCreationFeedbackCreateInfo*>(output_struct->pNext);
+                    const VkPipelineCreationFeedbackCreateInfo* in_cast = reinterpret_cast<const VkPipelineCreationFeedbackCreateInfo*>(in_pnext);
+
+                    out_cast->pipelineStageCreationFeedbackCount = in_cast->pipelineStageCreationFeedbackCount;
+                    if (out_cast->pipelineStageCreationFeedbackCount > 0)
+                    {
+                        out_cast->pPipelineStageCreationFeedbacks =
+                            DecodeAllocator::Allocate<VkPipelineCreationFeedback>(in_cast->pipelineStageCreationFeedbackCount);
+                        memcpy(out_cast->pPipelineStageCreationFeedbacks,
+                               in_cast->pPipelineStageCreationFeedbacks,
+                               sizeof(VkPipelineCreationFeedback) * in_cast->pipelineStageCreationFeedbackCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES:
@@ -12491,6 +12509,34 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_PROPERTIES:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkPhysicalDeviceVulkan14Properties>());
+
+                // We have to create allocated space for the identicalMemoryTypeRequirements data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkPhysicalDeviceVulkan14Properties* out_cast = reinterpret_cast<VkPhysicalDeviceVulkan14Properties*>(output_struct->pNext);
+                    const VkPhysicalDeviceVulkan14Properties* in_cast = reinterpret_cast<const VkPhysicalDeviceVulkan14Properties*>(in_pnext);
+
+                    out_cast->copySrcLayoutCount = in_cast->copySrcLayoutCount;
+                    if (out_cast->copySrcLayoutCount > 0)
+                    {
+                        out_cast->pCopySrcLayouts =
+                            DecodeAllocator::Allocate<VkImageLayout>(in_cast->copySrcLayoutCount);
+                        memcpy(out_cast->pCopySrcLayouts,
+                               in_cast->pCopySrcLayouts,
+                               sizeof(VkImageLayout) * in_cast->copySrcLayoutCount);
+                    }
+
+                    out_cast->copyDstLayoutCount = in_cast->copyDstLayoutCount;
+                    if (out_cast->copyDstLayoutCount > 0)
+                    {
+                        out_cast->pCopyDstLayouts =
+                            DecodeAllocator::Allocate<VkImageLayout>(in_cast->copyDstLayoutCount);
+                        memcpy(out_cast->pCopyDstLayouts,
+                               in_cast->pCopyDstLayouts,
+                               sizeof(VkImageLayout) * in_cast->copyDstLayoutCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO:
@@ -12691,6 +12737,34 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkPhysicalDeviceHostImageCopyProperties>());
+
+                // We have to create allocated space for the identicalMemoryTypeRequirements data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkPhysicalDeviceHostImageCopyProperties* out_cast = reinterpret_cast<VkPhysicalDeviceHostImageCopyProperties*>(output_struct->pNext);
+                    const VkPhysicalDeviceHostImageCopyProperties* in_cast = reinterpret_cast<const VkPhysicalDeviceHostImageCopyProperties*>(in_pnext);
+
+                    out_cast->copySrcLayoutCount = in_cast->copySrcLayoutCount;
+                    if (out_cast->copySrcLayoutCount > 0)
+                    {
+                        out_cast->pCopySrcLayouts =
+                            DecodeAllocator::Allocate<VkImageLayout>(in_cast->copySrcLayoutCount);
+                        memcpy(out_cast->pCopySrcLayouts,
+                               in_cast->pCopySrcLayouts,
+                               sizeof(VkImageLayout) * in_cast->copySrcLayoutCount);
+                    }
+
+                    out_cast->copyDstLayoutCount = in_cast->copyDstLayoutCount;
+                    if (out_cast->copyDstLayoutCount > 0)
+                    {
+                        out_cast->pCopyDstLayouts =
+                            DecodeAllocator::Allocate<VkImageLayout>(in_cast->copyDstLayoutCount);
+                        memcpy(out_cast->pCopyDstLayouts,
+                               in_cast->pCopyDstLayouts,
+                               sizeof(VkImageLayout) * in_cast->copyDstLayoutCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY:
@@ -12741,6 +12815,24 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_PRESENT_INFO_KHR:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkPresentInfoKHR>());
+
+                // We have to create allocated space for the pResults data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkPresentInfoKHR* out_cast = reinterpret_cast<VkPresentInfoKHR*>(output_struct->pNext);
+                    const VkPresentInfoKHR* in_cast = reinterpret_cast<const VkPresentInfoKHR*>(in_pnext);
+
+                    out_cast->swapchainCount = in_cast->swapchainCount;
+                    if (out_cast->swapchainCount > 0)
+                    {
+                        out_cast->pResults =
+                            DecodeAllocator::Allocate<VkResult>(in_cast->swapchainCount);
+                        memcpy(out_cast->pResults,
+                               in_cast->pResults,
+                               sizeof(VkResult) * in_cast->swapchainCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR:
@@ -13386,6 +13478,24 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_INTERNAL_REPRESENTATION_KHR:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkPipelineExecutableInternalRepresentationKHR>());
+
+                // We have to create allocated space for the pData data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkPipelineExecutableInternalRepresentationKHR* out_cast = reinterpret_cast<VkPipelineExecutableInternalRepresentationKHR*>(output_struct->pNext);
+                    const VkPipelineExecutableInternalRepresentationKHR* in_cast = reinterpret_cast<const VkPipelineExecutableInternalRepresentationKHR*>(in_pnext);
+
+                    out_cast->dataSize = in_cast->dataSize;
+                    if (out_cast->dataSize > 0)
+                    {
+                        out_cast->pData =
+                            reinterpret_cast<void*>(DecodeAllocator::Allocate<uint8_t>(in_cast->dataSize));
+                        memcpy(out_cast->pData,
+                               in_cast->pData,
+                               sizeof(uint8_t) * in_cast->dataSize);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_PIPELINE_LIBRARY_CREATE_INFO_KHR:
@@ -13746,6 +13856,24 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkPhysicalDeviceLayeredApiPropertiesListKHR>());
+
+                // We have to create allocated space for the pLayeredApis data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkPhysicalDeviceLayeredApiPropertiesListKHR* out_cast = reinterpret_cast<VkPhysicalDeviceLayeredApiPropertiesListKHR*>(output_struct->pNext);
+                    const VkPhysicalDeviceLayeredApiPropertiesListKHR* in_cast = reinterpret_cast<const VkPhysicalDeviceLayeredApiPropertiesListKHR*>(in_pnext);
+
+                    out_cast->layeredApiCount = in_cast->layeredApiCount;
+                    if (out_cast->layeredApiCount > 0)
+                    {
+                        out_cast->pLayeredApis =
+                            DecodeAllocator::Allocate<VkPhysicalDeviceLayeredApiPropertiesKHR>(in_cast->layeredApiCount);
+                        memcpy(out_cast->pLayeredApis,
+                               in_cast->pLayeredApis,
+                               sizeof(VkPhysicalDeviceLayeredApiPropertiesKHR) * in_cast->layeredApiCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR:
@@ -14156,6 +14284,24 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkDrmFormatModifierPropertiesListEXT>());
+
+                // We have to create allocated space for the pDrmFormatModifierProperties data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkDrmFormatModifierPropertiesListEXT* out_cast = reinterpret_cast<VkDrmFormatModifierPropertiesListEXT*>(output_struct->pNext);
+                    const VkDrmFormatModifierPropertiesListEXT* in_cast = reinterpret_cast<const VkDrmFormatModifierPropertiesListEXT*>(in_pnext);
+
+                    out_cast->drmFormatModifierCount = in_cast->drmFormatModifierCount;
+                    if (out_cast->drmFormatModifierCount > 0)
+                    {
+                        out_cast->pDrmFormatModifierProperties =
+                            DecodeAllocator::Allocate<VkDrmFormatModifierPropertiesEXT>(in_cast->drmFormatModifierCount);
+                        memcpy(out_cast->pDrmFormatModifierProperties,
+                               in_cast->pDrmFormatModifierProperties,
+                               sizeof(VkDrmFormatModifierPropertiesEXT) * in_cast->drmFormatModifierCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT:
@@ -14181,6 +14327,24 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkDrmFormatModifierPropertiesList2EXT>());
+
+                // We have to create allocated space for the pDrmFormatModifierProperties data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkDrmFormatModifierPropertiesList2EXT* out_cast = reinterpret_cast<VkDrmFormatModifierPropertiesList2EXT*>(output_struct->pNext);
+                    const VkDrmFormatModifierPropertiesList2EXT* in_cast = reinterpret_cast<const VkDrmFormatModifierPropertiesList2EXT*>(in_pnext);
+
+                    out_cast->drmFormatModifierCount = in_cast->drmFormatModifierCount;
+                    if (out_cast->drmFormatModifierCount > 0)
+                    {
+                        out_cast->pDrmFormatModifierProperties =
+                            DecodeAllocator::Allocate<VkDrmFormatModifierProperties2EXT>(in_cast->drmFormatModifierCount);
+                        memcpy(out_cast->pDrmFormatModifierProperties,
+                               in_cast->pDrmFormatModifierProperties,
+                               sizeof(VkDrmFormatModifierProperties2EXT) * in_cast->drmFormatModifierCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT:
@@ -14621,6 +14785,24 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_COMPATIBILITY_EXT:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkSurfacePresentModeCompatibilityEXT>());
+
+                // We have to create allocated space for the pPresentModes data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkSurfacePresentModeCompatibilityEXT* out_cast = reinterpret_cast<VkSurfacePresentModeCompatibilityEXT*>(output_struct->pNext);
+                    const VkSurfacePresentModeCompatibilityEXT* in_cast = reinterpret_cast<const VkSurfacePresentModeCompatibilityEXT*>(in_pnext);
+
+                    out_cast->presentModeCount = in_cast->presentModeCount;
+                    if (out_cast->presentModeCount > 0)
+                    {
+                        out_cast->pPresentModes =
+                            DecodeAllocator::Allocate<VkPresentModeKHR>(in_cast->presentModeCount);
+                        memcpy(out_cast->pPresentModes,
+                               in_cast->pPresentModes,
+                               sizeof(VkPresentModeKHR) * in_cast->presentModeCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SWAPCHAIN_MAINTENANCE_1_FEATURES_EXT:
@@ -14911,6 +15093,24 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkImageCompressionControlEXT>());
+
+                // We have to create allocated space for the pFixedRateFlags data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkImageCompressionControlEXT* out_cast = reinterpret_cast<VkImageCompressionControlEXT*>(output_struct->pNext);
+                    const VkImageCompressionControlEXT* in_cast = reinterpret_cast<const VkImageCompressionControlEXT*>(in_pnext);
+
+                    out_cast->compressionControlPlaneCount = in_cast->compressionControlPlaneCount;
+                    if (out_cast->compressionControlPlaneCount > 0)
+                    {
+                        out_cast->pFixedRateFlags =
+                            DecodeAllocator::Allocate<VkImageCompressionFixedRateFlagsEXT>(in_cast->compressionControlPlaneCount);
+                        memcpy(out_cast->pFixedRateFlags,
+                               in_cast->pFixedRateFlags,
+                               sizeof(VkImageCompressionFixedRateFlagsEXT) * in_cast->compressionControlPlaneCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT:
@@ -15666,6 +15866,24 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_GET_LATENCY_MARKER_INFO_NV:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkGetLatencyMarkerInfoNV>());
+
+                // We have to create allocated space for the pTimings data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkGetLatencyMarkerInfoNV* out_cast = reinterpret_cast<VkGetLatencyMarkerInfoNV*>(output_struct->pNext);
+                    const VkGetLatencyMarkerInfoNV* in_cast = reinterpret_cast<const VkGetLatencyMarkerInfoNV*>(in_pnext);
+
+                    out_cast->timingCount = in_cast->timingCount;
+                    if (out_cast->timingCount > 0)
+                    {
+                        out_cast->pTimings =
+                            DecodeAllocator::Allocate<VkLatencyTimingsFrameReportNV>(in_cast->timingCount);
+                        memcpy(out_cast->pTimings,
+                               in_cast->pTimings,
+                               sizeof(VkLatencyTimingsFrameReportNV) * in_cast->timingCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_LATENCY_SUBMISSION_PRESENT_ID_NV:
@@ -15686,6 +15904,24 @@ void InitializeOutputStructPNextImpl(const VkBaseInStructure* in_pnext, VkBaseOu
             case VK_STRUCTURE_TYPE_LATENCY_SURFACE_CAPABILITIES_NV:
             {
                 output_struct->pNext = reinterpret_cast<VkBaseOutStructure*>(DecodeAllocator::Allocate<VkLatencySurfaceCapabilitiesNV>());
+
+                // We have to create allocated space for the pPresentModes data to be written to, otherwise,
+                // it will try to write to a non-existent output location.
+                if (output_struct->pNext != nullptr)
+                {
+                    VkLatencySurfaceCapabilitiesNV* out_cast = reinterpret_cast<VkLatencySurfaceCapabilitiesNV*>(output_struct->pNext);
+                    const VkLatencySurfaceCapabilitiesNV* in_cast = reinterpret_cast<const VkLatencySurfaceCapabilitiesNV*>(in_pnext);
+
+                    out_cast->presentModeCount = in_cast->presentModeCount;
+                    if (out_cast->presentModeCount > 0)
+                    {
+                        out_cast->pPresentModes =
+                            DecodeAllocator::Allocate<VkPresentModeKHR>(in_cast->presentModeCount);
+                        memcpy(out_cast->pPresentModes,
+                               in_cast->pPresentModes,
+                               sizeof(VkPresentModeKHR) * in_cast->presentModeCount);
+                    }
+                }
                 break;
             }
             case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_RENDER_AREAS_FEATURES_QCOM:

@@ -62,7 +62,6 @@ class KhronosReplayConsumerBodyGenerator():
         """ Method may be overriden.
             None implies no customization
         """
-
         return None
 
     def handle_instance_device_items(self):
@@ -312,6 +311,7 @@ class KhronosReplayConsumerBodyGenerator():
             if self.check_skip_extended_struct_handling(struct, struct_type):
                 continue
 
+            # TODO: Eventually handle these cases in automatic code generation
             custom_extended = self.generate_custom_extended_struct_handling(struct, struct_type)
             if custom_extended:
                 write(custom_extended, file=self.outFile)
@@ -329,6 +329,114 @@ class KhronosReplayConsumerBodyGenerator():
                 ),
                 file=self.outFile
             )
+
+            # Handle output structs with members that are arrays. We need to make sure
+            # that they have space allocated for us to fill content into.
+            if not struct in self.PLATFORM_STRUCTS:
+                actual_type = struct
+                if struct in self.all_struct_aliases:
+                    actual_type = self.all_struct_aliases[struct]
+                has_array_data = False
+                for member in self.all_struct_members[actual_type]:
+                    if not (
+                        self.is_handle(member.base_type) or member.is_const
+                    ) and member.is_pointer and member.is_array and member.is_dynamic:
+                        has_array_data = True
+
+                if has_array_data:
+                    write('', file=self.outFile)
+                    write(
+                        '                // We have to create allocated space for the {} data to be written to, otherwise,'
+                        .format(member.name),
+                        file=self.outFile
+                    )
+                    write(
+                        '                // it will try to write to a non-existent output location.',
+                        file=self.outFile
+                    )
+
+                    write(
+                        '                if (output_struct->{} != nullptr)'.
+                        format(api_data.extended_struct_variable),
+                        file=self.outFile
+                    )
+                    write('                {', file=self.outFile)
+                    write(
+                        '                    {0}* out_cast = reinterpret_cast<{0}*>(output_struct->{1});'
+                        .format(struct, api_data.extended_struct_variable),
+                        file=self.outFile
+                    )
+                    write(
+                        '                    const {0}* in_cast = reinterpret_cast<const {0}*>({1});'
+                        .format(struct, var_name),
+                        file=self.outFile
+                    )
+
+                    for member in self.all_struct_members[actual_type]:
+                        if not (
+                            self.is_handle(member.base_type) or member.is_const
+                        ) and member.is_pointer and member.is_array and member.is_dynamic:
+                            member_type = member.base_type
+                            if member_type == 'void':
+                                member_type = 'uint8_t'
+
+                            write('', file=self.outFile)
+                            write(
+                                '                    out_cast->{0} = in_cast->{0};'
+                                .format(member.array_length_value.name),
+                                file=self.outFile
+                            )
+                            write(
+                                '                    if (out_cast->{} > 0)'.
+                                format(member.array_length_value.name),
+                                file=self.outFile
+                            )
+                            write('                    {', file=self.outFile)
+
+
+                            write(
+                                '                        out_cast->{} ='.
+                                format(member.name),
+                                file=self.outFile
+                            )
+                            reinterp_string_prefix = ''
+                            reinterp_string_suffic = ''
+                            if member_type != member.base_type:
+                                reinterp_string_prefix = 'reinterpret_cast<{0}*>('.format(member.base_type)
+                                reinterp_string_suffic = ')'
+                            write(
+                                '                            {}DecodeAllocator::Allocate<{}>(in_cast->{}){};'
+                                .format(
+                                    reinterp_string_prefix,
+                                    member_type,
+                                    member.array_length_value.name,
+                                    reinterp_string_suffic
+                                ),
+                                file=self.outFile
+                            )
+
+
+                            write(
+                                '                        memcpy(out_cast->{},'.
+                                format(member.name),
+                                file=self.outFile
+                            )
+                            write(
+                                '                               in_cast->{},'.
+                                format(member.name),
+                                file=self.outFile
+                            )
+                            write(
+                                '                               sizeof({}) * in_cast->{});'
+                                .format(
+                                    member_type, member.array_length_value.name
+                                ),
+                                file=self.outFile
+                            )
+                            write('                    }', file=self.outFile)
+
+                    write('                }', file=self.outFile)
+
             write('                break;', file=self.outFile)
             write('            }', file=self.outFile)
         write('            default:', file=self.outFile)

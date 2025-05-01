@@ -1684,6 +1684,10 @@ class KhronosBaseGenerator(OutputGenerator):
                 )
                 base_type = type_info['baseType']
 
+            is_const = False
+            if 'const' in full_type:
+                is_const = True
+
             is_optional = False
             if 'optional' in param.attrib:
                 is_optional = param.attrib.get('optional').lower() == 'true'
@@ -1725,6 +1729,7 @@ class KhronosBaseGenerator(OutputGenerator):
                     platform_base_type=platform_base_type,
                     platform_full_type=platform_full_type,
                     bitfield_width=bitfield_width,
+                    is_const=is_const,
                     is_optional=is_optional
                 )
             )
