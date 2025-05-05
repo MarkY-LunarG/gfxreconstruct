@@ -344,17 +344,6 @@ class KhronosReplayConsumerBodyGenerator():
                         has_array_data = True
 
                 if has_array_data:
-                    write('', file=self.outFile)
-                    write(
-                        '                // We have to create allocated space for the {} data to be written to, otherwise,'
-                        .format(member.name),
-                        file=self.outFile
-                    )
-                    write(
-                        '                // it will try to write to a non-existent output location.',
-                        file=self.outFile
-                    )
-
                     write(
                         '                if (output_struct->{} != nullptr)'.
                         format(api_data.extended_struct_variable),
@@ -382,6 +371,15 @@ class KhronosReplayConsumerBodyGenerator():
 
                             write('', file=self.outFile)
                             write(
+                                '                    // We have to create allocated space for the {} data to be written to, otherwise,'
+                                .format(member.name),
+                                file=self.outFile
+                            )
+                            write(
+                                '                    // it will try to write to a non-existent output location.',
+                                file=self.outFile
+                            )
+                            write(
                                 '                    out_cast->{0} = in_cast->{0};'
                                 .format(member.array_length_value.name),
                                 file=self.outFile
@@ -393,7 +391,6 @@ class KhronosReplayConsumerBodyGenerator():
                             )
                             write('                    {', file=self.outFile)
 
-
                             write(
                                 '                        out_cast->{} ='.
                                 format(member.name),
@@ -402,35 +399,143 @@ class KhronosReplayConsumerBodyGenerator():
                             reinterp_string_prefix = ''
                             reinterp_string_suffic = ''
                             if member_type != member.base_type:
-                                reinterp_string_prefix = 'reinterpret_cast<{0}*>('.format(member.base_type)
+                                reinterp_string_prefix = 'reinterpret_cast<{0}*>('.format(
+                                    member.base_type
+                                )
                                 reinterp_string_suffic = ')'
                             write(
                                 '                            {}DecodeAllocator::Allocate<{}>(in_cast->{}){};'
                                 .format(
-                                    reinterp_string_prefix,
-                                    member_type,
+                                    reinterp_string_prefix, member_type,
                                     member.array_length_value.name,
                                     reinterp_string_suffic
                                 ),
                                 file=self.outFile
                             )
 
-
+                            # Only copy if this is an extensible struct
+                            if self.is_struct(
+                                member.base_type
+                            ) and member.base_type in self.all_extended_structs:
+                                internal_deref = '.'
+                                if member.pointer_count > 1:
+                                    internal_deref = '->'
+                                write('', file=self.outFile)
+                                write(
+                                    '                        // Member {} is an array of {} which is a structure'
+                                    .format(
+                                        member.name,
+                                        member.base_type,
+                                    ),
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                        // with a {} and therefore needs to be properly initialized'
+                                    .format(
+                                        api_data.extended_struct_variable,
+                                    ),
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                        for (uint32_t child_idx = 0; child_idx < in_cast->{}; ++child_idx)'
+                                    .format(member.array_length_value.name, ),
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                        {',
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                            out_cast->{}[child_idx]{}{} = {};'
+                                    .format(
+                                        member.name, internal_deref,
+                                        api_data.struct_type_variable,
+                                        self.struct_type_names[member.base_type
+                                                               ]
+                                    ),
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                            if (in_cast->{}[child_idx]{}{} != nullptr)'
+                                    .format(
+                                        member.name,
+                                        internal_deref,
+                                        api_data.extended_struct_variable,
+                                    ),
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                            {',
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                                const auto* child_input_base = reinterpret_cast<const {}*>(&in_cast->{}[child_idx]{}{});'
+                                    .format(
+                                        api_data.base_in_struct, member.name,
+                                        internal_deref,
+                                        api_data.extended_struct_variable
+                                    ),
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                                auto* child_output_base = reinterpret_cast<{}*>(&out_cast->{}[child_idx]);'
+                                    .format(
+                                        api_data.base_out_struct, member.name
+                                    ),
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                                if (child_input_base != nullptr)',
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                                {',
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                                    InitializeOutputStructPNextImpl(child_input_base, child_output_base);',
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                                }',
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                            }',
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                            else',
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                            {',
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                                out_cast->{}[child_idx]{}{} = nullptr;'
+                                    .format(
+                                        member.name, internal_deref,
+                                        api_data.extended_struct_variable
+                                    ),
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                            }',
+                                    file=self.outFile
+                                )
+                                write(
+                                    '                        }',
+                                    file=self.outFile
+                                )
+                            write('                    }', file=self.outFile)
                             write(
-                                '                        memcpy(out_cast->{},'.
-                                format(member.name),
-                                file=self.outFile
+                                '                    else', file=self.outFile
                             )
+                            write('                    {', file=self.outFile)
                             write(
-                                '                               in_cast->{},'.
-                                format(member.name),
-                                file=self.outFile
-                            )
-                            write(
-                                '                               sizeof({}) * in_cast->{});'
-                                .format(
-                                    member_type, member.array_length_value.name
-                                ),
+                                '                        out_cast->{} = nullptr;'
+                                .format(member.name),
                                 file=self.outFile
                             )
                             write('                    }', file=self.outFile)

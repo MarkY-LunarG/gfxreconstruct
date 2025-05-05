@@ -5230,22 +5230,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SPACE_LOCATIONS:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSpaceLocations>());
-
-                // We have to create allocated space for the locations data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSpaceLocations* out_cast = reinterpret_cast<XrSpaceLocations*>(output_struct->next);
                     const XrSpaceLocations* in_cast = reinterpret_cast<const XrSpaceLocations*>(in_next);
 
+                    // We have to create allocated space for the locations data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->locationCount = in_cast->locationCount;
                     if (out_cast->locationCount > 0)
                     {
                         out_cast->locations =
                             DecodeAllocator::Allocate<XrSpaceLocationData>(in_cast->locationCount);
-                        memcpy(out_cast->locations,
-                               in_cast->locations,
-                               sizeof(XrSpaceLocationData) * in_cast->locationCount);
+                    }
+                    else
+                    {
+                        out_cast->locations = nullptr;
                     }
                 }
                 break;
@@ -5253,22 +5253,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SPACE_VELOCITIES:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSpaceVelocities>());
-
-                // We have to create allocated space for the velocities data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSpaceVelocities* out_cast = reinterpret_cast<XrSpaceVelocities*>(output_struct->next);
                     const XrSpaceVelocities* in_cast = reinterpret_cast<const XrSpaceVelocities*>(in_next);
 
+                    // We have to create allocated space for the velocities data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->velocityCount = in_cast->velocityCount;
                     if (out_cast->velocityCount > 0)
                     {
                         out_cast->velocities =
                             DecodeAllocator::Allocate<XrSpaceVelocityData>(in_cast->velocityCount);
-                        memcpy(out_cast->velocities,
-                               in_cast->velocities,
-                               sizeof(XrSpaceVelocityData) * in_cast->velocityCount);
+                    }
+                    else
+                    {
+                        out_cast->velocities = nullptr;
                     }
                 }
                 break;
@@ -5411,32 +5411,35 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_VISIBILITY_MASK_KHR:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrVisibilityMaskKHR>());
-
-                // We have to create allocated space for the indices data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrVisibilityMaskKHR* out_cast = reinterpret_cast<XrVisibilityMaskKHR*>(output_struct->next);
                     const XrVisibilityMaskKHR* in_cast = reinterpret_cast<const XrVisibilityMaskKHR*>(in_next);
 
+                    // We have to create allocated space for the vertices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->vertexCapacityInput = in_cast->vertexCapacityInput;
                     if (out_cast->vertexCapacityInput > 0)
                     {
                         out_cast->vertices =
                             DecodeAllocator::Allocate<XrVector2f>(in_cast->vertexCapacityInput);
-                        memcpy(out_cast->vertices,
-                               in_cast->vertices,
-                               sizeof(XrVector2f) * in_cast->vertexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->vertices = nullptr;
                     }
 
+                    // We have to create allocated space for the indices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->indexCapacityInput = in_cast->indexCapacityInput;
                     if (out_cast->indexCapacityInput > 0)
                     {
                         out_cast->indices =
                             DecodeAllocator::Allocate<uint32_t>(in_cast->indexCapacityInput);
-                        memcpy(out_cast->indices,
-                               in_cast->indices,
-                               sizeof(uint32_t) * in_cast->indexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->indices = nullptr;
                     }
                 }
                 break;
@@ -5499,32 +5502,35 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrDebugUtilsMessengerCallbackDataEXT>());
-
-                // We have to create allocated space for the sessionLabels data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrDebugUtilsMessengerCallbackDataEXT* out_cast = reinterpret_cast<XrDebugUtilsMessengerCallbackDataEXT*>(output_struct->next);
                     const XrDebugUtilsMessengerCallbackDataEXT* in_cast = reinterpret_cast<const XrDebugUtilsMessengerCallbackDataEXT*>(in_next);
 
+                    // We have to create allocated space for the objects data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->objectCount = in_cast->objectCount;
                     if (out_cast->objectCount > 0)
                     {
                         out_cast->objects =
                             DecodeAllocator::Allocate<XrDebugUtilsObjectNameInfoEXT>(in_cast->objectCount);
-                        memcpy(out_cast->objects,
-                               in_cast->objects,
-                               sizeof(XrDebugUtilsObjectNameInfoEXT) * in_cast->objectCount);
+                    }
+                    else
+                    {
+                        out_cast->objects = nullptr;
                     }
 
+                    // We have to create allocated space for the sessionLabels data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->sessionLabelCount = in_cast->sessionLabelCount;
                     if (out_cast->sessionLabelCount > 0)
                     {
                         out_cast->sessionLabels =
                             DecodeAllocator::Allocate<XrDebugUtilsLabelEXT>(in_cast->sessionLabelCount);
-                        memcpy(out_cast->sessionLabels,
-                               in_cast->sessionLabels,
-                               sizeof(XrDebugUtilsLabelEXT) * in_cast->sessionLabelCount);
+                    }
+                    else
+                    {
+                        out_cast->sessionLabels = nullptr;
                     }
                 }
                 break;
@@ -5622,22 +5628,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_HAND_JOINT_LOCATIONS_EXT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrHandJointLocationsEXT>());
-
-                // We have to create allocated space for the jointLocations data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrHandJointLocationsEXT* out_cast = reinterpret_cast<XrHandJointLocationsEXT*>(output_struct->next);
                     const XrHandJointLocationsEXT* in_cast = reinterpret_cast<const XrHandJointLocationsEXT*>(in_next);
 
+                    // We have to create allocated space for the jointLocations data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->jointCount = in_cast->jointCount;
                     if (out_cast->jointCount > 0)
                     {
                         out_cast->jointLocations =
                             DecodeAllocator::Allocate<XrHandJointLocationEXT>(in_cast->jointCount);
-                        memcpy(out_cast->jointLocations,
-                               in_cast->jointLocations,
-                               sizeof(XrHandJointLocationEXT) * in_cast->jointCount);
+                    }
+                    else
+                    {
+                        out_cast->jointLocations = nullptr;
                     }
                 }
                 break;
@@ -5645,22 +5651,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_HAND_JOINT_VELOCITIES_EXT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrHandJointVelocitiesEXT>());
-
-                // We have to create allocated space for the jointVelocities data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrHandJointVelocitiesEXT* out_cast = reinterpret_cast<XrHandJointVelocitiesEXT*>(output_struct->next);
                     const XrHandJointVelocitiesEXT* in_cast = reinterpret_cast<const XrHandJointVelocitiesEXT*>(in_next);
 
+                    // We have to create allocated space for the jointVelocities data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->jointCount = in_cast->jointCount;
                     if (out_cast->jointCount > 0)
                     {
                         out_cast->jointVelocities =
                             DecodeAllocator::Allocate<XrHandJointVelocityEXT>(in_cast->jointCount);
-                        memcpy(out_cast->jointVelocities,
-                               in_cast->jointVelocities,
-                               sizeof(XrHandJointVelocityEXT) * in_cast->jointCount);
+                    }
+                    else
+                    {
+                        out_cast->jointVelocities = nullptr;
                     }
                 }
                 break;
@@ -5703,22 +5709,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SECONDARY_VIEW_CONFIGURATION_FRAME_STATE_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSecondaryViewConfigurationFrameStateMSFT>());
-
-                // We have to create allocated space for the viewConfigurationStates data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSecondaryViewConfigurationFrameStateMSFT* out_cast = reinterpret_cast<XrSecondaryViewConfigurationFrameStateMSFT*>(output_struct->next);
                     const XrSecondaryViewConfigurationFrameStateMSFT* in_cast = reinterpret_cast<const XrSecondaryViewConfigurationFrameStateMSFT*>(in_next);
 
+                    // We have to create allocated space for the viewConfigurationStates data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->viewConfigurationCount = in_cast->viewConfigurationCount;
                     if (out_cast->viewConfigurationCount > 0)
                     {
                         out_cast->viewConfigurationStates =
                             DecodeAllocator::Allocate<XrSecondaryViewConfigurationStateMSFT>(in_cast->viewConfigurationCount);
-                        memcpy(out_cast->viewConfigurationStates,
-                               in_cast->viewConfigurationStates,
-                               sizeof(XrSecondaryViewConfigurationStateMSFT) * in_cast->viewConfigurationCount);
+                    }
+                    else
+                    {
+                        out_cast->viewConfigurationStates = nullptr;
                     }
                 }
                 break;
@@ -5751,22 +5757,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_CONTROLLER_MODEL_PROPERTIES_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrControllerModelPropertiesMSFT>());
-
-                // We have to create allocated space for the nodeProperties data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrControllerModelPropertiesMSFT* out_cast = reinterpret_cast<XrControllerModelPropertiesMSFT*>(output_struct->next);
                     const XrControllerModelPropertiesMSFT* in_cast = reinterpret_cast<const XrControllerModelPropertiesMSFT*>(in_next);
 
+                    // We have to create allocated space for the nodeProperties data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->nodeCapacityInput = in_cast->nodeCapacityInput;
                     if (out_cast->nodeCapacityInput > 0)
                     {
                         out_cast->nodeProperties =
                             DecodeAllocator::Allocate<XrControllerModelNodePropertiesMSFT>(in_cast->nodeCapacityInput);
-                        memcpy(out_cast->nodeProperties,
-                               in_cast->nodeProperties,
-                               sizeof(XrControllerModelNodePropertiesMSFT) * in_cast->nodeCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->nodeProperties = nullptr;
                     }
                 }
                 break;
@@ -5779,22 +5785,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_CONTROLLER_MODEL_STATE_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrControllerModelStateMSFT>());
-
-                // We have to create allocated space for the nodeStates data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrControllerModelStateMSFT* out_cast = reinterpret_cast<XrControllerModelStateMSFT*>(output_struct->next);
                     const XrControllerModelStateMSFT* in_cast = reinterpret_cast<const XrControllerModelStateMSFT*>(in_next);
 
+                    // We have to create allocated space for the nodeStates data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->nodeCapacityInput = in_cast->nodeCapacityInput;
                     if (out_cast->nodeCapacityInput > 0)
                     {
                         out_cast->nodeStates =
                             DecodeAllocator::Allocate<XrControllerModelNodeStateMSFT>(in_cast->nodeCapacityInput);
-                        memcpy(out_cast->nodeStates,
-                               in_cast->nodeStates,
-                               sizeof(XrControllerModelNodeStateMSFT) * in_cast->nodeCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->nodeStates = nullptr;
                     }
                 }
                 break;
@@ -5842,22 +5848,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_BODY_SKELETON_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrBodySkeletonFB>());
-
-                // We have to create allocated space for the joints data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrBodySkeletonFB* out_cast = reinterpret_cast<XrBodySkeletonFB*>(output_struct->next);
                     const XrBodySkeletonFB* in_cast = reinterpret_cast<const XrBodySkeletonFB*>(in_next);
 
+                    // We have to create allocated space for the joints data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->jointCount = in_cast->jointCount;
                     if (out_cast->jointCount > 0)
                     {
                         out_cast->joints =
                             DecodeAllocator::Allocate<XrBodySkeletonJointFB>(in_cast->jointCount);
-                        memcpy(out_cast->joints,
-                               in_cast->joints,
-                               sizeof(XrBodySkeletonJointFB) * in_cast->jointCount);
+                    }
+                    else
+                    {
+                        out_cast->joints = nullptr;
                     }
                 }
                 break;
@@ -5870,22 +5876,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_BODY_JOINT_LOCATIONS_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrBodyJointLocationsFB>());
-
-                // We have to create allocated space for the time data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrBodyJointLocationsFB* out_cast = reinterpret_cast<XrBodyJointLocationsFB*>(output_struct->next);
                     const XrBodyJointLocationsFB* in_cast = reinterpret_cast<const XrBodyJointLocationsFB*>(in_next);
 
+                    // We have to create allocated space for the jointLocations data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->jointCount = in_cast->jointCount;
                     if (out_cast->jointCount > 0)
                     {
                         out_cast->jointLocations =
                             DecodeAllocator::Allocate<XrBodyJointLocationFB>(in_cast->jointCount);
-                        memcpy(out_cast->jointLocations,
-                               in_cast->jointLocations,
-                               sizeof(XrBodyJointLocationFB) * in_cast->jointCount);
+                    }
+                    else
+                    {
+                        out_cast->jointLocations = nullptr;
                     }
                 }
                 break;
@@ -5928,22 +5934,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_COMPONENTS_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSceneComponentsMSFT>());
-
-                // We have to create allocated space for the components data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSceneComponentsMSFT* out_cast = reinterpret_cast<XrSceneComponentsMSFT*>(output_struct->next);
                     const XrSceneComponentsMSFT* in_cast = reinterpret_cast<const XrSceneComponentsMSFT*>(in_next);
 
+                    // We have to create allocated space for the components data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->componentCapacityInput = in_cast->componentCapacityInput;
                     if (out_cast->componentCapacityInput > 0)
                     {
                         out_cast->components =
                             DecodeAllocator::Allocate<XrSceneComponentMSFT>(in_cast->componentCapacityInput);
-                        memcpy(out_cast->components,
-                               in_cast->components,
-                               sizeof(XrSceneComponentMSFT) * in_cast->componentCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->components = nullptr;
                     }
                 }
                 break;
@@ -5956,22 +5962,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_COMPONENT_LOCATIONS_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSceneComponentLocationsMSFT>());
-
-                // We have to create allocated space for the locations data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSceneComponentLocationsMSFT* out_cast = reinterpret_cast<XrSceneComponentLocationsMSFT*>(output_struct->next);
                     const XrSceneComponentLocationsMSFT* in_cast = reinterpret_cast<const XrSceneComponentLocationsMSFT*>(in_next);
 
+                    // We have to create allocated space for the locations data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->locationCount = in_cast->locationCount;
                     if (out_cast->locationCount > 0)
                     {
                         out_cast->locations =
                             DecodeAllocator::Allocate<XrSceneComponentLocationMSFT>(in_cast->locationCount);
-                        memcpy(out_cast->locations,
-                               in_cast->locations,
-                               sizeof(XrSceneComponentLocationMSFT) * in_cast->locationCount);
+                    }
+                    else
+                    {
+                        out_cast->locations = nullptr;
                     }
                 }
                 break;
@@ -5984,22 +5990,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_OBJECTS_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSceneObjectsMSFT>());
-
-                // We have to create allocated space for the sceneObjects data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSceneObjectsMSFT* out_cast = reinterpret_cast<XrSceneObjectsMSFT*>(output_struct->next);
                     const XrSceneObjectsMSFT* in_cast = reinterpret_cast<const XrSceneObjectsMSFT*>(in_next);
 
+                    // We have to create allocated space for the sceneObjects data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->sceneObjectCount = in_cast->sceneObjectCount;
                     if (out_cast->sceneObjectCount > 0)
                     {
                         out_cast->sceneObjects =
                             DecodeAllocator::Allocate<XrSceneObjectMSFT>(in_cast->sceneObjectCount);
-                        memcpy(out_cast->sceneObjects,
-                               in_cast->sceneObjects,
-                               sizeof(XrSceneObjectMSFT) * in_cast->sceneObjectCount);
+                    }
+                    else
+                    {
+                        out_cast->sceneObjects = nullptr;
                     }
                 }
                 break;
@@ -6017,22 +6023,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_PLANES_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrScenePlanesMSFT>());
-
-                // We have to create allocated space for the scenePlanes data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrScenePlanesMSFT* out_cast = reinterpret_cast<XrScenePlanesMSFT*>(output_struct->next);
                     const XrScenePlanesMSFT* in_cast = reinterpret_cast<const XrScenePlanesMSFT*>(in_next);
 
+                    // We have to create allocated space for the scenePlanes data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->scenePlaneCount = in_cast->scenePlaneCount;
                     if (out_cast->scenePlaneCount > 0)
                     {
                         out_cast->scenePlanes =
                             DecodeAllocator::Allocate<XrScenePlaneMSFT>(in_cast->scenePlaneCount);
-                        memcpy(out_cast->scenePlanes,
-                               in_cast->scenePlanes,
-                               sizeof(XrScenePlaneMSFT) * in_cast->scenePlaneCount);
+                    }
+                    else
+                    {
+                        out_cast->scenePlanes = nullptr;
                     }
                 }
                 break;
@@ -6045,22 +6051,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_MESHES_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSceneMeshesMSFT>());
-
-                // We have to create allocated space for the sceneMeshes data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSceneMeshesMSFT* out_cast = reinterpret_cast<XrSceneMeshesMSFT*>(output_struct->next);
                     const XrSceneMeshesMSFT* in_cast = reinterpret_cast<const XrSceneMeshesMSFT*>(in_next);
 
+                    // We have to create allocated space for the sceneMeshes data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->sceneMeshCount = in_cast->sceneMeshCount;
                     if (out_cast->sceneMeshCount > 0)
                     {
                         out_cast->sceneMeshes =
                             DecodeAllocator::Allocate<XrSceneMeshMSFT>(in_cast->sceneMeshCount);
-                        memcpy(out_cast->sceneMeshes,
-                               in_cast->sceneMeshes,
-                               sizeof(XrSceneMeshMSFT) * in_cast->sceneMeshCount);
+                    }
+                    else
+                    {
+                        out_cast->sceneMeshes = nullptr;
                     }
                 }
                 break;
@@ -6078,22 +6084,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_MESH_VERTEX_BUFFER_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSceneMeshVertexBufferMSFT>());
-
-                // We have to create allocated space for the vertices data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSceneMeshVertexBufferMSFT* out_cast = reinterpret_cast<XrSceneMeshVertexBufferMSFT*>(output_struct->next);
                     const XrSceneMeshVertexBufferMSFT* in_cast = reinterpret_cast<const XrSceneMeshVertexBufferMSFT*>(in_next);
 
+                    // We have to create allocated space for the vertices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->vertexCapacityInput = in_cast->vertexCapacityInput;
                     if (out_cast->vertexCapacityInput > 0)
                     {
                         out_cast->vertices =
                             DecodeAllocator::Allocate<XrVector3f>(in_cast->vertexCapacityInput);
-                        memcpy(out_cast->vertices,
-                               in_cast->vertices,
-                               sizeof(XrVector3f) * in_cast->vertexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->vertices = nullptr;
                     }
                 }
                 break;
@@ -6101,22 +6107,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_MESH_INDICES_UINT32_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSceneMeshIndicesUint32MSFT>());
-
-                // We have to create allocated space for the indices data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSceneMeshIndicesUint32MSFT* out_cast = reinterpret_cast<XrSceneMeshIndicesUint32MSFT*>(output_struct->next);
                     const XrSceneMeshIndicesUint32MSFT* in_cast = reinterpret_cast<const XrSceneMeshIndicesUint32MSFT*>(in_next);
 
+                    // We have to create allocated space for the indices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->indexCapacityInput = in_cast->indexCapacityInput;
                     if (out_cast->indexCapacityInput > 0)
                     {
                         out_cast->indices =
                             DecodeAllocator::Allocate<uint32_t>(in_cast->indexCapacityInput);
-                        memcpy(out_cast->indices,
-                               in_cast->indices,
-                               sizeof(uint32_t) * in_cast->indexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->indices = nullptr;
                     }
                 }
                 break;
@@ -6124,22 +6130,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_MESH_INDICES_UINT16_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSceneMeshIndicesUint16MSFT>());
-
-                // We have to create allocated space for the indices data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSceneMeshIndicesUint16MSFT* out_cast = reinterpret_cast<XrSceneMeshIndicesUint16MSFT*>(output_struct->next);
                     const XrSceneMeshIndicesUint16MSFT* in_cast = reinterpret_cast<const XrSceneMeshIndicesUint16MSFT*>(in_next);
 
+                    // We have to create allocated space for the indices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->indexCapacityInput = in_cast->indexCapacityInput;
                     if (out_cast->indexCapacityInput > 0)
                     {
                         out_cast->indices =
                             DecodeAllocator::Allocate<uint16_t>(in_cast->indexCapacityInput);
-                        memcpy(out_cast->indices,
-                               in_cast->indices,
-                               sizeof(uint16_t) * in_cast->indexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->indices = nullptr;
                     }
                 }
                 break;
@@ -6192,102 +6198,126 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_HAND_TRACKING_MESH_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrHandTrackingMeshFB>());
-
-                // We have to create allocated space for the indices data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrHandTrackingMeshFB* out_cast = reinterpret_cast<XrHandTrackingMeshFB*>(output_struct->next);
                     const XrHandTrackingMeshFB* in_cast = reinterpret_cast<const XrHandTrackingMeshFB*>(in_next);
 
+                    // We have to create allocated space for the jointBindPoses data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->jointCapacityInput = in_cast->jointCapacityInput;
                     if (out_cast->jointCapacityInput > 0)
                     {
                         out_cast->jointBindPoses =
                             DecodeAllocator::Allocate<XrPosef>(in_cast->jointCapacityInput);
-                        memcpy(out_cast->jointBindPoses,
-                               in_cast->jointBindPoses,
-                               sizeof(XrPosef) * in_cast->jointCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->jointBindPoses = nullptr;
                     }
 
+                    // We have to create allocated space for the jointRadii data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->jointCapacityInput = in_cast->jointCapacityInput;
                     if (out_cast->jointCapacityInput > 0)
                     {
                         out_cast->jointRadii =
                             DecodeAllocator::Allocate<float>(in_cast->jointCapacityInput);
-                        memcpy(out_cast->jointRadii,
-                               in_cast->jointRadii,
-                               sizeof(float) * in_cast->jointCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->jointRadii = nullptr;
                     }
 
+                    // We have to create allocated space for the jointParents data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->jointCapacityInput = in_cast->jointCapacityInput;
                     if (out_cast->jointCapacityInput > 0)
                     {
                         out_cast->jointParents =
                             DecodeAllocator::Allocate<XrHandJointEXT>(in_cast->jointCapacityInput);
-                        memcpy(out_cast->jointParents,
-                               in_cast->jointParents,
-                               sizeof(XrHandJointEXT) * in_cast->jointCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->jointParents = nullptr;
                     }
 
+                    // We have to create allocated space for the vertexPositions data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->vertexCapacityInput = in_cast->vertexCapacityInput;
                     if (out_cast->vertexCapacityInput > 0)
                     {
                         out_cast->vertexPositions =
                             DecodeAllocator::Allocate<XrVector3f>(in_cast->vertexCapacityInput);
-                        memcpy(out_cast->vertexPositions,
-                               in_cast->vertexPositions,
-                               sizeof(XrVector3f) * in_cast->vertexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->vertexPositions = nullptr;
                     }
 
+                    // We have to create allocated space for the vertexNormals data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->vertexCapacityInput = in_cast->vertexCapacityInput;
                     if (out_cast->vertexCapacityInput > 0)
                     {
                         out_cast->vertexNormals =
                             DecodeAllocator::Allocate<XrVector3f>(in_cast->vertexCapacityInput);
-                        memcpy(out_cast->vertexNormals,
-                               in_cast->vertexNormals,
-                               sizeof(XrVector3f) * in_cast->vertexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->vertexNormals = nullptr;
                     }
 
+                    // We have to create allocated space for the vertexUVs data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->vertexCapacityInput = in_cast->vertexCapacityInput;
                     if (out_cast->vertexCapacityInput > 0)
                     {
                         out_cast->vertexUVs =
                             DecodeAllocator::Allocate<XrVector2f>(in_cast->vertexCapacityInput);
-                        memcpy(out_cast->vertexUVs,
-                               in_cast->vertexUVs,
-                               sizeof(XrVector2f) * in_cast->vertexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->vertexUVs = nullptr;
                     }
 
+                    // We have to create allocated space for the vertexBlendIndices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->vertexCapacityInput = in_cast->vertexCapacityInput;
                     if (out_cast->vertexCapacityInput > 0)
                     {
                         out_cast->vertexBlendIndices =
                             DecodeAllocator::Allocate<XrVector4sFB>(in_cast->vertexCapacityInput);
-                        memcpy(out_cast->vertexBlendIndices,
-                               in_cast->vertexBlendIndices,
-                               sizeof(XrVector4sFB) * in_cast->vertexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->vertexBlendIndices = nullptr;
                     }
 
+                    // We have to create allocated space for the vertexBlendWeights data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->vertexCapacityInput = in_cast->vertexCapacityInput;
                     if (out_cast->vertexCapacityInput > 0)
                     {
                         out_cast->vertexBlendWeights =
                             DecodeAllocator::Allocate<XrVector4f>(in_cast->vertexCapacityInput);
-                        memcpy(out_cast->vertexBlendWeights,
-                               in_cast->vertexBlendWeights,
-                               sizeof(XrVector4f) * in_cast->vertexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->vertexBlendWeights = nullptr;
                     }
 
+                    // We have to create allocated space for the indices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->indexCapacityInput = in_cast->indexCapacityInput;
                     if (out_cast->indexCapacityInput > 0)
                     {
                         out_cast->indices =
                             DecodeAllocator::Allocate<int16_t>(in_cast->indexCapacityInput);
-                        memcpy(out_cast->indices,
-                               in_cast->indices,
-                               sizeof(int16_t) * in_cast->indexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->indices = nullptr;
                     }
                 }
                 break;
@@ -6450,22 +6480,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_RENDER_MODEL_BUFFER_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrRenderModelBufferFB>());
-
-                // We have to create allocated space for the buffer data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrRenderModelBufferFB* out_cast = reinterpret_cast<XrRenderModelBufferFB*>(output_struct->next);
                     const XrRenderModelBufferFB* in_cast = reinterpret_cast<const XrRenderModelBufferFB*>(in_next);
 
+                    // We have to create allocated space for the buffer data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->bufferCapacityInput = in_cast->bufferCapacityInput;
                     if (out_cast->bufferCapacityInput > 0)
                     {
                         out_cast->buffer =
                             DecodeAllocator::Allocate<uint8_t>(in_cast->bufferCapacityInput);
-                        memcpy(out_cast->buffer,
-                               in_cast->buffer,
-                               sizeof(uint8_t) * in_cast->bufferCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->buffer = nullptr;
                     }
                 }
                 break;
@@ -6598,22 +6628,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_LOCALIZATION_MAP_IMPORT_INFO_ML:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrLocalizationMapImportInfoML>());
-
-                // We have to create allocated space for the data data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrLocalizationMapImportInfoML* out_cast = reinterpret_cast<XrLocalizationMapImportInfoML*>(output_struct->next);
                     const XrLocalizationMapImportInfoML* in_cast = reinterpret_cast<const XrLocalizationMapImportInfoML*>(in_next);
 
+                    // We have to create allocated space for the data data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->size = in_cast->size;
                     if (out_cast->size > 0)
                     {
                         out_cast->data =
                             DecodeAllocator::Allocate<char>(in_cast->size);
-                        memcpy(out_cast->data,
-                               in_cast->data,
-                               sizeof(char) * in_cast->size);
+                    }
+                    else
+                    {
+                        out_cast->data = nullptr;
                     }
                 }
                 break;
@@ -6636,22 +6666,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_MARKERS_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSceneMarkersMSFT>());
-
-                // We have to create allocated space for the sceneMarkers data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSceneMarkersMSFT* out_cast = reinterpret_cast<XrSceneMarkersMSFT*>(output_struct->next);
                     const XrSceneMarkersMSFT* in_cast = reinterpret_cast<const XrSceneMarkersMSFT*>(in_next);
 
+                    // We have to create allocated space for the sceneMarkers data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->sceneMarkerCapacityInput = in_cast->sceneMarkerCapacityInput;
                     if (out_cast->sceneMarkerCapacityInput > 0)
                     {
                         out_cast->sceneMarkers =
                             DecodeAllocator::Allocate<XrSceneMarkerMSFT>(in_cast->sceneMarkerCapacityInput);
-                        memcpy(out_cast->sceneMarkers,
-                               in_cast->sceneMarkers,
-                               sizeof(XrSceneMarkerMSFT) * in_cast->sceneMarkerCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->sceneMarkers = nullptr;
                     }
                 }
                 break;
@@ -6659,22 +6689,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_MARKER_TYPE_FILTER_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSceneMarkerTypeFilterMSFT>());
-
-                // We have to create allocated space for the markerTypes data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSceneMarkerTypeFilterMSFT* out_cast = reinterpret_cast<XrSceneMarkerTypeFilterMSFT*>(output_struct->next);
                     const XrSceneMarkerTypeFilterMSFT* in_cast = reinterpret_cast<const XrSceneMarkerTypeFilterMSFT*>(in_next);
 
+                    // We have to create allocated space for the markerTypes data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->markerTypeCount = in_cast->markerTypeCount;
                     if (out_cast->markerTypeCount > 0)
                     {
                         out_cast->markerTypes =
                             DecodeAllocator::Allocate<XrSceneMarkerTypeMSFT>(in_cast->markerTypeCount);
-                        memcpy(out_cast->markerTypes,
-                               in_cast->markerTypes,
-                               sizeof(XrSceneMarkerTypeMSFT) * in_cast->markerTypeCount);
+                    }
+                    else
+                    {
+                        out_cast->markerTypes = nullptr;
                     }
                 }
                 break;
@@ -6682,22 +6712,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SCENE_MARKER_QR_CODES_MSFT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSceneMarkerQRCodesMSFT>());
-
-                // We have to create allocated space for the qrCodes data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSceneMarkerQRCodesMSFT* out_cast = reinterpret_cast<XrSceneMarkerQRCodesMSFT*>(output_struct->next);
                     const XrSceneMarkerQRCodesMSFT* in_cast = reinterpret_cast<const XrSceneMarkerQRCodesMSFT*>(in_next);
 
+                    // We have to create allocated space for the qrCodes data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->qrCodeCapacityInput = in_cast->qrCodeCapacityInput;
                     if (out_cast->qrCodeCapacityInput > 0)
                     {
                         out_cast->qrCodes =
                             DecodeAllocator::Allocate<XrSceneMarkerQRCodeMSFT>(in_cast->qrCodeCapacityInput);
-                        memcpy(out_cast->qrCodes,
-                               in_cast->qrCodes,
-                               sizeof(XrSceneMarkerQRCodeMSFT) * in_cast->qrCodeCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->qrCodes = nullptr;
                     }
                 }
                 break;
@@ -6715,22 +6745,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SPACE_UUID_FILTER_INFO_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSpaceUuidFilterInfoFB>());
-
-                // We have to create allocated space for the uuids data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSpaceUuidFilterInfoFB* out_cast = reinterpret_cast<XrSpaceUuidFilterInfoFB*>(output_struct->next);
                     const XrSpaceUuidFilterInfoFB* in_cast = reinterpret_cast<const XrSpaceUuidFilterInfoFB*>(in_next);
 
+                    // We have to create allocated space for the uuids data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->uuidCount = in_cast->uuidCount;
                     if (out_cast->uuidCount > 0)
                     {
                         out_cast->uuids =
                             DecodeAllocator::Allocate<XrUuidEXT>(in_cast->uuidCount);
-                        memcpy(out_cast->uuids,
-                               in_cast->uuids,
-                               sizeof(XrUuidEXT) * in_cast->uuidCount);
+                    }
+                    else
+                    {
+                        out_cast->uuids = nullptr;
                     }
                 }
                 break;
@@ -6743,22 +6773,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SPACE_QUERY_RESULTS_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSpaceQueryResultsFB>());
-
-                // We have to create allocated space for the results data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSpaceQueryResultsFB* out_cast = reinterpret_cast<XrSpaceQueryResultsFB*>(output_struct->next);
                     const XrSpaceQueryResultsFB* in_cast = reinterpret_cast<const XrSpaceQueryResultsFB*>(in_next);
 
+                    // We have to create allocated space for the results data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->resultCapacityInput = in_cast->resultCapacityInput;
                     if (out_cast->resultCapacityInput > 0)
                     {
                         out_cast->results =
                             DecodeAllocator::Allocate<XrSpaceQueryResultFB>(in_cast->resultCapacityInput);
-                        memcpy(out_cast->results,
-                               in_cast->results,
-                               sizeof(XrSpaceQueryResultFB) * in_cast->resultCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->results = nullptr;
                     }
                 }
                 break;
@@ -6841,22 +6871,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SEMANTIC_LABELS_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSemanticLabelsFB>());
-
-                // We have to create allocated space for the buffer data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSemanticLabelsFB* out_cast = reinterpret_cast<XrSemanticLabelsFB*>(output_struct->next);
                     const XrSemanticLabelsFB* in_cast = reinterpret_cast<const XrSemanticLabelsFB*>(in_next);
 
+                    // We have to create allocated space for the buffer data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->bufferCapacityInput = in_cast->bufferCapacityInput;
                     if (out_cast->bufferCapacityInput > 0)
                     {
                         out_cast->buffer =
                             DecodeAllocator::Allocate<char>(in_cast->bufferCapacityInput);
-                        memcpy(out_cast->buffer,
-                               in_cast->buffer,
-                               sizeof(char) * in_cast->bufferCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->buffer = nullptr;
                     }
                 }
                 break;
@@ -6864,22 +6894,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_ROOM_LAYOUT_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrRoomLayoutFB>());
-
-                // We have to create allocated space for the wallUuids data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrRoomLayoutFB* out_cast = reinterpret_cast<XrRoomLayoutFB*>(output_struct->next);
                     const XrRoomLayoutFB* in_cast = reinterpret_cast<const XrRoomLayoutFB*>(in_next);
 
+                    // We have to create allocated space for the wallUuids data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->wallUuidCapacityInput = in_cast->wallUuidCapacityInput;
                     if (out_cast->wallUuidCapacityInput > 0)
                     {
                         out_cast->wallUuids =
                             DecodeAllocator::Allocate<XrUuidEXT>(in_cast->wallUuidCapacityInput);
-                        memcpy(out_cast->wallUuids,
-                               in_cast->wallUuids,
-                               sizeof(XrUuidEXT) * in_cast->wallUuidCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->wallUuids = nullptr;
                     }
                 }
                 break;
@@ -6887,22 +6917,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_BOUNDARY_2D_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrBoundary2DFB>());
-
-                // We have to create allocated space for the vertices data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrBoundary2DFB* out_cast = reinterpret_cast<XrBoundary2DFB*>(output_struct->next);
                     const XrBoundary2DFB* in_cast = reinterpret_cast<const XrBoundary2DFB*>(in_next);
 
+                    // We have to create allocated space for the vertices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->vertexCapacityInput = in_cast->vertexCapacityInput;
                     if (out_cast->vertexCapacityInput > 0)
                     {
                         out_cast->vertices =
                             DecodeAllocator::Allocate<XrVector2f>(in_cast->vertexCapacityInput);
-                        memcpy(out_cast->vertices,
-                               in_cast->vertices,
-                               sizeof(XrVector2f) * in_cast->vertexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->vertices = nullptr;
                     }
                 }
                 break;
@@ -6930,22 +6960,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SPACE_CONTAINER_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSpaceContainerFB>());
-
-                // We have to create allocated space for the uuids data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSpaceContainerFB* out_cast = reinterpret_cast<XrSpaceContainerFB*>(output_struct->next);
                     const XrSpaceContainerFB* in_cast = reinterpret_cast<const XrSpaceContainerFB*>(in_next);
 
+                    // We have to create allocated space for the uuids data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->uuidCapacityInput = in_cast->uuidCapacityInput;
                     if (out_cast->uuidCapacityInput > 0)
                     {
                         out_cast->uuids =
                             DecodeAllocator::Allocate<XrUuidEXT>(in_cast->uuidCapacityInput);
-                        memcpy(out_cast->uuids,
-                               in_cast->uuids,
-                               sizeof(XrUuidEXT) * in_cast->uuidCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->uuids = nullptr;
                     }
                 }
                 break;
@@ -6983,32 +7013,35 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_FACE_EXPRESSION_WEIGHTS_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrFaceExpressionWeightsFB>());
-
-                // We have to create allocated space for the time data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrFaceExpressionWeightsFB* out_cast = reinterpret_cast<XrFaceExpressionWeightsFB*>(output_struct->next);
                     const XrFaceExpressionWeightsFB* in_cast = reinterpret_cast<const XrFaceExpressionWeightsFB*>(in_next);
 
+                    // We have to create allocated space for the weights data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->weightCount = in_cast->weightCount;
                     if (out_cast->weightCount > 0)
                     {
                         out_cast->weights =
                             DecodeAllocator::Allocate<float>(in_cast->weightCount);
-                        memcpy(out_cast->weights,
-                               in_cast->weights,
-                               sizeof(float) * in_cast->weightCount);
+                    }
+                    else
+                    {
+                        out_cast->weights = nullptr;
                     }
 
+                    // We have to create allocated space for the confidences data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->confidenceCount = in_cast->confidenceCount;
                     if (out_cast->confidenceCount > 0)
                     {
                         out_cast->confidences =
                             DecodeAllocator::Allocate<float>(in_cast->confidenceCount);
-                        memcpy(out_cast->confidences,
-                               in_cast->confidences,
-                               sizeof(float) * in_cast->confidenceCount);
+                    }
+                    else
+                    {
+                        out_cast->confidences = nullptr;
                     }
                 }
                 break;
@@ -7101,22 +7134,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_VIRTUAL_KEYBOARD_MODEL_ANIMATION_STATES_META:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrVirtualKeyboardModelAnimationStatesMETA>());
-
-                // We have to create allocated space for the states data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrVirtualKeyboardModelAnimationStatesMETA* out_cast = reinterpret_cast<XrVirtualKeyboardModelAnimationStatesMETA*>(output_struct->next);
                     const XrVirtualKeyboardModelAnimationStatesMETA* in_cast = reinterpret_cast<const XrVirtualKeyboardModelAnimationStatesMETA*>(in_next);
 
+                    // We have to create allocated space for the states data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->stateCapacityInput = in_cast->stateCapacityInput;
                     if (out_cast->stateCapacityInput > 0)
                     {
                         out_cast->states =
                             DecodeAllocator::Allocate<XrVirtualKeyboardAnimationStateMETA>(in_cast->stateCapacityInput);
-                        memcpy(out_cast->states,
-                               in_cast->states,
-                               sizeof(XrVirtualKeyboardAnimationStateMETA) * in_cast->stateCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->states = nullptr;
                     }
                 }
                 break;
@@ -7124,22 +7157,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_VIRTUAL_KEYBOARD_TEXTURE_DATA_META:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrVirtualKeyboardTextureDataMETA>());
-
-                // We have to create allocated space for the buffer data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrVirtualKeyboardTextureDataMETA* out_cast = reinterpret_cast<XrVirtualKeyboardTextureDataMETA*>(output_struct->next);
                     const XrVirtualKeyboardTextureDataMETA* in_cast = reinterpret_cast<const XrVirtualKeyboardTextureDataMETA*>(in_next);
 
+                    // We have to create allocated space for the buffer data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->bufferCapacityInput = in_cast->bufferCapacityInput;
                     if (out_cast->bufferCapacityInput > 0)
                     {
                         out_cast->buffer =
                             DecodeAllocator::Allocate<uint8_t>(in_cast->bufferCapacityInput);
-                        memcpy(out_cast->buffer,
-                               in_cast->buffer,
-                               sizeof(uint8_t) * in_cast->bufferCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->buffer = nullptr;
                     }
                 }
                 break;
@@ -7262,32 +7295,35 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_SPACE_TRIANGLE_MESH_META:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrSpaceTriangleMeshMETA>());
-
-                // We have to create allocated space for the indices data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrSpaceTriangleMeshMETA* out_cast = reinterpret_cast<XrSpaceTriangleMeshMETA*>(output_struct->next);
                     const XrSpaceTriangleMeshMETA* in_cast = reinterpret_cast<const XrSpaceTriangleMeshMETA*>(in_next);
 
+                    // We have to create allocated space for the vertices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->vertexCapacityInput = in_cast->vertexCapacityInput;
                     if (out_cast->vertexCapacityInput > 0)
                     {
                         out_cast->vertices =
                             DecodeAllocator::Allocate<XrVector3f>(in_cast->vertexCapacityInput);
-                        memcpy(out_cast->vertices,
-                               in_cast->vertices,
-                               sizeof(XrVector3f) * in_cast->vertexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->vertices = nullptr;
                     }
 
+                    // We have to create allocated space for the indices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->indexCapacityInput = in_cast->indexCapacityInput;
                     if (out_cast->indexCapacityInput > 0)
                     {
                         out_cast->indices =
                             DecodeAllocator::Allocate<uint32_t>(in_cast->indexCapacityInput);
-                        memcpy(out_cast->indices,
-                               in_cast->indices,
-                               sizeof(uint32_t) * in_cast->indexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->indices = nullptr;
                     }
                 }
                 break;
@@ -7300,22 +7336,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_FACE_TRACKER_CREATE_INFO2_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrFaceTrackerCreateInfo2FB>());
-
-                // We have to create allocated space for the requestedDataSources data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrFaceTrackerCreateInfo2FB* out_cast = reinterpret_cast<XrFaceTrackerCreateInfo2FB*>(output_struct->next);
                     const XrFaceTrackerCreateInfo2FB* in_cast = reinterpret_cast<const XrFaceTrackerCreateInfo2FB*>(in_next);
 
+                    // We have to create allocated space for the requestedDataSources data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->requestedDataSourceCount = in_cast->requestedDataSourceCount;
                     if (out_cast->requestedDataSourceCount > 0)
                     {
                         out_cast->requestedDataSources =
                             DecodeAllocator::Allocate<XrFaceTrackingDataSource2FB>(in_cast->requestedDataSourceCount);
-                        memcpy(out_cast->requestedDataSources,
-                               in_cast->requestedDataSources,
-                               sizeof(XrFaceTrackingDataSource2FB) * in_cast->requestedDataSourceCount);
+                    }
+                    else
+                    {
+                        out_cast->requestedDataSources = nullptr;
                     }
                 }
                 break;
@@ -7328,32 +7364,35 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_FACE_EXPRESSION_WEIGHTS2_FB:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrFaceExpressionWeights2FB>());
-
-                // We have to create allocated space for the time data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrFaceExpressionWeights2FB* out_cast = reinterpret_cast<XrFaceExpressionWeights2FB*>(output_struct->next);
                     const XrFaceExpressionWeights2FB* in_cast = reinterpret_cast<const XrFaceExpressionWeights2FB*>(in_next);
 
+                    // We have to create allocated space for the weights data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->weightCount = in_cast->weightCount;
                     if (out_cast->weightCount > 0)
                     {
                         out_cast->weights =
                             DecodeAllocator::Allocate<float>(in_cast->weightCount);
-                        memcpy(out_cast->weights,
-                               in_cast->weights,
-                               sizeof(float) * in_cast->weightCount);
+                    }
+                    else
+                    {
+                        out_cast->weights = nullptr;
                     }
 
+                    // We have to create allocated space for the confidences data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->confidenceCount = in_cast->confidenceCount;
                     if (out_cast->confidenceCount > 0)
                     {
                         out_cast->confidences =
                             DecodeAllocator::Allocate<float>(in_cast->confidenceCount);
-                        memcpy(out_cast->confidences,
-                               in_cast->confidences,
-                               sizeof(float) * in_cast->confidenceCount);
+                    }
+                    else
+                    {
+                        out_cast->confidences = nullptr;
                     }
                 }
                 break;
@@ -7421,22 +7460,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_FOVEATION_APPLY_INFO_HTC:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrFoveationApplyInfoHTC>());
-
-                // We have to create allocated space for the subImages data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrFoveationApplyInfoHTC* out_cast = reinterpret_cast<XrFoveationApplyInfoHTC*>(output_struct->next);
                     const XrFoveationApplyInfoHTC* in_cast = reinterpret_cast<const XrFoveationApplyInfoHTC*>(in_next);
 
+                    // We have to create allocated space for the subImages data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->subImageCount = in_cast->subImageCount;
                     if (out_cast->subImageCount > 0)
                     {
                         out_cast->subImages =
                             DecodeAllocator::Allocate<XrSwapchainSubImage>(in_cast->subImageCount);
-                        memcpy(out_cast->subImages,
-                               in_cast->subImages,
-                               sizeof(XrSwapchainSubImage) * in_cast->subImageCount);
+                    }
+                    else
+                    {
+                        out_cast->subImages = nullptr;
                     }
                 }
                 break;
@@ -7474,22 +7513,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_FORCE_FEEDBACK_CURL_APPLY_LOCATIONS_MNDX:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrForceFeedbackCurlApplyLocationsMNDX>());
-
-                // We have to create allocated space for the locations data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrForceFeedbackCurlApplyLocationsMNDX* out_cast = reinterpret_cast<XrForceFeedbackCurlApplyLocationsMNDX*>(output_struct->next);
                     const XrForceFeedbackCurlApplyLocationsMNDX* in_cast = reinterpret_cast<const XrForceFeedbackCurlApplyLocationsMNDX*>(in_next);
 
+                    // We have to create allocated space for the locations data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->locationCount = in_cast->locationCount;
                     if (out_cast->locationCount > 0)
                     {
                         out_cast->locations =
                             DecodeAllocator::Allocate<XrForceFeedbackCurlApplyLocationMNDX>(in_cast->locationCount);
-                        memcpy(out_cast->locations,
-                               in_cast->locations,
-                               sizeof(XrForceFeedbackCurlApplyLocationMNDX) * in_cast->locationCount);
+                    }
+                    else
+                    {
+                        out_cast->locations = nullptr;
                     }
                 }
                 break;
@@ -7497,22 +7536,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_HAND_TRACKING_DATA_SOURCE_INFO_EXT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrHandTrackingDataSourceInfoEXT>());
-
-                // We have to create allocated space for the requestedDataSources data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrHandTrackingDataSourceInfoEXT* out_cast = reinterpret_cast<XrHandTrackingDataSourceInfoEXT*>(output_struct->next);
                     const XrHandTrackingDataSourceInfoEXT* in_cast = reinterpret_cast<const XrHandTrackingDataSourceInfoEXT*>(in_next);
 
+                    // We have to create allocated space for the requestedDataSources data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->requestedDataSourceCount = in_cast->requestedDataSourceCount;
                     if (out_cast->requestedDataSourceCount > 0)
                     {
                         out_cast->requestedDataSources =
                             DecodeAllocator::Allocate<XrHandTrackingDataSourceEXT>(in_cast->requestedDataSourceCount);
-                        memcpy(out_cast->requestedDataSources,
-                               in_cast->requestedDataSources,
-                               sizeof(XrHandTrackingDataSourceEXT) * in_cast->requestedDataSourceCount);
+                    }
+                    else
+                    {
+                        out_cast->requestedDataSources = nullptr;
                     }
                 }
                 break;
@@ -7550,22 +7589,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_PLANE_DETECTOR_LOCATIONS_EXT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrPlaneDetectorLocationsEXT>());
-
-                // We have to create allocated space for the planeLocations data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrPlaneDetectorLocationsEXT* out_cast = reinterpret_cast<XrPlaneDetectorLocationsEXT*>(output_struct->next);
                     const XrPlaneDetectorLocationsEXT* in_cast = reinterpret_cast<const XrPlaneDetectorLocationsEXT*>(in_next);
 
+                    // We have to create allocated space for the planeLocations data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->planeLocationCapacityInput = in_cast->planeLocationCapacityInput;
                     if (out_cast->planeLocationCapacityInput > 0)
                     {
                         out_cast->planeLocations =
                             DecodeAllocator::Allocate<XrPlaneDetectorLocationEXT>(in_cast->planeLocationCapacityInput);
-                        memcpy(out_cast->planeLocations,
-                               in_cast->planeLocations,
-                               sizeof(XrPlaneDetectorLocationEXT) * in_cast->planeLocationCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->planeLocations = nullptr;
                     }
                 }
                 break;
@@ -7573,22 +7612,22 @@ void InitializeOutputStructNextImpl(const XrBaseInStructure* in_next, XrBaseOutS
             case XR_TYPE_PLANE_DETECTOR_POLYGON_BUFFER_EXT:
             {
                 output_struct->next = reinterpret_cast<XrBaseOutStructure*>(DecodeAllocator::Allocate<XrPlaneDetectorPolygonBufferEXT>());
-
-                // We have to create allocated space for the vertices data to be written to, otherwise,
-                // it will try to write to a non-existent output location.
                 if (output_struct->next != nullptr)
                 {
                     XrPlaneDetectorPolygonBufferEXT* out_cast = reinterpret_cast<XrPlaneDetectorPolygonBufferEXT*>(output_struct->next);
                     const XrPlaneDetectorPolygonBufferEXT* in_cast = reinterpret_cast<const XrPlaneDetectorPolygonBufferEXT*>(in_next);
 
+                    // We have to create allocated space for the vertices data to be written to, otherwise,
+                    // it will try to write to a non-existent output location.
                     out_cast->vertexCapacityInput = in_cast->vertexCapacityInput;
                     if (out_cast->vertexCapacityInput > 0)
                     {
                         out_cast->vertices =
                             DecodeAllocator::Allocate<XrVector2f>(in_cast->vertexCapacityInput);
-                        memcpy(out_cast->vertices,
-                               in_cast->vertices,
-                               sizeof(XrVector2f) * in_cast->vertexCapacityInput);
+                    }
+                    else
+                    {
+                        out_cast->vertices = nullptr;
                     }
                 }
                 break;
