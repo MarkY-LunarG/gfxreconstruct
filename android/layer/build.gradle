@@ -3,10 +3,10 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 33
     namespace 'com.lunarg.gfxreconstruct.layer'
-    ndkVersion '26.3.11579264'
+    ndkVersion '25.1.8937393'
     defaultConfig {
         minSdkVersion 26
-        targetSdkVersion 33
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         ndk {
@@ -25,7 +25,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-fexceptions", "-std=c++17", "-Wno-nullability-completeness"
-                arguments "-DANDROID_TOOLCHAIN=clang", "-DANDROID_STL=c++_static"
+                arguments "-DANDROID_TOOLCHAIN=clang", "-DANDROID_STL=c++_static", "-DCMAKE_BUILD_TYPE=Debug"
                 if (project.hasProperty("DisableOpenXR")) {
                     logger.info('GFXReconstruct layer built with NO OpenXr Support! [DisableOpenXR found]')
                     arguments.add("-DGFXRECON_ENABLE_OPENXR=OFF")
@@ -38,14 +38,27 @@ android {
         }
     }
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+        debug {
+            debuggable true
+            jniDebuggable true
+            packagingOptions {
+                doNotStrip '**/*.so'
+            }
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Debug"
+                }
+            }
+			ndk {
+				debuggable true
+				debugSymbolLevel 'FULL'
+			}
+		}
+	}
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
+			version "3.22.1"
         }
     }
 

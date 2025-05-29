@@ -1,5 +1,16 @@
 cmake_minimum_required(VERSION 3.4.1)
 
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_C_FLAGS_DEBUG "-g -O0")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+set(CMAKE_STRIP "false")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-strip-debug")
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+
 get_filename_component(GFXRECON_SOURCE_DIR ../.. ABSOLUTE)
 
 list(APPEND CMAKE_PREFIX_PATH "${GFXRECON_SOURCE_DIR}/external/nlohmann-json")
@@ -95,3 +106,15 @@ endif()
 target_link_options(VkLayer_gfxreconstruct
     PRIVATE
         LINKER:--version-script=${GFXRECON_SOURCE_DIR}/layer/VkLayer_gfxreconstruct-android.map)
+
+target_compile_options(VkLayer_gfxreconstruct
+    PRIVATE
+        -g
+        -O0
+        -fno-omit-frame-pointer
+)
+
+set_target_properties(VkLayer_gfxreconstruct PROPERTIES
+    ANDROID_UNIFIED_HEADERS ON
+    ANDROID_SKIP_STRIP TRUE
+)
