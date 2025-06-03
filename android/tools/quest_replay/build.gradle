@@ -20,9 +20,45 @@ android {
             }
         }
     }
-    buildTypes {
+
+    signingConfigs {
         release {
+            storeFile file("my-release-key.jks")
+            storePassword "testtest"
+            keyAlias "my-key-alias"
+            keyPassword "testtest"
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            jniDebuggable true
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Debug"
+                }
+            }
+            ndk {
+                debuggable true
+                debugSymbolLevel 'FULL'
+            }
+        }
+        release {
+            signingConfig signingConfigs.release
+            debuggable false
+            jniDebuggable false
             minifyEnabled false
+            shrinkResources false
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Release"
+                    cppFlags "-DCMAKE_CXX_FLAGS=-O3"
+                }
+            }
+            ndk {
+                debuggable false
+            }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

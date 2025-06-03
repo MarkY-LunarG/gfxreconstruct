@@ -49,16 +49,31 @@ android {
                     arguments "-DCMAKE_BUILD_TYPE=Debug"
                 }
             }
-			ndk {
-				debuggable true
-				debugSymbolLevel 'FULL'
-			}
-		}
-	}
+            ndk {
+                debuggable true
+                debugSymbolLevel 'FULL'
+            }
+        }
+        release {
+            debuggable false
+            jniDebuggable false
+            minifyEnabled false
+            shrinkResources false
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Release"
+                    cppFlags "-DCMAKE_CXX_FLAGS=-O3"
+                }
+            }
+            ndk {
+                debuggable false
+            }
+        }
+    }
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
-			version "3.22.1"
+            version "3.22.1"
         }
     }
 
