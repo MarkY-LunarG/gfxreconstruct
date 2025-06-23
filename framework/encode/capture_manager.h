@@ -260,7 +260,7 @@ class CommonCaptureManager
     {
         return CreateInstance(Derived::InitSingleton(), Derived::DestroySingleton);
     }
-    static int32_t GetPidFromProcessName(const char* process_name);
+    static bool ProcessMatchesCaptureName(const std::string& desired_name);
     CommonCaptureManager();
 
     enum CaptureModeFlags : uint32_t
