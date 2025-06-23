@@ -250,10 +250,14 @@ bool CommonCaptureManager::ProcessMatchesCaptureName(const std::string& desired_
 
 #elif defined(WIN32)
 
-        TCHAR szWideString[MAX_PATH];
-        char  ascii_name[MAX_PATH];
-        GetModuleFileName(NULL, szWideString, MAX_PATH);
-        WideCharToMultiByte(CP_ACP, 0, szWideString, lstrlen(szWideString), ascii_name, MAX_PATH, NULL, NULL);
+        char ascii_name[MAX_PATH];
+#ifdef UNICODE
+        WCHAR wide_string[MAX_PATH];
+        GetModuleFileName(NULL, wide_string, MAX_PATH);
+        WideCharToMultiByte(CP_ACP, 0, wide_string, lstrlen(wide_string), ascii_name, MAX_PATH, NULL, NULL);
+#else 
+        GetModuleFileNameA(NULL, ascii_name, MAX_PATH);
+#endif
         application_name = ascii_name;
 
 #else
