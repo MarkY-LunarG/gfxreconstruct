@@ -211,6 +211,79 @@ void CommonCaptureManager::DestroyInstance(ApiCaptureManager* api_capture_manage
     }
 }
 
+bool CommonCaptureManager::ProcessMatchesCaptureName(const std::string& desired_name)
+{
+    bool matches = false;
+
+    if (desired_name.length() > 0)
+    {
+        std::string application_name;
+#if defined(__APPLE__) || defined(__FreeBSD__)
+
+        application_name = getprogname();
+
+#elif defined(__linux__)
+
+        char command_line[1024] = { 0 };
+        // Read the application name from the command-line from this process
+        FILE* fp = fopen("/proc/self/cmdline", "r");
+        if (fp)
+        {
+            char* str = fgets(command_line, sizeof(command_line), fp);
+            fclose(fp);
+            if (str != nullptr)
+            {
+                std::string cmd_line_string = command_line;
+
+                // If there are directory slashes, remove the directory before the name
+                std::size_t location = cmd_line_string.find_last_of('/');
+                if (location != std::string::npos)
+                {
+                    std::string tmp_string = cmd_line_string.substr(location + 1);
+                    cmd_line_string        = tmp_string;
+                }
+
+                // Now get the string before the first space
+                application_name = cmd_line_string.substr(0, cmd_line_string.find(' '));
+            }
+        }
+
+#elif defined(WIN32)
+
+        TCHAR szWideString[MAX_PATH];
+        char  ascii_name[MAX_PATH];
+        GetModuleFileName(NULL, szWideString, MAX_PATH);
+        WideCharToMultiByte(CP_ACP, 0, szWideString, lstrlen(szWideString), ascii_name, MAX_PATH, NULL, NULL);
+        application_name = ascii_name;
+
+#else
+        GFXRECON_ERROR_FATAL_ONCE("Unable to determine process name for this platform");
+
+        // Force to true so we capture everything
+        matches = true;
+#endif
+
+        if (application_name == desired_name)
+        {
+            GFXRECON_LOG_INFO_ONCE("Process name %s matches current process!", desired_name.c_str());
+            matches = true;
+        }
+        else
+        {
+            GFXRECON_LOG_WARNING_ONCE("Process name %s does not match current process %s, disabling capture.",
+                                      desired_name.c_str(),
+                                      application_name.c_str());
+        }
+    }
+    else
+    {
+        // Weird case of empty name, so just return matches always
+        matches = true;
+    }
+
+    return matches;
+}
+
 int32_t CommonCaptureManager::GetPidFromProcessName(const char* process_name)
 {
     int32_t pid = -1;
@@ -324,8 +397,6 @@ bool CommonCaptureManager::Initialize(format::ApiFamilyId                   api_
 {
     bool success = true;
 
-    GFXRECON_LOG_WARNING("----------------ENTERING CommonCaptureManager::Initialize");
-
     base_filename_        = base_filename;
     file_options_         = trace_settings.capture_file_options;
     timestamp_filename_   = trace_settings.time_stamp_file;
@@ -414,6 +485,13 @@ bool CommonCaptureManager::Initialize(format::ApiFamilyId                   api_
     bool capturing_process = true;
     if (!trace_settings.capture_package_name.empty())
     {
+#if 1 // Brainpain
+        if (!ProcessMatchesCaptureName(trace_settings.capture_package_name))
+        {
+            capture_mode_     = kModeDisabled;
+            capturing_process = false;
+        }
+#else // Brainpain
         int32_t pid = -1;
 
 #if defined(__linux__) || defined(__APPLE__)
@@ -437,6 +515,7 @@ bool CommonCaptureManager::Initialize(format::ApiFamilyId                   api_
                 capturing_process = false;
             }
         }
+#endif // Brainpain
     }
 
     if (capturing_process)
