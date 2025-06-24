@@ -255,10 +255,21 @@ bool CommonCaptureManager::ProcessMatchesCaptureName(const std::string& desired_
         WCHAR wide_string[MAX_PATH];
         GetModuleFileName(NULL, wide_string, MAX_PATH);
         WideCharToMultiByte(CP_ACP, 0, wide_string, lstrlen(wide_string), ascii_name, MAX_PATH, NULL, NULL);
-#else 
+#else
         GetModuleFileNameA(NULL, ascii_name, MAX_PATH);
 #endif
-        application_name = ascii_name;
+        std::string cmd_line_string = ascii_name;
+
+        // If there are directory slashes, remove the directory before the name
+        std::size_t location = cmd_line_string.find_last_of('\\');
+        if (location != std::string::npos)
+        {
+            std::string tmp_string = cmd_line_string.substr(location + 1);
+            cmd_line_string        = tmp_string;
+        }
+
+        // Now get the string before the first space
+        application_name = cmd_line_string.substr(0, cmd_line_string.find(' '));
 
 #else
         GFXRECON_ERROR_FATAL_ONCE("Unable to determine process name for this platform");
@@ -269,7 +280,7 @@ bool CommonCaptureManager::ProcessMatchesCaptureName(const std::string& desired_
 
         if (application_name == desired_name)
         {
-            GFXRECON_LOG_INFO_ONCE("Process name %s matches current process!", desired_name.c_str());
+            GFXRECON_LOG_INFO_ONCE("Process name %s matches current process, enabling capture", desired_name.c_str());
             matches = true;
         }
         else
@@ -286,70 +297,6 @@ bool CommonCaptureManager::ProcessMatchesCaptureName(const std::string& desired_
     }
 
     return matches;
-}
-
-int32_t CommonCaptureManager::GetPidFromProcessName(const char* process_name)
-{
-    int32_t pid = -1;
-#if defined(__linux__) || defined(__APPLE__)
-    int            id            = 0;
-    DIR*           dir           = nullptr;
-    FILE*          fp            = nullptr;
-    struct dirent* entry         = nullptr;
-    char           filename[256] = { 0 };
-    char           cmdline[256]  = { 0 };
-
-    if (process_name == nullptr)
-    {
-        return pid;
-    }
-    dir = opendir("/proc");
-    if (dir == nullptr)
-    {
-        return pid;
-    }
-    while ((entry = readdir(dir)) != NULL)
-    {
-        id = atoi(entry->d_name);
-        if (id != 0)
-        {
-            snprintf(filename, 255, "/proc/%d/cmdline", id);
-            fp = fopen(filename, "r");
-            if (fp)
-            {
-                char* str = fgets(cmdline, sizeof(cmdline), fp);
-                fclose(fp);
-                if (str != nullptr && strcmp(process_name, cmdline) == 0)
-                {
-                    pid = id;
-                    break;
-                }
-            }
-        }
-    }
-    closedir(dir);
-#elif defined(WIN32)
-    HANDLE         hSnapShot = ::CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    PROCESSENTRY32 pe        = { 0 };
-    pe.dwSize                = sizeof(PROCESSENTRY32);
-    BOOL bSuccess            = ::Process32First(hSnapShot, &pe);
-    if (!bSuccess)
-    {
-        ::CloseHandle(hSnapShot);
-        return pid;
-    }
-    while (bSuccess)
-    {
-        if (strcmp(pe.szExeFile, process_name) == 0)
-        {
-            pid = pe.th32ProcessID;
-            break;
-        }
-        bSuccess = ::Process32Next(hSnapShot, &pe);
-    }
-    ::CloseHandle(hSnapShot);
-#endif
-    return pid;
 }
 
 std::vector<uint32_t> CalcScreenshotIndices(std::vector<util::UintRange> ranges, uint32_t interval)
@@ -489,37 +436,11 @@ bool CommonCaptureManager::Initialize(format::ApiFamilyId                   api_
     bool capturing_process = true;
     if (!trace_settings.capture_package_name.empty())
     {
-#if 1 // Brainpain
         if (!ProcessMatchesCaptureName(trace_settings.capture_package_name))
         {
             capture_mode_     = kModeDisabled;
             capturing_process = false;
         }
-#else // Brainpain
-        int32_t pid = -1;
-
-#if defined(__linux__) || defined(__APPLE__)
-        pid = getpid();
-#elif defined(WIN32)
-        pid                 = GetCurrentProcessId();
-#else
-        GFXRECON_LOG_ERROR_ONCE("Can not use capture app detection on this platform");
-#endif
-
-        if (pid >= 0)
-        {
-            GFXRECON_LOG_INFO("Restricting to capture_package_name = %s", trace_settings.capture_package_name.c_str());
-            int32_t process_id = GetPidFromProcessName(trace_settings.capture_package_name.c_str());
-            if (process_id != INT32_MAX && pid != process_id)
-            {
-                GFXRECON_LOG_WARNING_ONCE("Skipping process %d because it does not match package name %s",
-                                          pid,
-                                          trace_settings.capture_package_name.c_str());
-                capture_mode_     = kModeDisabled;
-                capturing_process = false;
-            }
-        }
-#endif // Brainpain
     }
 
     if (capturing_process)
