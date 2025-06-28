@@ -589,16 +589,34 @@ bool CommonCaptureManager::IsCaptureSkippingCurrentThread() const
 
 bool CommonCaptureManager::IsCaptureModeTrack() const
 {
+#if ENABLE_OPENXR_SUPPORT
+    if (IsCaptureSkippingCurrentThread())
+    {
+        return false;
+    }
+#endif
     return (GetCaptureMode() & kModeTrack) == kModeTrack;
 }
 
 bool CommonCaptureManager::IsCaptureModeWrite() const
 {
+#if ENABLE_OPENXR_SUPPORT
+    if (IsCaptureSkippingCurrentThread())
+    {
+        return false;
+    }
+#endif
     return (GetCaptureMode() & kModeWrite) == kModeWrite;
 }
 
 bool CommonCaptureManager::IsCaptureModeDisabled() const
 {
+#if ENABLE_OPENXR_SUPPORT
+    if (IsCaptureSkippingCurrentThread())
+    {
+        return false;
+    }
+#endif
     return GetCaptureMode() == kModeDisabled;
 }
 

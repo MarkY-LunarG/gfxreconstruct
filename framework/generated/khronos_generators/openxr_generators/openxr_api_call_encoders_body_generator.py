@@ -157,14 +157,9 @@ class OpenXrApiCallEncodersBodyGenerator(OpenXrBaseGenerator, KhronosApiCallEnco
             capture_manager = 'manager'
             body += indent + 'OpenXrCaptureManager* manager = OpenXrCaptureManager::Get();\n'
             body += indent + 'GFXRECON_ASSERT(manager != nullptr);\n'
-            if not is_override:
-                # Allow customization that is unlocked and validly reentrant
-                # For example if one needs to record calls into the output stream to add context or state
-                # to allow replay time operations, or handle differences in state tracking between API's (e.g. wrapped handles)
-                body += indent + 'CustomEncoderPreCall<format::ApiCallId::ApiCall_{}>::PreLockReentrant({}, {});\n'.format(
-                    name, capture_manager, arg_list
-                )
+            body += indent + 'std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();\n'
 
+            if not is_override:
                 # Declare for handles that need unwrapping.
                 unwrapped_arg_list, unwrap_list = self.make_handle_unwrapping(
                     name, values
@@ -179,18 +174,7 @@ class OpenXrApiCallEncodersBodyGenerator(OpenXrBaseGenerator, KhronosApiCallEnco
                         ]
                     )
 
-                body += indent + 'CommonCaptureManager::CaptureMode save_capture_mode;\n'
-                top_indent = indent + ' ' * self.INDENT_SIZE
-                body += indent + '{\n'
-
-                lock_call = 'auto call_lock = manager->AcquireCallLock();\n'
-                body += top_indent + lock_call
-
         body += '\n'
-
-        body += top_indent + 'CustomEncoderPreCall<format::ApiCallId::ApiCall_{}>::Dispatch({}, {});\n'.format(
-            name, capture_manager, arg_list
-        )
 
         if not encode_after:
             body += '\n'
@@ -228,17 +212,6 @@ class OpenXrApiCallEncodersBodyGenerator(OpenXrBaseGenerator, KhronosApiCallEnco
                     ]
                 )
 
-            # Disable capture for reentrance
-            body += top_indent + 'save_capture_mode = manager->GetCaptureMode();\n'
-            body += top_indent + 'manager->SetCaptureMode(CommonCaptureManager::CaptureModeFlags::kModeDisabled);\n'
-
-            # Unlock above (only !is_override)
-            body += indent + '}\n\n'
-
-            # Still holding a lock across a call here...
-            if self.lock_for_destroy_handle_is_needed(name):
-                body += indent + 'ScopedDestroyLock exclusive_scoped_lock;\n'
-
             # Construct the function call to dispatch to the next layer.
             (call_setup_expr, call_expr) = self.make_layer_dispatch_call(
                 name, values, unwrapped_arg_list
@@ -252,12 +225,6 @@ class OpenXrApiCallEncodersBodyGenerator(OpenXrBaseGenerator, KhronosApiCallEnco
                 )
             else:
                 body += indent + '{};\n'.format(call_expr)
-
-            # Need to relock, since lock was released before dispatch
-            body += '\n' + indent + lock_call
-
-            # Restore capture_mode
-            body += indent + 'manager->SetCaptureMode(save_capture_mode);\n'
 
             # Wrap newly created handles.
             wrap_expr = self.make_handle_wrapping(values, indent)

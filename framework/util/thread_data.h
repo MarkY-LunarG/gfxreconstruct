@@ -40,14 +40,25 @@ class ThreadData
     std::vector<uint8_t>& GetScratchBuffer() { return scratch_buffer_; }
 
 #if ENABLE_OPENXR_SUPPORT
-    void EnableSkipCurrentThreadInFuture()
+    void SetSkipCurrentThreadInFuture(bool skip)
     {
-        // If not already in the list, add this thread ID to the list of IDs we
-        // will skip content for.
-        if (skip_threads_.find(thread_id_) == skip_threads_.end())
+        if (skip)
         {
-            GFXRECON_LOG_INFO("WriteToFile: Adding thread 0x%x to skip list", thread_id_);
-            skip_threads_.insert(thread_id_);
+            // If not already in the list, add this thread ID to the list of IDs we
+            // will skip content for.
+            if (skip_threads_.find(thread_id_) == skip_threads_.end())
+            {
+                GFXRECON_LOG_INFO("WriteToFile: Adding thread 0x%x to skip list", thread_id_);
+                skip_threads_.insert(thread_id_);
+            }
+        }
+        else
+        {
+            if (skip_threads_.find(thread_id_) != skip_threads_.end())
+            {
+                GFXRECON_LOG_INFO("WriteToFile: Removing thread 0x%x from skip list", thread_id_);
+                skip_threads_.erase(thread_id_);
+            }
         }
     }
 
