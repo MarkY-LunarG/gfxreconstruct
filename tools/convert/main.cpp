@@ -273,9 +273,9 @@ int main(int argc, const char** argv)
     bool detected_openxr = false;
     gfxrecon::decode::DetectAPIs(input_filename, detected_d3d12, detected_vulkan, detected_openxr);
 
-    if (!detected_vulkan && !is_asset_file)
+    if (!detected_vulkan && !detected_openxr && !is_asset_file)
     {
-        GFXRECON_LOG_INFO("Capture file does not contain Vulkan content.  D3D12 content may be present but "
+        GFXRECON_LOG_INFO("Capture file does not contain Vulkan or OpenXR content.  D3D12 content may be present but "
                           "gfxrecon-convert is not compiled with D3D12 support.");
         goto exit;
     }

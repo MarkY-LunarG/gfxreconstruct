@@ -274,7 +274,7 @@ class CommonCaptureManager
         return rv_annotation_info_.shaderid_mask;
     }
 
-    auto GetSkipThreadsWithInvalidData() const
+    bool GetSkipThreadsWithInvalidData() const
     {
         return skip_threads_with_invalid_data_;
     }

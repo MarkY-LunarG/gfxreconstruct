@@ -72,7 +72,22 @@ XRAPI_ATTR XrResult XRAPI_CALL xrEndFrame(XrSession session, const XrFrameEndInf
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock =
         OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    handle_unwrap_memory   = manager->GetHandleUnwrapMemory();
+    frameEndInfo_unwrapped = openxr_wrappers::UnwrapStructPtrHandles(frameEndInfo, handle_unwrap_memory);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->EndFrame(session, frameEndInfo_unwrapped);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrEndFrame);
     if (encoder)
@@ -153,8 +168,24 @@ XRAPI_ATTR XrResult XRAPI_CALL xrGetVulkanGraphicsDeviceKHR(XrInstance        in
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock =
         OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+#if 0  // Brainpain
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+#endif // Brainpain
+
     XrResult result = openxr_wrappers::GetInstanceTable(instance)->GetVulkanGraphicsDeviceKHR(
         instance, systemId, vkInstance, vkPhysicalDevice);
+
+#if 0  // Brainpain
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+#endif // Brainpain
 
     if (result >= 0)
     {
@@ -213,8 +244,24 @@ XRAPI_ATTR XrResult XRAPI_CALL xrCreateVulkanInstanceKHR(XrInstance             
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock =
         OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+#if 0  // Brainpain
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+#endif // Brainpain
+
     XrResult result = openxr_wrappers::GetInstanceTable(instance)->CreateVulkanInstanceKHR(
         instance, createInfo, vulkanInstance, vulkanResult);
+
+#if 0  // Brainpain
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+#endif // Brainpain
 
     if (result >= 0)
     {
@@ -281,8 +328,27 @@ XRAPI_ATTR XrResult XRAPI_CALL xrCreateVulkanDeviceKHR(XrInstance               
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock =
         OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    handle_unwrap_memory = manager->GetHandleUnwrapMemory();
+    createInfo_unwrapped = openxr_wrappers::UnwrapStructPtrHandles(createInfo, handle_unwrap_memory);
+
+#if 0  // Brainpain
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+#endif // Brainpain
+
     XrResult result = openxr_wrappers::GetInstanceTable(instance)->CreateVulkanDeviceKHR(
         instance, createInfo_unwrapped, vulkanDevice, vulkanResult);
+
+#if 0  // Brainpain
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+#endif // Brainpain
 
     if (result >= 0)
     {
@@ -340,8 +406,27 @@ XRAPI_ATTR XrResult XRAPI_CALL xrGetVulkanGraphicsDevice2KHR(XrInstance         
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock =
         OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    handle_unwrap_memory = manager->GetHandleUnwrapMemory();
+    getInfo_unwrapped    = openxr_wrappers::UnwrapStructPtrHandles(getInfo, handle_unwrap_memory);
+
+#if 0  // Brainpain
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+#endif // Brainpain
+
     XrResult result = openxr_wrappers::GetInstanceTable(instance)->GetVulkanGraphicsDevice2KHR(
         instance, getInfo_unwrapped, vulkanPhysicalDevice);
+
+#if 0  // Brainpain
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+#endif // Brainpain
 
     if (result >= 0)
     {
@@ -395,8 +480,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrCreateTriangleMeshFB(XrSession                 
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock =
         OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result =
         openxr_wrappers::GetInstanceTable(session)->CreateTriangleMeshFB(session, createInfo, outTriangleMesh);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     if (result >= 0)
     {
@@ -442,7 +539,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrDestroyTriangleMeshFB(XrTriangleMeshFB mesh)
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock =
         OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(mesh)->DestroyTriangleMeshFB(mesh);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginTrackedApiCallCapture(format::ApiCallId::ApiCall_xrDestroyTriangleMeshFB);
     if (encoder)

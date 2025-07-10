@@ -73,7 +73,7 @@ CommonCaptureManager::CommonCaptureManager() :
     debug_device_lost_(false), screenshot_prefix_(""), screenshots_enabled_(false), disable_dxr_(false),
     accel_struct_padding_(0), iunknown_wrapping_(false), force_command_serialization_(false), queue_zero_only_(false),
     allow_pipeline_compile_required_(false), quit_after_frame_ranges_(false), use_asset_file_(false), block_index_(0),
-    write_assets_(false), previous_write_assets_(false), skip_threads_with_invalid_data_(false)
+    write_assets_(false), previous_write_assets_(false), skip_threads_with_invalid_data_(true)
 {}
 
 CommonCaptureManager::~CommonCaptureManager()
@@ -369,7 +369,7 @@ bool CommonCaptureManager::Initialize(format::ApiFamilyId                   api_
     force_fifo_present_mode_         = trace_settings.force_fifo_present_mode;
     use_asset_file_                  = trace_settings.use_asset_file;
     ignore_frame_boundary_android_   = trace_settings.ignore_frame_boundary_android;
-    skip_threads_with_invalid_data_  = trace_settings.skip_threads_with_invalid_data;
+    // skip_threads_with_invalid_data_  = trace_settings.skip_threads_with_invalid_data;
 
     rv_annotation_info_.gpuva_mask      = trace_settings.rv_anotation_info.gpuva_mask;
     rv_annotation_info_.descriptor_mask = trace_settings.rv_anotation_info.descriptor_mask;

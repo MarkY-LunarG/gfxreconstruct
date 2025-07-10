@@ -285,7 +285,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrEnumerateEnvironmentBlendModes(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(instance)->EnumerateEnvironmentBlendModes(instance, systemId, viewConfigurationType, environmentBlendModeCapacityInput, environmentBlendModeCountOutput, environmentBlendModes);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrEnumerateEnvironmentBlendModes>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrEnumerateEnvironmentBlendModes);
@@ -323,7 +336,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrCreateSession(
 
     handle_unwrap_memory = manager->GetHandleUnwrapMemory();
     createInfo_unwrapped = openxr_wrappers::UnwrapStructPtrHandles(createInfo, handle_unwrap_memory);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(instance)->CreateSession(instance, createInfo_unwrapped, session);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     if (CustomCallResult<format::ApiCallId::ApiCall_xrCreateSession>::Succeeded (manager, result))
     {
@@ -357,7 +383,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrDestroySession(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->DestroySession(session);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginTrackedApiCallCapture(format::ApiCallId::ApiCall_xrDestroySession);
     if (encoder)
@@ -387,7 +425,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrEnumerateReferenceSpaces(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->EnumerateReferenceSpaces(session, spaceCapacityInput, spaceCountOutput, spaces);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrEnumerateReferenceSpaces>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrEnumerateReferenceSpaces);
@@ -418,7 +469,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrCreateReferenceSpace(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->CreateReferenceSpace(session, createInfo, space);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     if (CustomCallResult<format::ApiCallId::ApiCall_xrCreateReferenceSpace>::Succeeded (manager, result))
     {
@@ -456,7 +519,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrGetReferenceSpaceBoundsRect(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->GetReferenceSpaceBoundsRect(session, referenceSpaceType, bounds);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrGetReferenceSpaceBoundsRect>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrGetReferenceSpaceBoundsRect);
@@ -491,7 +567,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrCreateActionSpace(
 
     handle_unwrap_memory = manager->GetHandleUnwrapMemory();
     createInfo_unwrapped = openxr_wrappers::UnwrapStructPtrHandles(createInfo, handle_unwrap_memory);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->CreateActionSpace(session, createInfo_unwrapped, space);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     if (CustomCallResult<format::ApiCallId::ApiCall_xrCreateActionSpace>::Succeeded (manager, result))
     {
@@ -588,7 +677,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrEnumerateViewConfigurations(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(instance)->EnumerateViewConfigurations(instance, systemId, viewConfigurationTypeCapacityInput, viewConfigurationTypeCountOutput, viewConfigurationTypes);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrEnumerateViewConfigurations>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrEnumerateViewConfigurations);
@@ -621,7 +723,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrGetViewConfigurationProperties(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(instance)->GetViewConfigurationProperties(instance, systemId, viewConfigurationType, configurationProperties);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrGetViewConfigurationProperties>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrGetViewConfigurationProperties);
@@ -655,7 +770,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrEnumerateViewConfigurationViews(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(instance)->EnumerateViewConfigurationViews(instance, systemId, viewConfigurationType, viewCapacityInput, viewCountOutput, views);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrEnumerateViewConfigurationViews>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrEnumerateViewConfigurationViews);
@@ -689,7 +817,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrEnumerateSwapchainFormats(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->EnumerateSwapchainFormats(session, formatCapacityInput, formatCountOutput, formats);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrEnumerateSwapchainFormats>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrEnumerateSwapchainFormats);
@@ -720,7 +861,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrCreateSwapchain(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->CreateSwapchain(session, createInfo, swapchain);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     if (CustomCallResult<format::ApiCallId::ApiCall_xrCreateSwapchain>::Succeeded (manager, result))
     {
@@ -754,7 +907,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrDestroySwapchain(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(swapchain)->DestroySwapchain(swapchain);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginTrackedApiCallCapture(format::ApiCallId::ApiCall_xrDestroySwapchain);
     if (encoder)
@@ -784,7 +949,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrEnumerateSwapchainImages(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(swapchain)->EnumerateSwapchainImages(swapchain, imageCapacityInput, imageCountOutput, images);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrEnumerateSwapchainImages>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrEnumerateSwapchainImages);
@@ -815,7 +993,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrAcquireSwapchainImage(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(swapchain)->AcquireSwapchainImage(swapchain, acquireInfo, index);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrAcquireSwapchainImage>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrAcquireSwapchainImage);
@@ -842,7 +1033,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrWaitSwapchainImage(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(swapchain)->WaitSwapchainImage(swapchain, waitInfo);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrWaitSwapchainImage);
     if (encoder)
@@ -867,7 +1070,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrReleaseSwapchainImage(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(swapchain)->ReleaseSwapchainImage(swapchain, releaseInfo);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrReleaseSwapchainImage);
     if (encoder)
@@ -892,7 +1107,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrBeginSession(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->BeginSession(session, beginInfo);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrBeginSession);
     if (encoder)
@@ -916,7 +1143,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrEndSession(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->EndSession(session);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrEndSession);
     if (encoder)
@@ -939,7 +1178,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrRequestExitSession(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->RequestExitSession(session);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrRequestExitSession);
     if (encoder)
@@ -966,7 +1217,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrWaitFrame(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->WaitFrame(session, frameWaitInfo, frameState);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrWaitFrame>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrWaitFrame);
@@ -993,7 +1257,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrBeginFrame(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->BeginFrame(session, frameBeginInfo);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrBeginFrame);
     if (encoder)
@@ -1029,7 +1305,21 @@ XRAPI_ATTR XrResult XRAPI_CALL xrLocateViews(
 
     handle_unwrap_memory = manager->GetHandleUnwrapMemory();
     viewLocateInfo_unwrapped = openxr_wrappers::UnwrapStructPtrHandles(viewLocateInfo, handle_unwrap_memory);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(session)->LocateViews(session, viewLocateInfo_unwrapped, viewState, viewCapacityInput, viewCountOutput, views);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
+
     omit_output_data = !CustomCallResult<format::ApiCallId::ApiCall_xrLocateViews>::Succeeded (manager, result);
 
     auto encoder = manager->BeginApiCallCapture(format::ApiCallId::ApiCall_xrLocateViews);
@@ -1134,7 +1424,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrCreateActionSet(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(instance)->CreateActionSet(instance, createInfo, actionSet);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     if (CustomCallResult<format::ApiCallId::ApiCall_xrCreateActionSet>::Succeeded (manager, result))
     {
@@ -1168,7 +1470,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrDestroyActionSet(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(actionSet)->DestroyActionSet(actionSet);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginTrackedApiCallCapture(format::ApiCallId::ApiCall_xrDestroyActionSet);
     if (encoder)
@@ -1202,7 +1516,20 @@ XRAPI_ATTR XrResult XRAPI_CALL xrCreateAction(
 
     handle_unwrap_memory = manager->GetHandleUnwrapMemory();
     createInfo_unwrapped = openxr_wrappers::UnwrapStructPtrHandles(createInfo, handle_unwrap_memory);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(actionSet)->CreateAction(actionSet, createInfo_unwrapped, action);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     if (CustomCallResult<format::ApiCallId::ApiCall_xrCreateAction>::Succeeded (manager, result))
     {
@@ -1236,7 +1563,19 @@ XRAPI_ATTR XrResult XRAPI_CALL xrDestroyAction(
     GFXRECON_ASSERT(manager != nullptr);
     std::shared_lock<CommonCaptureManager::ApiCallMutexT> shared_api_call_lock = OpenXrCaptureManager::AcquireSharedApiCallLock();
 
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(true);
+    }
+
     XrResult result = openxr_wrappers::GetInstanceTable(action)->DestroyAction(action);
+
+    if (manager->GetSkipThreadsWithInvalidData())
+    {
+        util::ThreadData* thread_data = manager->GetThreadData();
+        thread_data->SetSkipCurrentThreadInFuture(false);
+    }
 
     auto encoder = manager->BeginTrackedApiCallCapture(format::ApiCallId::ApiCall_xrDestroyAction);
     if (encoder)
