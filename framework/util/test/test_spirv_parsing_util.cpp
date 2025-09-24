@@ -313,7 +313,7 @@ const uint32_t spirv_bda_push_constant_offset[] = {
 TEST_CASE("SpirVParsingUtil", "[buffer_references]")
 {
     // setting this to kDebugSeverity yields debug-output from parser
-    gfxrecon::util::Log::Init(gfxrecon::util::Log::kDebugSeverity);
+    gfxrecon::util::Log::Init(gfxrecon::util::LoggingSeverity::kInfo);
 
     gfxrecon::util::SpirVParsingUtil spirVParsingUtil;
 
@@ -343,7 +343,7 @@ TEST_CASE("SpirVParsingUtil", "[buffer_references]")
 TEST_CASE("SpirVParsingUtil_offsets", "[buffer_references_with_offset]")
 {
     // setting this to kDebugSeverity yields debug-output from parser
-    gfxrecon::util::Log::Init(gfxrecon::util::Log::kDebugSeverity);
+    gfxrecon::util::Log::Init(gfxrecon::util::LoggingSeverity::kDebug);
 
     gfxrecon::util::SpirVParsingUtil spirVParsingUtil;
 
