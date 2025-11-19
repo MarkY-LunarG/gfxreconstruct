@@ -1465,7 +1465,7 @@
                         {
                             "arg": "<submit-index,command-index,draw-call-index>",
                             "description":
-                                "The capture file will be examined, and <submit-index,command-index,draw-call-index> will be converted to <arg> as used in `--dump-resources` <arg> below. The converted args will be used as the args for dump resources."
+                                "The capture file will be examined, and <submit-index,command-index,draw-call-index> will be used to dump resources for the given submit, command and draw indices."
                         },
                         {
                             "arg": "<filename>.json",

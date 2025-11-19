@@ -42,6 +42,7 @@ schema_filename: str = SETTINGS_OPTIONS_DIR / "settings_schema.json"
 # Generated/Modified files
 layer_json_filename: str = GFXR_ROOT_DIR / "layer/json/VkLayer_gfxreconstruct.json.in"
 layer_settings_filename: str = GFXR_ROOT_DIR / "layer/vk_layer_settings.txt"
+generated_replay_settings_filename: str = GFXR_ROOT_DIR / "tools/replay/generated_replay_settings.h"
 generated_settings_struct_filename: str = GFXR_ROOT_DIR / "framework/util/generated_settings_struct.h"
 generated_settings_manager_filename: str = GFXR_ROOT_DIR / "framework/util/generated_settings_manager.cpp"
 
@@ -67,6 +68,8 @@ empty_ending_string = "\");\n"
 # during the codegen phanse
 capture_gen_begin_str = "<!-- CAPTURE_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->"
 capture_gen_end_str = "<!-- CAPTURE_SETTINGS_OPTIONS TABLE CODEGEN END -->"
+replay_gen_begin_str = "<!-- REPLAY_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->"
+replay_gen_end_str = "<!-- REPLAY_SETTINGS_OPTIONS TABLE CODEGEN END -->"
 
 generated_source_copyright = f"""
 /*
@@ -323,6 +326,73 @@ class ParsedSettingType():
             self.filter = None
 
 
+class CommandLineArgumentDesc():
+    """CommandLineArgumentDesc - Class to store the command-line argument description for
+       a setting read from the JSON file.
+
+    Members:
+        arg         - The command-line argument
+        description - A description of what the argument does.
+    """
+
+    def __init__(self, setting_arg_desc):
+        self.arg = setting_arg_desc["arg"]
+        self.description = setting_arg_desc["description"]
+
+
+class ParsedCommandLineType():
+    """ParsedCommandLineType - Class to store the command-line argument information for
+       a setting read from the JSON file.
+
+    Members:
+        has_command_line   - Boolean indicating if this setting has a command-line option
+        is_required        - Boolean indicating if this setting is required to be part of
+                             the command-line options
+        long               - The long string for enabling this setting from the command-line
+                             (defaults to key with underscores (_) replaced with dashes (-)
+        short              - The short string for enabling this setting from the command-line
+        argument_label     - If this is an argument, not an option, what should we label the
+                             argument in documentation/usage outputs.
+        argument_desc      - A list of arguments and description strings used to describe
+                             various options regarding this setting.
+    """
+
+    def __init__(self, key_name, setting_command_line_object, tool_list):
+        self.has_command_line = False
+        self.is_required = False
+        self.long = ""
+        self.short = ""
+        self.argument_label = ""
+        self.argument_desc: list[CommandLineArgumentDesc] = []
+        if setting_command_line_object is not None:
+            self.has_command_line = True
+            if "long" in setting_command_line_object:
+                self.long = "--" + setting_command_line_object["long"]
+            else:
+                # Replay underscores with dashes
+                self.long = "--" + key_name.replace('_', '-')
+            if "short" in setting_command_line_object:
+                if len(setting_command_line_object["short"]) > 1:
+                    self.short = "--" + setting_command_line_object["short"]
+                else:
+                    self.short = "-" + setting_command_line_object["short"]
+            if "argument-label" in setting_command_line_object:
+                self.argument_label = setting_command_line_object[
+                    "argument-label"]
+            if 'argument-description-array' in setting_command_line_object:
+                for arg_desc in setting_command_line_object[
+                        "argument-description-array"]:
+                    self.argument_desc.append(
+                        CommandLineArgumentDesc(arg_desc))
+        if tool_list is not None:
+            for tool in tool_list:
+                if tool != "CAPTURE":
+                    # Must be a command line so generate it
+                    self.has_command_line = True
+                    # Replay underscores with dashes
+                    self.long = "--" + key_name.replace('_', '-')
+
+
 class ParsedSetting():
     """ParsedSetting - Class to store the settings we read from the JSON file.
 
@@ -403,6 +473,12 @@ class ParsedSetting():
             self.parent = ParsedDependency(setting_input_json["parent"])
         else:
             self.parent = None
+        if "command-line" in setting_input_json:
+            self.command_line = ParsedCommandLineType(
+                self.key, setting_input_json["command-line"], None)
+        else:
+            self.command_line = ParsedCommandLineType(self.key, None,
+                                                      self.tools)
 
         self.dependencies: list[ParsedDependency] = []
         if "additional_dependencies" in setting_input_json:
@@ -658,7 +734,8 @@ class ParsedSetting():
 
         # If this is an enum, list each parameter in the usage and it's description
         if self.type.primitive_type == "ENUM":
-            usage_info.append("May be the following:")
+            usage_info.append(
+                f"{self.command_line.argument_label} may be the following:")
 
             flag_indent = "   "
             flag_dev_cont_indent = continue_indent
@@ -670,7 +747,7 @@ class ParsedSetting():
                     output_desc += "<li>"
 
                 if len(flag.key) > 0:
-                    output_desc += flag.key.lower() + " "
+                    output_desc += "`" + flag.key.lower() + "` "
                 else:
                     output_desc += "\"\" "
 
@@ -681,7 +758,7 @@ class ParsedSetting():
                                             1) * " "
 
                     if is_html_out:
-                        output_desc += " - "
+                        output_desc += " : "
 
                     desc_words = flag.description.split(' ')
                     for word in desc_words:
@@ -702,7 +779,88 @@ class ParsedSetting():
             if is_html_out:
                 usage_info.append("</ul>")
 
+        # If this is a multi-line argument descriptor with multiple options,
+        # list each option in the usage and it's description
+        if len(self.command_line.argument_desc) > 0:
+            usage_info.append(
+                f"{self.command_line.argument_label} may be the following:")
+
+            arg_indent = "   "
+            arg_dev_cont_indent = continue_indent
+            if is_html_out:
+                usage_info.append("<ul>")
+            for cl_arg_desc in self.command_line.argument_desc:
+                output_desc = arg_indent
+
+                if is_html_out:
+                    output_desc += "<li>"
+
+                arg = cl_arg_desc.arg
+                if is_html_out:
+                    arg = "`" + cl_arg_desc.arg + "`"
+                output_desc += arg + " "
+                if len(cl_arg_desc.description) > 0:
+                    if len(output_desc) < continue_len:
+                        if is_html_out:
+                            output_desc += (continue_len - len(output_desc) -
+                                            1) * " "
+
+                    if is_html_out:
+                        output_desc += " : "
+
+                    description = cl_arg_desc.description
+                    if is_html_out:
+                        description = self.FixHtmlTagsInString(
+                            cl_arg_desc.description)
+
+                    desc_words = description.split(' ')
+                    for index, word in enumerate(desc_words):
+                        add_word = ''
+                        if index > 0:
+                            add_word = ' '
+                        add_word += word
+                        if len(output_desc + add_word) < max_column_width:
+                            output_desc += add_word
+                        else:
+                            usage_info.append(output_desc)
+                            output_desc = arg_dev_cont_indent + add_word
+
+                if len(output_desc) > continue_len:
+                    usage_info.append(output_desc)
+
+                if is_html_out:
+                    usage_info.append("</li>")
+
+            if is_html_out:
+                usage_info.append("</ul>")
+
         return usage_info
+
+    # Generate the replay tool usage information into a Markdown format
+    # for Android
+    # Parameters:
+    #   None
+    # Returns:
+    #   markdown_setting_table_entry : List of strings necessary to
+    #                                  write the setting information to
+    #                                  a replay usage markdown table.
+    def GenerateAndroidReplayUsageSettingsEntry(self):
+        markdown_setting_table_entry = []
+        if ((self.tools is None or "REPLAY" in self.tools)
+                and (self.type.primitive_type != "GROUP")
+                and (self.command_line.has_command_line)
+                and ("ALL" in self.platforms or "ANDROID" in self.platforms)
+                and ("ALL" in self.apis or "VULKAN" in self.apis)):
+
+            options = self.GenerateCommandLineOptions(False, True)
+            default_label, default_value = self.GetDefaultLabelAndValue(True)
+            full_description = ' '.join(
+                self.GenerateFullUsageDescription(30, " ", True))
+            required_string = 'Required' if self.command_line.is_required else 'Optional'
+            table_string = f"| {options} | {required_string} | {full_description} | {default_label} | {','.join(self.apis)} |"
+
+            markdown_setting_table_entry.append(table_string)
+        return markdown_setting_table_entry
 
     # Generate the capture library usage information into a Markdown format
     # for the appropriate api (specified in the "api" parameter)
@@ -730,6 +888,217 @@ class ParsedSetting():
 
             markdown_setting_table_entry.append(table_string)
         return markdown_setting_table_entry
+
+    # Generate the replay tool usage information into a Markdown format
+    # for the appropriate api (specified in the "api" parameter)
+    # Parameters:
+    #   api : API desired to filter by
+    # Returns:
+    #   markdown_setting_table_entry : List of strings necessary to
+    #                                  write the setting information to
+    #                                  a replay usage markdown table.
+    def GenerateDesktopReplayUsageSettingsEntry(self, api: str):
+        markdown_setting_table_entry = []
+        if ((self.tools is None or "REPLAY" in self.tools)
+                and (self.type.primitive_type != "GROUP")
+                and ("ALL" in self.apis or api in self.apis)
+                and (self.command_line.has_command_line) and
+            ("ALL" in self.platforms or "MACOS" in self.platforms
+             or "LINUX" in self.platforms or "WINDOWS" in self.platforms)
+                and ("ALL" in self.apis or api in self.apis)):
+
+            options = self.GenerateCommandLineOptions(False, True)
+            default_label, default_value = self.GetDefaultLabelAndValue(True)
+            full_description = ' '.join(
+                self.GenerateFullUsageDescription(30, " ", True))
+            required_string = 'Required' if self.command_line.is_required else 'Optional'
+            table_string = f"| {options} | {required_string} | {full_description} | {default_label} | {','.join(self.apis)} |"
+
+            markdown_setting_table_entry.append(table_string)
+        return markdown_setting_table_entry
+
+    # Generate the command-line option for this setting.
+    # Parameters:
+    #  add_bracket : If this is a usage output for the command-line, we typically
+    #                list all valid parameters at the start with each optional
+    #                option in brackets "[]".
+    #                Other uses, though, do not want these brackets around the
+    #                command-line option.
+    #  is_html :     Indicates this is being output to a Markdown/HTML file
+    # Returns:
+    #   command_line_output : a string containing the command-line option info
+    def GenerateCommandLineOptions(self, add_bracket: bool, is_html: bool):
+        command_line_output = ""
+        if self.type.primitive_type != "GROUP" and self.command_line.has_command_line:
+            cl_prefix = ""
+            cl_postfix = ""
+            if (not self.command_line.is_required) and add_bracket:
+                cl_prefix += "["
+                cl_postfix += "]"
+
+            command_line_output = cl_prefix
+            if self.command_line.short:
+                command_line_output += self.command_line.short
+                if self.command_line.long:
+                    if is_html:
+                        command_line_output += "\\"
+                    command_line_output += "|"
+            if self.command_line.long:
+                command_line_output += self.command_line.long
+            if self.type.primitive_type != "BOOL":
+                argument_label = self.command_line.argument_label
+                if is_html:
+                    argument_label = self.FixHtmlTagsInString(
+                        self.command_line.argument_label)
+                command_line_output += ' ' + argument_label
+            command_line_output += cl_postfix
+
+        return command_line_output
+
+    # If a setting has a single-character command-line option, check for that.
+    # It can be done much quicker than a multi-character check so it's broken
+    # out from that on purpose.
+    # Parameters:
+    #   None
+    # Returns:
+    #   settings_command_line_options : List of strings to handle checking
+    #                                   and setting a tool setting via the
+    #                                   command-line using a "short" command-line
+    #                                   option
+    def GenerateToolShortArgCommandLineCheck(self, tool: str):
+        settings_command_line_options = []
+
+        if self.type.primitive_type != "GROUP" and self.command_line.has_command_line:
+            if len(self.command_line.short) > 2 or len(
+                    self.command_line.short) == 0:
+                return []
+            short_command = self.command_line.short[1:]
+
+            indent = "                "
+            settings_command_line_options.append(
+                indent + f"case (\'{short_command}\'):")
+            indent += "    "
+            tool_prefix = f"settings_struct_.{tool.lower()}_settings.{self.key} = "
+
+            if_string, new_indent = GenerateApiIfCheck(self.apis)
+            if len(if_string) > 0:
+                settings_command_line_options.append(if_string)
+                settings_command_line_options.append(indent + "{")
+                indent += new_indent
+
+            if self.type.primitive_type == "BOOL":
+                settings_command_line_options.append(indent +
+                                                     f"{tool_prefix}true;")
+            else:
+                settings_command_line_options.append(
+                    indent +
+                    f"if (HasArgumentParameter(command_line_args, cur_arg))")
+                settings_command_line_options.append(indent + "{")
+                if self.type.primitive_type == "INT":
+                    settings_command_line_options.append(
+                        indent +
+                        f"    {tool_prefix}atoi(command_line_args[++cur_arg].c_str());"
+                    )
+                elif self.type.primitive_type == "FLOAT":
+                    settings_command_line_options.append(
+                        indent +
+                        f"    {tool_prefix}static_cast<float>(atof(command_line_args[++cur_arg].c_str()));"
+                    )
+                else:
+                    settings_command_line_options.append(
+                        indent +
+                        f"    {tool_prefix}command_line_args[++cur_arg];")
+                settings_command_line_options.append(indent + "}")
+                settings_command_line_options.append(indent + "else")
+                settings_command_line_options.append(indent + "{")
+                settings_command_line_options.append(indent +
+                                                     "    valid_arg = false;")
+                settings_command_line_options.append(
+                    indent +
+                    f"    GFXRECON_LOG_ERROR(\"Command-line argument '{short_command}' missing expected argument\");"
+                )
+                settings_command_line_options.append(indent + "}")
+            if len(self.apis) > 1 or "ALL" not in self.apis:
+                indent = indent[4:]
+                settings_command_line_options.append(indent + "}")
+            settings_command_line_options.append(indent + f"break;")
+
+        return settings_command_line_options
+
+    # Check for a command-line argument that is more than one character long for this
+    # setting.  This may include the "short-argument" option as well if that option is
+    # longer than a single character.
+    # Parameters:
+    #  add_indent : Add the provided indent before the check (necessary if this
+    #               statement is indented for a platform/API-specific parent section)
+    # Returns:
+    #   settings_command_line_options : List of strings containing the settings
+    #                                   command-line option C code
+    def GenerateToolLongArgCommandLineCheck(self, tool: str):
+        settings_command_line_options = []
+
+        if self.type.primitive_type != "GROUP" and self.command_line.has_command_line:
+
+            indent = "            "
+            arguments = ""
+            if_string = indent + f"if ("
+            if len(self.command_line.short) > 2:
+                arguments += self.command_line.short[2:]
+                if_string += f"arg_opt == \"{self.command_line.short[2:]}\""
+            if len(self.command_line.long) > 2:
+                if len(self.command_line.short) > 2:
+                    if_string += " || "
+                if_string += f"arg_opt == \"{self.command_line.long[2:]}\""
+                if len(arguments) > 0:
+                    arguments += "|"
+                arguments += self.command_line.long[2:]
+            if_string += ")"
+            settings_command_line_options.append(if_string)
+            settings_command_line_options.append(indent + "{")
+
+            indent += "    "
+            tool_prefix = f"settings_struct_.{tool.lower()}_settings.{self.key} = "
+            if self.type.primitive_type == "BOOL":
+                settings_command_line_options.append(indent + tool_prefix +
+                                                     "true;")
+                settings_command_line_options.append(indent +
+                                                     "goto early_out;")
+            else:
+                settings_command_line_options.append(
+                    indent +
+                    f"if (HasArgumentParameter(command_line_args, cur_arg))")
+                settings_command_line_options.append(indent + "{")
+                if self.type.primitive_type == "INT":
+                    settings_command_line_options.append(
+                        indent +
+                        f"    {tool_prefix}atoi(command_line_args[++cur_arg].c_str());"
+                    )
+                elif self.type.primitive_type == "FLOAT":
+                    settings_command_line_options.append(
+                        indent +
+                        f"    {tool_prefix}static_cast<float>(atof(command_line_args[++cur_arg].c_str()));"
+                    )
+                else:
+                    settings_command_line_options.append(
+                        indent +
+                        f"    {tool_prefix}command_line_args[++cur_arg];")
+                settings_command_line_options.append(indent + "}")
+                settings_command_line_options.append(indent + "else")
+                settings_command_line_options.append(indent + "{")
+                settings_command_line_options.append(indent +
+                                                     "    valid_arg = false;")
+                settings_command_line_options.append(
+                    indent +
+                    f"    GFXRECON_LOG_ERROR(\"Command-line argument \\\"{arguments}\\\" missing expected argument\");"
+                )
+                settings_command_line_options.append(indent + "}")
+
+                settings_command_line_options.append(indent +
+                                                     "goto early_out;")
+            indent = indent[4:]
+            settings_command_line_options.append(indent + "}")
+
+        return settings_command_line_options
 
     # Generate the settings structure containing all of the settings.
     # Parameters:
@@ -1331,14 +1700,15 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
         setting_manager_source.write("}\n\n")
 
 
-# Update a USAGE_android.md options/settings table for the
-# capture library with the latest settings info.
+# Update a USAGE_android.md options/settings tables for the
+# capture library and replay tool with the latest settings info.
 #   parsed_settings : The dictionary of all settings parsed from the
 #                     JSON file.
 def UpdateAndroidUsageSettingsTable(parsed_settings):
     print(f"Updating (GFXReconstruct)/USAGE_android.md")
 
     capture_markdown_table_lines = []
+    replay_markdown_table_lines = []
 
     capture_markdown_table_lines.append(capture_gen_begin_str)
     capture_markdown_table_lines.append(
@@ -1352,6 +1722,20 @@ def UpdateAndroidUsageSettingsTable(parsed_settings):
 
     capture_markdown_table_lines.append(capture_gen_end_str)
 
+    replay_markdown_table_lines.append(replay_gen_begin_str)
+    replay_markdown_table_lines.append(
+        "| Command-Line Argument | Required | Description | Default | Valid for APIs |"
+    )
+    replay_markdown_table_lines.append(
+        "| --------------------- | -------- | ----------- | ------- | -------------- |"
+    )
+
+    for key, parsed_setting in parsed_settings.items():
+        replay_markdown_table_lines.extend(
+            parsed_setting.GenerateAndroidReplayUsageSettingsEntry())
+
+    replay_markdown_table_lines.append(replay_gen_end_str)
+
     # Now, read the current capture settings source file and replace the old
     # settings information with the new settings
     markdown_lines = []
@@ -1359,7 +1743,8 @@ def UpdateAndroidUsageSettingsTable(parsed_settings):
         record_lines = True
         while line := markdown_doc.readline():
             stripped_line = line.rstrip()
-            if record_lines and stripped_line == capture_gen_begin_str:
+            if record_lines and (stripped_line == capture_gen_begin_str
+                                 or stripped_line == replay_gen_begin_str):
                 record_lines = False
 
             if record_lines:
@@ -1368,13 +1753,16 @@ def UpdateAndroidUsageSettingsTable(parsed_settings):
                 if stripped_line == capture_gen_end_str:
                     markdown_lines.extend(capture_markdown_table_lines)
                     record_lines = True
+                elif stripped_line == replay_gen_end_str:
+                    markdown_lines.extend(replay_markdown_table_lines)
+                    record_lines = True
 
     with open(android_usage_doc_filename, 'w') as markdown_doc:
         markdown_doc.write('\n'.join(markdown_lines))
 
 
 # Update a desktop USAGE.md options/settings tables for the
-# capture library with the latest settings info.
+# capture library and replay tool with the latest settings info.
 #   parsed_settings : The dictionary of all settings parsed from the
 #                     JSON file.
 #   api             : The current API who's info we need to output
@@ -1386,6 +1774,7 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
     print(f"Updating {source_file}")
 
     capture_markdown_table_lines = []
+    replay_markdown_table_lines = []
 
     capture_markdown_table_lines.append(capture_gen_begin_str)
     capture_markdown_table_lines.append(
@@ -1400,6 +1789,20 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
 
     capture_markdown_table_lines.append(capture_gen_end_str)
 
+    replay_markdown_table_lines.append(replay_gen_begin_str)
+    replay_markdown_table_lines.append(
+        "| Command-Line Argument | Required | Description | Default | Valid for APIs |"
+    )
+    replay_markdown_table_lines.append(
+        "| --------------------- | -------- | ----------- | ------- | -------------- |"
+    )
+
+    for key, parsed_setting in parsed_settings.items():
+        replay_markdown_table_lines.extend(
+            parsed_setting.GenerateDesktopReplayUsageSettingsEntry(api))
+
+    replay_markdown_table_lines.append(replay_gen_end_str)
+
     # Now, read the current capture settings source file and replace the old
     # settings information with the new settings
     markdown_lines = []
@@ -1407,7 +1810,8 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
         record_lines = True
         while line := markdown_doc.readline():
             stripped_line = line.rstrip()
-            if record_lines and stripped_line == capture_gen_begin_str:
+            if record_lines and (stripped_line == capture_gen_begin_str
+                                 or stripped_line == replay_gen_begin_str):
                 record_lines = False
 
             if record_lines:
@@ -1415,6 +1819,9 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
             else:
                 if stripped_line == capture_gen_end_str:
                     markdown_lines.extend(capture_markdown_table_lines)
+                    record_lines = True
+                elif stripped_line == replay_gen_end_str:
+                    markdown_lines.extend(replay_markdown_table_lines)
                     record_lines = True
 
     with open(source_file, 'w') as markdown_doc:
