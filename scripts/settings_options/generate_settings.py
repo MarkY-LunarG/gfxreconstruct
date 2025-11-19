@@ -1391,6 +1391,312 @@ def GenerateToolIfCheck(tool_list, indent: int = 1):
     return if_string
 
 
+# Utility function used to output the options listing that appears at
+# the start of a usage output for the given dictionary of parsed_settings.
+# Parameters:
+#   settings_list     : The dictionary of all settings parsed from the
+#                       JSON file.
+#   cur_usage_string  : the string to use when starting a new usage string.
+#                       NOTE: After outputting this string once, it may be
+#                             replaced by the standard empty_usage_string.
+#   cur_ending_string : the string to use when ending a new usage string.
+#                       NOTE: After outputting this string once, it may be
+#                             replaced by the standard empty_ending_string.
+# Returns:
+#   file_strings      : List of strings to write to the file
+#   cur_usage_string  : Updated value of which start usage string to use
+#   cur_ending_string : Updated value of which ending usage string to use
+def CreateUsageFileOptionsListing(settings_list, cur_usage_string: str,
+                                  cur_ending_string: str):
+    file_strings = []
+    usage_string = cur_usage_string
+    ending_string = cur_ending_string
+
+    for setting in settings_list:
+        command_line_opt = setting.GenerateCommandLineOptions(True, False)
+        if len(command_line_opt) == 0:
+            continue
+        elif len(usage_string) + len(command_line_opt) <= 110:
+            usage_string += command_line_opt + " "
+        else:
+            file_strings.append(usage_string.rstrip() + ending_string)
+            ending_string = empty_ending_string
+            usage_string = empty_usage_string
+
+    return file_strings, usage_string, ending_string
+
+
+# Utility function used to output the option descriptions for the usage
+# output for the given dictionary of parsed_settings.
+# Parameters:
+#   settings_list              : The dictionary of all settings parsed from the
+#                                JSON file.
+#   print_api_specific_section : Indicates that if we have a non-zero length
+#                                amount of data for the current settings_list,
+#                                that we should start a new API-specific
+#                                commented section
+#   api                        : the name of the current API to restrict to.
+# Returns:
+#   file_strings               : List of strings to write to the file
+#   print_api_specific_section : Updated value of whether or not to output
+#                                the API-specific comment
+def CreateUsageFileOptionsDescription(settings_list,
+                                      print_api_specific_section: bool,
+                                      api: str):
+    file_strings = []
+
+    if len(settings_list) > 0 and print_api_specific_section:
+        api_name = GetReadableApiString(api)
+        file_strings.append(
+            f"    GFXRECON_WRITE_CONSOLE(\"**{api_name}-Specific arguments:\");\n"
+        )
+        print_api_specific_section = False
+
+    for setting in settings_list:
+        command_line_opt = setting.GenerateCommandLineOptions(False, False)
+        if (setting.type.primitive_type == "GROUP"
+                or not setting.command_line.has_command_line
+                or len(command_line_opt) == 0):
+            continue
+        file_strings.append(description_start_string + command_line_opt +
+                            empty_ending_string)
+
+        usage_info = []
+        max_column_width = 60
+        continue_indent = " " * 15
+        usage_info.extend(
+            setting.GenerateFullUsageDescription(max_column_width,
+                                                 continue_indent))
+
+        for info in usage_info:
+            file_strings.append(description_continue_string + info +
+                                empty_ending_string)
+    return file_strings, print_api_specific_section
+
+
+# Utility function used to print out the settings information for a
+# dictionary of settings.  This function is typically used to output
+# required and optional items in the same way, just in separate passes.
+# Parameters:
+#   settings_list         : The dictionary of all settings parsed from the
+#                           JSON file.
+#   required_optional_str : The string to use when searching the dictionary.
+#                           It will be either "required" or "optional"
+#   replay_settings_header_file : The file to write content to
+# Returns:
+#   None
+def PrintUsageFileOptionDescriptions(settings_options,
+                                     required_optional_str: str,
+                                     replay_settings_header_file):
+
+    file_strings, first = CreateUsageFileOptionsDescription(
+        settings_options["ALL"]["ALL"][required_optional_str], False, "")
+    if len(file_strings) > 0:
+        replay_settings_header_file.write(''.join(file_strings))
+
+    for platform in settings_platforms:
+        if platform == "ALL" or len(
+                settings_options[platform]["ALL"][required_optional_str]) == 0:
+            continue
+
+        ifdef_begin, ifdef_end = GeneratePlatformIfdef([platform])
+        if len(ifdef_begin) > 0:
+            replay_settings_header_file.write(ifdef_begin + "\n")
+
+        file_strings, first = CreateUsageFileOptionsDescription(
+            settings_options[platform]["ALL"][required_optional_str], False,
+            "")
+        if len(file_strings) > 0:
+            replay_settings_header_file.write(''.join(file_strings))
+
+        if len(ifdef_end) > 0:
+            replay_settings_header_file.write(ifdef_end + "\n")
+
+    for api in settings_apis:
+        if api == "ALL":
+            continue
+
+        first = True
+        file_strings, first = CreateUsageFileOptionsDescription(
+            settings_options["ALL"][api][required_optional_str], first, api)
+        if len(file_strings) > 0:
+            replay_settings_header_file.write(''.join(file_strings))
+
+        for platform in settings_platforms:
+            if platform == "ALL" or len(settings_options[platform][api]
+                                        [required_optional_str]) == 0:
+                continue
+
+            ifdef_begin, ifdef_end = GeneratePlatformIfdef([platform])
+            if len(ifdef_begin) > 0:
+                replay_settings_header_file.write(ifdef_begin + "\n")
+
+            file_strings, first = CreateUsageFileOptionsDescription(
+                settings_options[platform][api][required_optional_str], first,
+                api)
+            if len(file_strings) > 0:
+                replay_settings_header_file.write(''.join(file_strings))
+
+            if len(ifdef_end) > 0:
+                replay_settings_header_file.write(ifdef_end + "\n")
+
+
+# Generate the usage information stored in the generated_replay_settings.h
+# header that is output when necessary by the replay tool.
+# Parameters:
+#   parsed_settings :    The dictionary of all settings parsed from the
+#                        JSON file.
+#   settings_apis :      The list of all possible APIs that were
+#                        discovered when from the parsed JSON settings
+#                        this is a convenience so we know ahead of time
+#                        how many groups to create and search for)
+#   settings_platforms : The list of all possible platforms that were
+#                        discovered when from the parsed JSON settings
+#                        this is a convenience so we know ahead of time
+#                        how many platforms to create and search for)
+# Returns:
+#   None
+def GenerateReplaySettingsHeader(parsed_settings, settings_apis,
+                                 settings_platforms):
+    print(
+        f"Generating {generated_replay_settings_filename}"
+    )
+
+    # Determine how many different lists we need to track individual
+    # settings organizing based on platform and api
+    settings_options = OrderedDict()
+    for platform in settings_platforms:
+        settings_options[platform] = OrderedDict()
+        for api in settings_apis:
+            settings_options[platform][api] = OrderedDict()
+
+            settings_options[platform][api]["required"] = []
+            settings_options[platform][api]["optional"] = []
+
+    # Split the settings into groups based on the supported platforms, apis, and if they're required or optional
+    for key, parsed_setting in parsed_settings.items():
+        if parsed_setting.command_line is None:
+            continue
+
+        for tool in parsed_setting.tools:
+            # No real command-line for capture
+            if tool != "REPLAY":
+                continue
+
+            # For command-line listings, we first break up per platform
+            for platform in parsed_setting.platforms:
+                # For command-line listings, we break up per API
+                for api in parsed_setting.apis:
+                    if parsed_setting.command_line.is_required:
+                        settings_options[platform][api]["required"].append(
+                            parsed_setting)
+                    else:
+                        settings_options[platform][api]["optional"].append(
+                            parsed_setting)
+
+    with open(generated_replay_settings_filename,
+              'w') as replay_settings_header:
+        replay_settings_header.write(generated_source_copyright)
+        replay_settings_header.write("\n#include \"../tool_settings.h\"\n\n")
+
+        replay_settings_header.write("#ifndef GFXRECON_REPLAY_SETTINGS_H\n")
+        replay_settings_header.write("#define GFXRECON_REPLAY_SETTINGS_H\n\n")
+
+        replay_settings_header.write(
+            "static void PrintUsage(const char* exe_name)\n")
+        replay_settings_header.write("{\n")
+        replay_settings_header.write(
+            "    std::string app_name     = exe_name;\n")
+        replay_settings_header.write(
+            "    size_t      dir_location = app_name.find_last_of(\"/\\\\\");\n"
+        )
+        replay_settings_header.write("\n")
+        replay_settings_header.write("    if (dir_location >= 0)\n")
+        replay_settings_header.write("    {\n")
+        replay_settings_header.write(
+            "        app_name.replace(0, dir_location + 1, \"\");\n")
+        replay_settings_header.write("    }\n")
+        replay_settings_header.write("\n")
+        replay_settings_header.write(
+            "    GFXRECON_WRITE_CONSOLE(\"\\n%s - A tool to replay GFXReconstruct capture files.\\n\", app_name.c_str());\n"
+        )
+        replay_settings_header.write(
+            "    GFXRECON_WRITE_CONSOLE(\"Usage:\");\n")
+
+        # Print settings valid for all platforms first
+        file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
+            settings_options["ALL"]["ALL"]["required"], app_name_usage_string,
+            app_name_ending_string)
+        replay_settings_header.write(''.join(file_strings))
+        file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
+            settings_options["ALL"]["ALL"]["optional"], current_usage,
+            current_ending)
+        replay_settings_header.write(''.join(file_strings))
+
+        for api in settings_apis:
+            file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
+                settings_options["ALL"][api]["required"], current_usage,
+                current_ending)
+            replay_settings_header.write(''.join(file_strings))
+            file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
+                settings_options["ALL"][api]["optional"], current_usage,
+                current_ending)
+            replay_settings_header.write(''.join(file_strings))
+
+        # Print the remainder
+        if len(current_usage) > len(empty_usage_string):
+            replay_settings_header.write(current_usage + empty_ending_string)
+
+        # Print settings valid for a particular platform, but all APIs first
+        for platform in parsed_setting.platforms:
+            if platform == "ALL":
+                continue
+
+            begin_ifdef, end_ifdef = GeneratePlatformIfdef([platform])
+            if len(begin_ifdef) > 0:
+                replay_settings_header.append(begin_ifdef)
+
+            for api in settings_apis:
+                file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
+                    settings_options[platform][api]["required"], current_usage,
+                    current_ending)
+                replay_settings_header.write(''.join(file_strings))
+                file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
+                    settings_options[platform][api]["optional"], current_usage,
+                    current_ending)
+                replay_settings_header.write(''.join(file_strings))
+
+            # Print the remainder
+            if len(current_usage) > len(empty_usage_string):
+                replay_settings_header.write(current_usage +
+                                             empty_ending_string)
+
+            if len(end_ifdef) > 0:
+                replay_settings_header.append(end_ifdef)
+
+        replay_settings_header.write(
+            "    GFXRECON_WRITE_CONSOLE(\"\\t\\t\\t<file>\");\n")
+        replay_settings_header.write(
+            "    GFXRECON_WRITE_CONSOLE(\"Required arguments:\");\n")
+        replay_settings_header.write(
+            "    GFXRECON_WRITE_CONSOLE(\"   <file>\\t\\tPath to the capture file to replay.\");\n"
+        )
+
+        PrintUsageFileOptionDescriptions(settings_options, "required",
+                                         replay_settings_header)
+
+        replay_settings_header.write(
+            "    GFXRECON_WRITE_CONSOLE(\"Optional arguments:\");\n")
+
+        PrintUsageFileOptionDescriptions(settings_options, "optional",
+                                         replay_settings_header)
+
+        replay_settings_header.write("}\n")
+        replay_settings_header.write("#endif // GFXRECON_REPLAY_SETTINGS_H\n")
+
+    return
+
+
 # Generate the settings structure containing all settings.
 # Parameters:
 #   parsed_settings :    The dictionary of all settings parsed from the
@@ -1867,6 +2173,9 @@ if __name__ == "__main__":
     # Vulkan layer manifest file and layer settings generation
     UpdateVulkanLayerManifestInputFile(parsed_settings)
     GenerateVulkanLayerSettingsFile(parsed_settings)
+
+    GenerateReplaySettingsHeader(parsed_settings, settings_apis,
+                                 settings_platforms)
 
     # Update documentation
     UpdateAndroidUsageSettingsTable(parsed_settings)
