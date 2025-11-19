@@ -24,7 +24,7 @@
 
 #include "decode/vulkan_replay_dump_resources_options.h"
 #include "decode/vulkan_replay_options.h"
-#include "replay_settings.h"
+#include "generated_replay_settings.h"
 #include "util/json_util.h"
 #include "util/logging.h"
 #include "decode/vulkan_pre_process_consumer.h"

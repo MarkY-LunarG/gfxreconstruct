@@ -209,7 +209,7 @@ int main(int argc, const char** argv)
 
     gfxrecon::util::ArgumentParser arg_parser(argc, argv, kOptions, kArguments);
 
-    if (CheckOptionPrintUsage(argv[0], arg_parser) || CheckOptionPrintVersion(argv[0], arg_parser))
+    if (CheckOptionPrintUsage(argv[0], arg_parser, PrintUsage) || CheckOptionPrintVersion(argv[0], arg_parser))
     {
         gfxrecon::util::Log::Release();
         exit(0);

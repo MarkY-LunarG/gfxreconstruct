@@ -21,7 +21,8 @@
 ** DEALINGS IN THE SOFTWARE.
 */
 
-#include "replay_settings.h"
+#include "generated_replay_settings.h"
+#include "tools/tool_settings.h"
 
 #include "application/android_context.h"
 #include "application/android_window.h"
@@ -68,8 +69,8 @@ const char kLayerProperty[]      = "debug.vulkan.layers";
 
 const int32_t kSwipeDistance = 200;
 
-void        ProcessAppCmd(struct android_app* app, int32_t cmd);
-int32_t     ProcessInputEvent(struct android_app* app, AInputEvent* event);
+void    ProcessAppCmd(struct android_app* app, int32_t cmd);
+int32_t ProcessInputEvent(struct android_app* app, AInputEvent* event);
 
 static std::unique_ptr<gfxrecon::decode::FileProcessor> file_processor;
 
@@ -102,25 +103,36 @@ extern "C"
 
 void android_main(struct android_app* app)
 {
-    gfxrecon::util::Log::Init();
+    // Create the tool settings using a smart pointer so it is automatically cleaned up on exit
+    std::unique_ptr<gfxrecon::tools::ToolSettings> tool_settings =
+        std::make_unique<gfxrecon::tools::ToolSettings>(gfxrecon::util::settings::kGfxrToolType_Replay_Tool);
+
     GFXRECON_WRITE_CONSOLE("====== Entering android_main");
 
     // Keep screen on while window is active.
     ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
 
-    std::string                    args = gfxrecon::util::GetIntentExtra(app, kArgsExtentKey);
-    gfxrecon::util::ArgumentParser arg_parser(false, args.c_str(), kOptions, kArguments);
+    std::string args = gfxrecon::util::GetIntentExtra(app, kArgsExtentKey);
+
+    std::vector<std::string>        extra_args;
+    gfxrecon::tools::CmdLineRetType ret_type = tool_settings->ProcessCommandLine(args, 1, extra_args);
 
     app->onAppCmd     = ProcessAppCmd;
     app->onInputEvent = ProcessInputEvent;
 
     bool run = true;
 
-    if (CheckOptionPrintUsage(kApplicationName, arg_parser) || CheckOptionPrintVersion(kApplicationName, arg_parser))
+    if (ret_type == gfxrecon::tools::CmdLineRetType_PrintUsage)
     {
+        PrintUsage(kApplicationName);
         run = false;
     }
-    else if (arg_parser.IsInvalid() || (arg_parser.GetPositionalArgumentsCount() > 1))
+    if (ret_type == gfxrecon::tools::CmdLineRetType_PrintVersion)
+    {
+        gfxrecon::tools::PrintVersion(kApplicationName);
+        run = false;
+    }
+    else if (ret_type == gfxrecon::tools::CmdLineRetType_Error)
     {
         PrintUsage(kApplicationName);
         run = false;
@@ -128,22 +140,11 @@ void android_main(struct android_app* app)
 
     if (run)
     {
-        // Update logging with values retrieved from command line arguments
-        gfxrecon::util::Log::Settings log_settings;
-        GetLogSettings(arg_parser, log_settings);
-        gfxrecon::util::Log::UpdateWithSettings(log_settings);
-
-        std::string filename = kDefaultCaptureFile;
-
-        if (arg_parser.GetPositionalArgumentsCount() == 1)
-        {
-            const std::vector<std::string>& positional_arguments = arg_parser.GetPositionalArguments();
-            filename                                             = positional_arguments[0];
-        }
+        std::string filename = extra_args[0];
 
         try
         {
-            file_processor = arg_parser.IsOptionSet(kPreloadMeasurementRangeOption)
+            file_processor = tool_settings->IsPreloadEnabled()
                                  ? std::make_unique<gfxrecon::decode::PreloadFileProcessor>()
                                  : std::make_unique<gfxrecon::decode::FileProcessor>();
 
@@ -158,7 +159,7 @@ void android_main(struct android_app* app)
 
                 gfxrecon::decode::VulkanTrackedObjectInfoTable tracked_object_info_table;
                 gfxrecon::decode::VulkanReplayOptions          replay_options =
-                    GetVulkanReplayOptions(arg_parser, filename, &tracked_object_info_table);
+                    tool_settings->GetVulkanReplayOptions(filename, &tracked_object_info_table);
 
                 gfxrecon::decode::VulkanReplayConsumer vulkan_replay_consumer(application, replay_options);
                 gfxrecon::decode::VulkanDecoder        vulkan_decoder;
@@ -187,10 +188,10 @@ void android_main(struct android_app* app)
 
                 uint32_t measurement_start_frame;
                 uint32_t measurement_end_frame;
-                bool     has_mfr = GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
+                bool has_mfr = tool_settings->GetMeasurementFrameRange(measurement_start_frame, measurement_end_frame);
 
                 std::string measurement_file_name;
-                GetMeasurementFilename(arg_parser, measurement_file_name);
+                tool_settings->GetMeasurementFilename(measurement_file_name);
 
                 bool     quit_after_frame = false;
                 uint32_t quit_frame;
@@ -198,7 +199,7 @@ void android_main(struct android_app* app)
                 if (replay_options.quit_after_frame)
                 {
                     quit_after_frame = true;
-                    GetQuitAfterFrame(arg_parser, quit_frame);
+                    tool_settings->GetQuitAfterFrame(quit_frame);
                 }
 
                 gfxrecon::graphics::FpsInfo fps_info(static_cast<uint64_t>(measurement_start_frame),
@@ -224,7 +225,7 @@ void android_main(struct android_app* app)
                                                       replay_options.block_index_from,
                                                       replay_options.block_index_to);
 
-                application->SetPauseFrame(GetPauseFrame(arg_parser));
+                application->SetPauseFrame(tool_settings->GetPauseFrame());
 
 #if ENABLE_OPENXR_SUPPORT
                 gfxrecon::decode::OpenXrReplayOptions  openxr_replay_options = {};
@@ -238,7 +239,10 @@ void android_main(struct android_app* app)
 #endif
 
                 // Warn if the capture layer is active.
-                CheckActiveLayers(kLayerProperty);
+                if (tool_settings->IsCaptureLayerEnabled())
+                {
+                    GFXRECON_LOG_WARNING("Replay tool has detected that the capture layer is enabled");
+                }
 
                 // Start the application in the paused state, preventing replay from starting before the app
                 // gained focus event is received.

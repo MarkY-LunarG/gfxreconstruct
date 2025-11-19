@@ -23,9 +23,10 @@ add_subdirectory(../../framework/application-multi-win ${PROJECT_SOURCE_DIR}/../
 add_library(gfxrecon-replay
             SHARED
                 ${GFXRECON_SOURCE_DIR}/tools/tool_settings.h
+                ${GFXRECON_SOURCE_DIR}/tools/tool_settings.cpp
                 ${GFXRECON_SOURCE_DIR}/tools/replay/parse_dump_resources_cli.h
                 ${GFXRECON_SOURCE_DIR}/tools/replay/parse_dump_resources_cli.cpp
-                ${GFXRECON_SOURCE_DIR}/tools/replay/replay_settings.h
+                ${GFXRECON_SOURCE_DIR}/tools/replay/generated_replay_settings.h
                 ${GFXRECON_SOURCE_DIR}/tools/replay/replay_pre_processing.h
                 ${GFXRECON_SOURCE_DIR}/tools/replay/recapture_vulkan_entry.cpp
                 ${GFXRECON_SOURCE_DIR}/tools/replay/recapture_vulkan_entry.h

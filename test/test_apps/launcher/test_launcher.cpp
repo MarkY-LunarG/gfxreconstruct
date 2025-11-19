@@ -216,7 +216,7 @@ int inner_main(
 
     gfxrecon::util::ArgumentParser arg_parser(argc, argv, kOptions, kArguments);
 
-    if (CheckOptionPrintUsage(argv[0], arg_parser))
+    if (CheckOptionPrintUsage(argv[0], arg_parser, PrintUsage))
     {
         gfxrecon::util::Log::Release();
         return 0;

@@ -36,9 +36,10 @@ add_subdirectory(${GFXRECON_SOURCE_DIR}/external/OpenXR-SDK ${PROJECT_SOURCE_DIR
 add_library(gfxrecon-quest-replay
             SHARED
                 ${GFXRECON_SOURCE_DIR}/tools/tool_settings.h
+                ${GFXRECON_SOURCE_DIR}/tools/tool_settings.cpp
                 ${GFXRECON_SOURCE_DIR}/tools/replay/parse_dump_resources_cli.h
                 ${GFXRECON_SOURCE_DIR}/tools/replay/parse_dump_resources_cli.cpp
-                ${GFXRECON_SOURCE_DIR}/tools/replay/replay_settings.h
+                ${GFXRECON_SOURCE_DIR}/tools/replay/generated_replay_settings.h
                 ${GFXRECON_SOURCE_DIR}/tools/replay/recapture_vulkan_entry.cpp
                 ${GFXRECON_SOURCE_DIR}/tools/replay/recapture_vulkan_entry.h
                 ${GFXRECON_SOURCE_DIR}/framework/generated/generated_vulkan_recapture_func_table.h

@@ -22,7 +22,8 @@
 ** DEALINGS IN THE SOFTWARE.
 */
 
-#include "replay_settings.h"
+#include "generated_replay_settings.h"
+#include "tools/tool_settings.h"
 
 #include "application/application.h"
 #include "decode/file_processor.h"
@@ -99,53 +100,41 @@ void WaitForExit()
 void WaitForExit() {}
 #endif
 
-const char kLayerEnvVar[] = "VK_INSTANCE_LAYERS";
-
 int main(int argc, const char** argv)
 {
     int return_code = 0;
 
-    // Default initialize logging to report issues while loading settings.
-    gfxrecon::util::Log::Init(gfxrecon::decode::kDefaultLogLevel);
+    // Create the tool settings using a smart pointer so it is automatically cleaned up on exit
+    std::unique_ptr<gfxrecon::tools::ToolSettings> tool_settings =
+        std::make_unique<gfxrecon::tools::ToolSettings>(gfxrecon::util::settings::kGfxrToolType_Replay_Tool);
 
-    gfxrecon::util::ArgumentParser arg_parser(argc, argv, kOptions, kArguments);
+    std::vector<std::string>        extra_args;
+    gfxrecon::tools::CmdLineRetType ret_type = tool_settings->ProcessCommandLine(argc, argv, 1, extra_args);
 
-    if (CheckOptionPrintVersion(argv[0], arg_parser) || CheckOptionPrintUsage(argv[0], arg_parser))
+    if (ret_type == gfxrecon::tools::CmdLineRetType_PrintUsage)
     {
-        gfxrecon::util::Log::Release();
+        PrintUsage(kApplicationName);
         exit(0);
     }
-    else if (arg_parser.IsInvalid() || (arg_parser.GetPositionalArgumentsCount() != 1))
+    if (ret_type == gfxrecon::tools::CmdLineRetType_PrintVersion)
     {
-        PrintUsage(argv[0]);
-        gfxrecon::util::Log::Release();
+        gfxrecon::tools::PrintVersion(kApplicationName);
+        exit(0);
+    }
+    else if (ret_type == gfxrecon::tools::CmdLineRetType_Error)
+    {
+        PrintUsage(kApplicationName);
         exit(-1);
     }
-    else
-    {
-        ProcessDisableDebugPopup(arg_parser);
-    }
 
-    // Update logging with values retrieved from command line arguments
-    gfxrecon::util::Log::Settings log_settings;
-    GetLogSettings(arg_parser, log_settings);
-    gfxrecon::util::Log::UpdateWithSettings(log_settings);
+    tool_settings->ProcessDisableDebugPopup();
 
     try
     {
-        const std::vector<std::string>& positional_arguments = arg_parser.GetPositionalArguments();
-        std::string                     filename             = positional_arguments[0];
-
-        std::unique_ptr<gfxrecon::decode::FileProcessor> file_processor;
-
-        if (arg_parser.IsOptionSet(kPreloadMeasurementRangeOption))
-        {
-            file_processor = std::make_unique<gfxrecon::decode::PreloadFileProcessor>();
-        }
-        else
-        {
-            file_processor = std::make_unique<gfxrecon::decode::FileProcessor>();
-        }
+        std::string                                      filename = extra_args[0];
+        std::unique_ptr<gfxrecon::decode::FileProcessor> file_processor =
+            tool_settings->IsPreloadEnabled() ? std::make_unique<gfxrecon::decode::PreloadFileProcessor>()
+                                              : std::make_unique<gfxrecon::decode::FileProcessor>();
 
         if (!file_processor->Initialize(filename))
         {
@@ -154,13 +143,13 @@ int main(int argc, const char** argv)
         else
         {
             // Select WSI context based on CLI
-            std::string wsi_extension = GetWsiExtensionName(GetWsiPlatform(arg_parser));
+            std::string wsi_extension = tool_settings->GetWsiExtensionName();
             auto        application   = std::make_shared<gfxrecon::application::Application>(
                 kApplicationName, file_processor.get(), wsi_extension, nullptr);
 
             gfxrecon::decode::VulkanTrackedObjectInfoTable tracked_object_info_table;
             gfxrecon::decode::VulkanReplayOptions          vulkan_replay_options =
-                GetVulkanReplayOptions(arg_parser, filename, &tracked_object_info_table);
+                tool_settings->GetVulkanReplayOptions(filename, &tracked_object_info_table);
 
             bool     quit_after_frame = false;
             uint32_t quit_frame       = std::numeric_limits<uint32_t>::max();
@@ -177,8 +166,8 @@ int main(int argc, const char** argv)
 
             if (vulkan_replay_options.enable_vulkan)
             {
-                has_mfr = GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
-                GetMeasurementFilename(arg_parser, measurement_file_name);
+                has_mfr = tool_settings->GetMeasurementFrameRange(measurement_start_frame, measurement_end_frame);
+                tool_settings->GetMeasurementFilename(measurement_file_name);
                 quit_after_measurement_frame_range = vulkan_replay_options.quit_after_measurement_frame_range;
                 flush_measurement_frame_range      = vulkan_replay_options.flush_measurement_frame_range;
                 flush_inside_measurement_range     = vulkan_replay_options.flush_inside_measurement_range;
@@ -186,8 +175,7 @@ int main(int argc, const char** argv)
 
                 if (vulkan_replay_options.quit_after_frame)
                 {
-                    quit_after_frame = true;
-                    GetQuitAfterFrame(arg_parser, quit_frame);
+                    quit_after_frame = tool_settings->GetQuitAfterFrame(quit_frame);
                 }
             }
 
@@ -223,7 +211,7 @@ int main(int argc, const char** argv)
             api_replay_consumer.vk_replay_consumer = &vulkan_replay_consumer;
 
 #if defined(D3D12_SUPPORT)
-            gfxrecon::decode::DxReplayOptions    dx_replay_options = GetDxReplayOptions(arg_parser, filename);
+            gfxrecon::decode::DxReplayOptions    dx_replay_options = tool_settings->GetDxReplayOptions(filename);
             gfxrecon::decode::Dx12ReplayConsumer dx12_replay_consumer(application, dx_replay_options);
             gfxrecon::decode::Dx12Decoder        dx12_decoder;
 
@@ -309,11 +297,14 @@ int main(int argc, const char** argv)
 #endif
 
             // Warn if the capture layer is active.
-            CheckActiveLayers(gfxrecon::util::platform::GetEnv(kLayerEnvVar));
+            if (tool_settings->IsCaptureLayerEnabled())
+            {
+                GFXRECON_LOG_WARNING("Replay tool has detected that the capture layer is enabled");
+            }
 
             fps_info.BeginFile();
 
-            application->SetPauseFrame(GetPauseFrame(arg_parser));
+            application->SetPauseFrame(tool_settings->GetPauseFrame());
             application->SetFpsInfo(&fps_info);
             application->Run();
 

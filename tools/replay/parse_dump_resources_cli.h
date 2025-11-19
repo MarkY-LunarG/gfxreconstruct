@@ -24,7 +24,7 @@
 #ifndef GFXRECON_PARSE_DUMP_RESOURCES_CLI_H
 #define GFXRECON_PARSE_DUMP_RESOURCES_CLI_H
 
-#include "replay_settings.h"
+#include "generated_replay_settings.h"
 
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(parse_dump_resources)

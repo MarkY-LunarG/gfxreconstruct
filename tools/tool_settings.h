@@ -21,6 +21,9 @@
 ** DEALINGS IN THE SOFTWARE.
 */
 
+#ifndef GFXRECON_PLATFORM_SETTINGS_H
+#define GFXRECON_PLATFORM_SETTINGS_H
+
 #include PROJECT_VERSION_HEADER_FILE
 
 #if defined(D3D12_SUPPORT)
@@ -49,6 +52,7 @@
 #include "util/platform.h"
 #include "util/options.h"
 #include "util/strings.h"
+#include "util/settings_manager.h"
 
 #if ENABLE_OPENXR_SUPPORT
 #include "openxr/openxr.h"
@@ -61,9 +65,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-#ifndef GFXRECON_PLATFORM_SETTINGS_H
-#define GFXRECON_PLATFORM_SETTINGS_H
 
 const char kApplicationName[] = "GFXReconstruct Replay";
 const char kCaptureLayer[]    = "VK_LAYER_LUNARG_gfxreconstruct";
@@ -208,10 +209,147 @@ const char kDefaultDumpResourcesDir[]               = "";
 const bool kDefaultDumpResourcesModifiableStateOnly = false;
 #endif
 
+GFXRECON_BEGIN_NAMESPACE(gfxrecon)
+GFXRECON_BEGIN_NAMESPACE(tools)
+
+enum CmdLineRetType
+{
+    CmdLineRetType_Success = 0,
+    CmdLineRetType_PrintUsage,
+    CmdLineRetType_PrintVersion,
+    CmdLineRetType_Error
+};
+
+class ToolSettings
+{
+  public:
+    ToolSettings(gfxrecon::util::settings::GfxrToolType tool_type);
+    ~ToolSettings();
+
+    CmdLineRetType ProcessCommandLine(int                       argc,
+                                      const char**              argv,
+                                      uint32_t                  expected_num_of_extra_args,
+                                      std::vector<std::string>& extra_args);
+    CmdLineRetType ProcessCommandLine(std::string               command_line_args,
+                                      uint32_t                  expected_num_of_extra_args,
+                                      std::vector<std::string>& extra_args);
+
+    // Disable the debug pop-up
+    void ProcessDisableDebugPopup();
+
+    // Is the GFXR capture layer enabled
+    bool IsCaptureLayerEnabled();
+
+    // Get any pause settings (function return is if we should pause true/false)
+    uint32_t GetPauseFrame(void);
+
+    bool IsPreloadEnabled();
+
+    // API-specific replay options
+    gfxrecon::decode::VulkanReplayOptions
+    GetVulkanReplayOptions(const std::string&                              filename,
+                           gfxrecon::decode::VulkanTrackedObjectInfoTable* tracked_object_info_table);
+
+    // WSI funcs
+    // ====================
+    std::string GetWsiArgString();
+
+    /// @brief Selects the WSI extension name based on the WSI platform.
+    /// @return If WsiPlatform::kAuto, returns the first available WSI extension name.
+    ///         Otherwise, returns the WSI extension name for the specified platform.
+    std::string GetFirstWsiExtensionName();
+
+    /// @brief Selects the WSI extension name based on the WSI platform.
+    /// @return If WsiPlatform::kAuto, returns an empty string.
+    ///         Otherwise, returns the WSI extension name for the specified platform.
+    std::string GetWsiExtensionName();
+
+    bool GetQuitAfterFrame(uint32_t& quit_frame);
+
+    void GetMeasurementFilename(std::string& file_name);
+    bool GetMeasurementFrameRange(uint32_t& start_frame, uint32_t& end_frame);
+
+  private:
+    bool GenerateArgumentVector(int32_t argc, const char** const argv, std::vector<std::string>& cmd_line_vector);
+    bool GenerateArgumentVector(std::string, std::vector<std::string>& cmd_line_vector);
+    CmdLineRetType ProcessCommandLine(const std::vector<std::string>& command_line_args,
+                                      uint32_t                        expected_num_of_extra_args,
+                                      std::vector<std::string>&       extra_args);
+
+    void GetLayerListFromEnvVar(const char* env_var, std::vector<std::string>& layer_list);
+
+    WsiPlatform GetWsiPlatform();
+    std::string GetFirstWsiExtensionName(WsiPlatform platform);
+
+    // Replay options private methods
+    void GetReplayOptions(gfxrecon::decode::ReplayOptions& options, const std::string& filename);
+    void CheckForceWindowed(gfxrecon::decode::ReplayOptions& options);
+    void CheckWindowOrigin(gfxrecon::decode::ReplayOptions& options);
+
+    gfxrecon::decode::CreateResourceAllocator
+    GetCreateResourceAllocatorFunc(const std::string&                              filename,
+                                   const gfxrecon::decode::VulkanReplayOptions&    replay_options,
+                                   gfxrecon::decode::VulkanTrackedObjectInfoTable* tracked_object_info_table);
+
+    std::vector<int32_t> GetFilteredMsgs(const std::string& messages);
+
+    // Modifies settings parameter with values set via command line
+    void GetLogSettings(gfxrecon::util::Log::Settings& log_settings);
+
+    // Private screenshot methods
+    std::string                                    GetScreenshotDir();
+    gfxrecon::util::ScreenshotFormat               GetScreenshotFormat();
+    void                                           GetScreenshotSize(uint32_t& width, uint32_t& height);
+    float                                          GetScreenshotScale();
+    std::vector<gfxrecon::decode::ScreenshotRange> GetScreenshotRanges();
+
+    // Private dump-resources methods
+    std::string                       GetDumpResourcesDir();
+    gfxrecon::util::ScreenshotFormat  GetDumpresourcesImageFormat();
+    gfxrecon::format::CompressionType GetDumpResourcesCompressionType();
+    float                             GetDumpResourcesScale();
+
+    // Members
+    gfxrecon::util::settings::GfxrToolType tool_type_;
+};
+
+static bool PrintVersion(const char* exe_name)
+{
+    std::string app_name     = exe_name;
+    size_t      dir_location = app_name.find_last_of("/\\");
+
+    if (dir_location >= 0)
+    {
+        app_name.replace(0, dir_location + 1, "");
+    }
+
+    GFXRECON_WRITE_CONSOLE("%s version info:", app_name.c_str());
+    GFXRECON_WRITE_CONSOLE("  GFXReconstruct Version %s", GetProjectVersionString());
+    GFXRECON_WRITE_CONSOLE("  Vulkan Header Version %u.%u.%u",
+                           VK_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE),
+                           VK_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE),
+                           VK_VERSION_PATCH(VK_HEADER_VERSION_COMPLETE));
+
+#if ENABLE_OPENXR_SUPPORT
+    GFXRECON_WRITE_CONSOLE("  OpenXR Header Version %u.%u.%u",
+                           XR_VERSION_MAJOR(XR_CURRENT_API_VERSION),
+                           XR_VERSION_MINOR(XR_CURRENT_API_VERSION),
+                           XR_VERSION_PATCH(XR_CURRENT_API_VERSION));
+#endif
+
+    return true;
+}
+
+GFXRECON_END_NAMESPACE(tools)
+GFXRECON_END_NAMESPACE(gfxrecon)
+
+// Brainpain - Delete below this
+
 static void ProcessDisableDebugPopup(const gfxrecon::util::ArgumentParser& arg_parser)
 {
 #if defined(WIN32) && defined(_DEBUG)
-    if (arg_parser.IsOptionSet(kNoDebugPopup))
+    bool disable_popup = arg_parser.IsOptionSet(kNoDebugPopup);
+    if (disable_popup)
     {
         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
@@ -310,91 +448,98 @@ InitRealignAllocatorCreateFunc(const std::string&                              f
 
 static uint32_t GetPauseFrame(const gfxrecon::util::ArgumentParser& arg_parser)
 {
-    uint32_t    pause_frame = 0;
-    const auto& value       = arg_parser.GetArgumentValue(kPauseFrameArgument);
+    uint32_t pause_frame = 0;
+    bool     pause_set   = false;
 
-    if (arg_parser.IsOptionSet(kPausedOption))
-    {
-        pause_frame = 1;
-    }
-    else if (!value.empty())
+    const auto& value = arg_parser.GetArgumentValue(kPauseFrameArgument);
+    pause_set         = arg_parser.IsOptionSet(kPausedOption);
+    if (!value.empty())
     {
         pause_frame = std::stoi(value);
     }
 
+    if (pause_set)
+    {
+        pause_frame = 1;
+    }
     return pause_frame;
 }
 
 static WsiPlatform GetWsiPlatform(const gfxrecon::util::ArgumentParser& arg_parser)
 {
     WsiPlatform wsi_platform = WsiPlatform::kAuto;
-    const auto& value        = arg_parser.GetArgumentValue(kWsiArgument);
-
-    if (!value.empty())
+    std::string wsi_argument = arg_parser.GetArgumentValue(kWsiArgument);
+    if (!wsi_argument.empty())
     {
-        if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformAuto, value.c_str()) == 0)
+        if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformAuto, wsi_argument.c_str()) == 0)
         {
             wsi_platform = WsiPlatform::kAuto;
         }
-        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformWin32, value.c_str()) == 0)
+        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformWin32, wsi_argument.c_str()) == 0)
         {
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
             wsi_platform = WsiPlatform::kWin32;
 #else
-            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system", value.c_str());
+            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system",
+                                 wsi_argument.c_str());
 #endif
         }
-        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformXlib, value.c_str()) == 0)
+        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformXlib, wsi_argument.c_str()) == 0)
         {
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
             wsi_platform = WsiPlatform::kXlib;
 #else
-            GFXRECON_LOG_WARNING("Ignoring wsi option %s, which is not enabled on this system", value.c_str());
+            GFXRECON_LOG_WARNING("Ignoring wsi option %s, which is not enabled on this system", wsi_argument.c_str());
 #endif
         }
-        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformXcb, value.c_str()) == 0)
+        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformXcb, wsi_argument.c_str()) == 0)
         {
 #if defined(VK_USE_PLATFORM_XCB_KHR)
             wsi_platform = WsiPlatform::kXcb;
 #else
-            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system", value.c_str());
+            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system",
+                                 wsi_argument.c_str());
 #endif
         }
-        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformWayland, value.c_str()) == 0)
+        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformWayland, wsi_argument.c_str()) == 0)
         {
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
             wsi_platform = WsiPlatform::kWayland;
 #else
-            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system", value.c_str());
+            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system",
+                                 wsi_argument.c_str());
 #endif
         }
-        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformMetal, value.c_str()) == 0)
+        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformMetal, wsi_argument.c_str()) == 0)
         {
 #if defined(VK_USE_PLATFORM_METAL_EXT)
             wsi_platform = WsiPlatform::kMetal;
 #else
-            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system", value.c_str());
+            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system",
+                                 wsi_argument.c_str());
 #endif
         }
-        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformDisplay, value.c_str()) == 0)
+        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformDisplay, wsi_argument.c_str()) == 0)
         {
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
             wsi_platform = WsiPlatform::kDisplay;
 #else
-            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system", value.c_str());
+            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system",
+                                 wsi_argument.c_str());
 #endif
         }
-        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformHeadless, value.c_str()) == 0)
+        else if (gfxrecon::util::platform::StringCompareNoCase(kWsiPlatformHeadless, wsi_argument.c_str()) == 0)
         {
 #if defined(VK_USE_PLATFORM_HEADLESS)
             wsi_platform = WsiPlatform::kHeadless;
 #else
-            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system", value.c_str());
+            GFXRECON_LOG_WARNING("Ignoring wsi option \"%s\", which is not enabled on this system",
+                                 wsi_argument.c_str());
 #endif
         }
         else
         {
-            GFXRECON_LOG_WARNING("Ignoring unrecognized wsi option \"%s\"", value.c_str());
+            GFXRECON_LOG_WARNING("Ignoring unrecognized wsi option \"%s\"", wsi_argument.c_str());
         }
     }
 
@@ -518,9 +663,10 @@ static std::string GetWsiArgString()
 static void GetLogSettings(const gfxrecon::util::ArgumentParser& arg_parser,
                            gfxrecon::util::Log::Settings&        log_settings)
 {
-    // Parse log level
     gfxrecon::util::LoggingSeverity log_level;
-    const std::string&              value_string = arg_parser.GetArgumentValue(kLogLevelArgument);
+
+    // Parse log level
+    const std::string& value_string = arg_parser.GetArgumentValue(kLogLevelArgument);
     if (value_string.empty() || !gfxrecon::util::Log::StringToSeverity(value_string, log_level))
     {
         log_level = gfxrecon::decode::kDefaultLogLevel;
@@ -557,7 +703,8 @@ static void GetMeasurementFilename(const gfxrecon::util::ArgumentParser& arg_par
 static gfxrecon::util::ScreenshotFormat GetScreenshotFormat(const gfxrecon::util::ArgumentParser& arg_parser)
 {
     gfxrecon::util::ScreenshotFormat format = gfxrecon::util::ScreenshotFormat::kBmp;
-    const auto&                      value  = arg_parser.GetArgumentValue(kScreenshotFormatArgument);
+    std::string                      value;
+    value = arg_parser.GetArgumentValue(kScreenshotFormatArgument);
 
     if (!value.empty())
     {
@@ -580,8 +727,7 @@ static gfxrecon::util::ScreenshotFormat GetScreenshotFormat(const gfxrecon::util
 
 static std::string GetScreenshotDir(const gfxrecon::util::ArgumentParser& arg_parser)
 {
-    const auto& value = arg_parser.GetArgumentValue(kScreenshotDirArgument);
-
+    std::string value = arg_parser.GetArgumentValue(kScreenshotDirArgument);
     if (!value.empty())
     {
         return value;
@@ -592,8 +738,7 @@ static std::string GetScreenshotDir(const gfxrecon::util::ArgumentParser& arg_pa
 
 static std::string GetDumpResourcesDir(const gfxrecon::util::ArgumentParser& arg_parser)
 {
-    const auto& value = arg_parser.GetArgumentValue(kDumpResourcesDirArgument);
-
+    std::string value = arg_parser.GetArgumentValue(kDumpResourcesDirArgument);
     if (!value.empty())
     {
         return value;
@@ -604,8 +749,7 @@ static std::string GetDumpResourcesDir(const gfxrecon::util::ArgumentParser& arg
 
 static void GetScreenshotSize(const gfxrecon::util::ArgumentParser& arg_parser, uint32_t& width, uint32_t& height)
 {
-    const auto& value = arg_parser.GetArgumentValue(kScreenshotSizeArgument);
-
+    std::string value = arg_parser.GetArgumentValue(kScreenshotSizeArgument);
     if (!value.empty())
     {
         std::size_t x = value.find("x");
@@ -636,9 +780,9 @@ static void GetScreenshotSize(const gfxrecon::util::ArgumentParser& arg_parser, 
 
 static float GetScreenshotScale(const gfxrecon::util::ArgumentParser& arg_parser)
 {
-    const auto& value = arg_parser.GetArgumentValue(kScreenshotScaleArgument);
-
-    float scale = 0.0f;
+    float       scale = 0.0f;
+    std::string value;
+    value = arg_parser.GetArgumentValue(kScreenshotScaleArgument);
 
     if (!value.empty())
     {
@@ -767,14 +911,16 @@ GetMeasurementFrameRange(const gfxrecon::util::ArgumentParser& arg_parser, uint3
 
     return false;
 }
+
 static gfxrecon::decode::CreateResourceAllocator
 GetCreateResourceAllocatorFunc(const gfxrecon::util::ArgumentParser&           arg_parser,
                                const std::string&                              filename,
                                const gfxrecon::decode::VulkanReplayOptions&    replay_options,
                                gfxrecon::decode::VulkanTrackedObjectInfoTable* tracked_object_info_table)
 {
-    gfxrecon::decode::CreateResourceAllocator func  = CreateDefaultAllocator;
-    const auto&                               value = arg_parser.GetArgumentValue(kMemoryPortabilityShortOption);
+    gfxrecon::decode::CreateResourceAllocator func = CreateDefaultAllocator;
+
+    std::string value = arg_parser.GetArgumentValue(kMemoryPortabilityShortOption);
 
     if (!value.empty())
     {
@@ -1105,24 +1251,24 @@ GetVulkanReplayOptions(const gfxrecon::util::ArgumentParser&           arg_parse
     const std::string debug_severity_string = arg_parser.GetArgumentValue(kDebugMessageSeverityArgument);
     if (!debug_severity_string.empty())
     {
-        if (gfxrecon::util::platform::StringCompareNoCase("debug", debug_severity_string.c_str()))
+        if (!gfxrecon::util::platform::StringCompareNoCase("debug", debug_severity_string.c_str()))
         {
             replay_options.debug_message_severity =
                 VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
                 VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
         }
-        else if (gfxrecon::util::platform::StringCompareNoCase("info", debug_severity_string.c_str()))
+        else if (!gfxrecon::util::platform::StringCompareNoCase("info", debug_severity_string.c_str()))
         {
             replay_options.debug_message_severity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
                                                     VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
                                                     VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
         }
-        else if (gfxrecon::util::platform::StringCompareNoCase("warning", debug_severity_string.c_str()))
+        else if (!gfxrecon::util::platform::StringCompareNoCase("warning", debug_severity_string.c_str()))
         {
             replay_options.debug_message_severity =
                 VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
         }
-        else if (gfxrecon::util::platform::StringCompareNoCase("error", debug_severity_string.c_str()))
+        else if (!gfxrecon::util::platform::StringCompareNoCase("error", debug_severity_string.c_str()))
         {
             replay_options.debug_message_severity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
         }
@@ -1367,13 +1513,14 @@ static bool CheckOptionPrintVersion(const char* exe_name, const gfxrecon::util::
     return false;
 }
 
-static void PrintUsage(const char* exe_name);
+typedef void (*fnPrintUsage)(const char* exe_name);
 
-static bool CheckOptionPrintUsage(const char* exe_name, const gfxrecon::util::ArgumentParser& arg_parser)
+static bool
+CheckOptionPrintUsage(const char* exe_name, const gfxrecon::util::ArgumentParser& arg_parser, fnPrintUsage print_usage)
 {
     if (arg_parser.IsOptionSet(kHelpShortOption) || arg_parser.IsOptionSet(kHelpLongOption))
     {
-        PrintUsage(exe_name);
+        print_usage(exe_name);
         return true;
     }
 
