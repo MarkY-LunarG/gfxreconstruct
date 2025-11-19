@@ -1829,15 +1829,27 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
     vulkan_capture_settings_per_platform = OrderedDict()
     envvar_read_per_tool_per_api_per_platform = OrderedDict()
     dynamic_envvar_read_per_tool_per_api_per_platform = OrderedDict()
+    short_command_line_handling_per_tool = OrderedDict()
+    long_command_line_handling_per_tool = OrderedDict()
     for tool in settings_tools:
         envvar_read_per_tool_per_api_per_platform[tool] = OrderedDict()
         dynamic_envvar_read_per_tool_per_api_per_platform[tool] = OrderedDict()
+        short_command_line_handling_per_tool[tool] = OrderedDict()
+        long_command_line_handling_per_tool[tool] = OrderedDict()
         for platform in settings_platforms:
             vulkan_capture_settings_per_platform[platform] = OrderedDict()
             envvar_read_per_tool_per_api_per_platform[tool][
                 platform] = OrderedDict()
             dynamic_envvar_read_per_tool_per_api_per_platform[tool][
                 platform] = OrderedDict()
+        for api in settings_apis:
+            short_command_line_handling_per_tool[tool][api] = OrderedDict()
+            long_command_line_handling_per_tool[tool][api] = OrderedDict()
+            for platform in settings_platforms:
+                short_command_line_handling_per_tool[tool][api][
+                    platform] = OrderedDict()
+                long_command_line_handling_per_tool[tool][api][
+                    platform] = OrderedDict()
 
     for key, parsed_setting in parsed_settings.items():
         if (("ALL" in parsed_setting.apis or "VULKAN" in parsed_setting.apis)
@@ -1862,6 +1874,17 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
                     dynamic_envvar_read_per_tool_per_api_per_platform[tool][
                         platform][
                             key] = parsed_setting.GenerateEnvVarReadToSetting(
+                                tool)
+
+            if tool != "CAPTURE":
+                # For command-line listings, we break up per API
+                for api in parsed_setting.apis:
+                    for platform in parsed_setting.platforms:
+                        short_command_line_handling_per_tool[tool][api][platform][
+                            key] = parsed_setting.GenerateToolShortArgCommandLineCheck(
+                                tool)
+                        long_command_line_handling_per_tool[tool][api][platform][
+                            key] = parsed_setting.GenerateToolLongArgCommandLineCheck(
                                 tool)
 
     with open(generated_settings_manager_filename,
@@ -2004,6 +2027,123 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
                     setting_manager_source.write(end_ifdef + "\n")
 
         setting_manager_source.write("}\n\n")
+
+        setting_manager_source.write(
+            "bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool_type,\n"
+        )
+        setting_manager_source.write(
+            "                                            const std::vector<std::string>& command_line_args,\n"
+        )
+        setting_manager_source.write(
+            "                                            size_t&                         cur_arg)\n"
+        )
+
+        setting_manager_source.write("{\n")
+        setting_manager_source.write("    bool valid_arg = true;\n")
+        setting_manager_source.write("\n")
+        setting_manager_source.write(
+            "    // If this is a string or a single char\n")
+        setting_manager_source.write(
+            "    if (command_line_args[cur_arg].size() == 2)\n")
+        setting_manager_source.write("    {\n")
+
+        for tool in settings_tools:
+            if tool == "CAPTURE":
+                continue
+
+            if_string = GenerateToolIfCheck(tool, 2)
+            setting_manager_source.write(if_string + "\n")
+            setting_manager_source.write("        {\n")
+            setting_manager_source.write(
+                "            switch (command_line_args[cur_arg].at(1))\n")
+            setting_manager_source.write("            {\n")
+            setting_manager_source.write("                default:\n")
+            setting_manager_source.write(
+                "                    GFXRECON_LOG_WARNING(\"Invalid argument %s\", command_line_args[cur_arg].c_str());\n"
+            )
+            setting_manager_source.write(
+                "                    valid_arg = false;\n")
+            setting_manager_source.write("                    break;\n")
+
+            for api in settings_apis:
+                if "ALL" == platform:
+                    continue
+
+                for key, if_list in short_command_line_handling_per_tool[tool][
+                        api]["ALL"].items():
+                    for line in if_list:
+                        setting_manager_source.write(line + "\n")
+
+                for platform in settings_platforms:
+                    if platform == "ALL" or len(
+                            short_command_line_handling_per_tool[tool][api]
+                        [platform]) == 0:
+                        continue
+
+                    begin_ifdef, end_ifdef = GeneratePlatformIfdef([platform])
+                    if len(begin_ifdef) > 0:
+                        setting_manager_source.write(begin_ifdef + "\n")
+
+                    for key, if_list in short_command_line_handling_per_tool[
+                            tool][api][platform].items():
+                        for line in if_list:
+                            setting_manager_source.write(line + "\n")
+
+                    if len(end_ifdef) > 0:
+                        setting_manager_source.write(end_ifdef + "\n")
+
+            setting_manager_source.write("            }\n")
+            setting_manager_source.write("        }\n")
+
+        setting_manager_source.write("    }\n")
+        setting_manager_source.write("    else\n")
+        setting_manager_source.write("    {\n")
+
+        setting_manager_source.write(
+            "        // Get the string after the last dash\n")
+        setting_manager_source.write(
+            "        std::string arg_opt = command_line_args[cur_arg].substr(2);\n"
+        )
+
+        for tool in parsed_setting.tools:
+            if tool == "CAPTURE":
+                continue
+
+            if_string = GenerateToolIfCheck(tool, 2)
+            setting_manager_source.write(if_string + "\n")
+            setting_manager_source.write("        {\n")
+
+            for api in settings_apis:
+                for key, if_list in long_command_line_handling_per_tool[tool][
+                        api]["ALL"].items():
+                    for line in if_list:
+                        setting_manager_source.write(line + "\n")
+
+                for platform in settings_platforms:
+                    if platform == "ALL" or len(
+                            long_command_line_handling_per_tool[tool][api]
+                        [platform]) == 0:
+                        continue
+
+                    begin_ifdef, end_ifdef = GeneratePlatformIfdef([platform])
+                    if len(begin_ifdef) > 0:
+                        setting_manager_source.write(begin_ifdef + "\n")
+
+                    for key, if_list in long_command_line_handling_per_tool[
+                            tool][api][platform].items():
+                        for line in if_list:
+                            setting_manager_source.write(line + "\n")
+
+                    if len(end_ifdef) > 0:
+                        setting_manager_source.write(end_ifdef + "\n")
+
+        setting_manager_source.write("        }\n")
+        setting_manager_source.write("    }\n")
+        setting_manager_source.write("early_out:\n")
+        setting_manager_source.write("    return valid_arg;\n")
+        setting_manager_source.write("}\n")
+
+    setting_manager_source.close()
 
 
 # Update a USAGE_android.md options/settings tables for the

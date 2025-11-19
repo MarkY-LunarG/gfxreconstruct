@@ -51,6 +51,10 @@ class SettingsManager
 
     const GfxrSettingsStruct* GetSettingsStruct() const { return &settings_struct_; };
 
+    bool ProcessCommandLine(GfxrToolType                    tool_type,
+                            const std::vector<std::string>& command_line_args,
+                            std::vector<std::string>&       extra_args);
+
     // Generated methods (see generated_settings_manager.cpp for definitions)
     void UpdateDynamicEnvironmentVariables();
 
@@ -61,10 +65,13 @@ class SettingsManager
     bool ReadVulkanCaptureLayerSettingsFile();
     bool ReadEnvironmentVariable(const std::string& setting_string, std::string& value);
     bool SettingValueToBool(const std::string& setting_value);
+    bool HasArgumentParameter(const std::vector<std::string>& command_line_args, size_t& cur_arg);
 
     // Generated methods (see generated_settings_manager.cpp for definitions)
     void AdjustSettingFromFile(const std::string& key, const std::string& value);
     void ReadEnvironmentVariables();
+    bool
+    ProcessOptionArgument(GfxrToolType tool_type, const std::vector<std::string>& command_line_args, size_t& cur_arg);
 
     // Singleton items
     static std::unique_ptr<SettingsManager> singleton_;

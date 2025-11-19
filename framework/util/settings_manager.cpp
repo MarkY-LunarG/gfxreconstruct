@@ -178,6 +178,43 @@ bool SettingsManager::ReadEnvironmentVariable(const std::string& setting_string,
     return false;
 }
 
+bool SettingsManager::HasArgumentParameter(const std::vector<std::string>& command_line_args, size_t& cur_arg)
+{
+    if ((cur_arg + 1) < command_line_args.size())
+    {
+        // We have space, but does the next argument start with a dash '-', if
+        // so, it's another argument, not the parameter for this argument.
+        if (command_line_args[cur_arg + 1].at(0) != '-')
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool SettingsManager::ProcessCommandLine(GfxrToolType                    tool_type,
+                                         const std::vector<std::string>& command_line_args,
+                                         std::vector<std::string>&       extra_args)
+{
+    bool found_all = true;
+
+    for (size_t cur_arg = 0; cur_arg < command_line_args.size(); ++cur_arg)
+    {
+        if (command_line_args[cur_arg].at(0) == '-')
+        {
+            if (!ProcessOptionArgument(tool_type, command_line_args, cur_arg))
+            {
+                found_all = false;
+            }
+        }
+        else
+        {
+            extra_args.push_back(command_line_args[cur_arg]);
+        }
+    }
+    return found_all;
+}
+
 #include "generated_settings_manager.cpp"
 
 GFXRECON_END_NAMESPACE(settings)
