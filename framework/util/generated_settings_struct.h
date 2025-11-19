@@ -124,10 +124,127 @@ struct GfxrCaptureSettingsStruct
     // clang-format on
 };
 
+struct GfxrReplaySettingsStruct
+{
+    // clang-format off
+    std::string log_file{""};
+    std::string log_level{"info"};
+    bool        log_timestamps{false};
+#if defined(__ANDROID__)
+    std::string screenshot_dir{"/sdcard"};
+#else
+    std::string screenshot_dir{""};
+#endif
+    std::string screenshot_format{"bmp"};
+    std::string screenshots{""};
+    int32_t     screenshot_interval{1};
+    bool        add_new_pipeline_caches{false};
+    bool        capture{false};
+    std::string cpu_mask{""};
+    std::string debug_messenger_level{"warning"};
+    bool        deduplicate_device{false};
+    std::string dump_resources{""};
+    bool        dump_resources_before_draw{false};
+    bool        dump_resources_dump_all_image_subresources{false};
+    bool        dump_resources_dump_build_acceleration_structures_input_buffers{false};
+    int32_t     dump_resources_dump_color_attachment_index{-1};
+    bool        dump_resources_dump_depth_attachment{false};
+    bool        dump_resources_dump_raw_images{false};
+    bool        dump_resources_dump_separate_alpha{false};
+    bool        dump_resources_dump_unused_vertex_bindings{false};
+    bool        dump_resources_dump_vertex_index_buffers{false};
+    std::string dump_resources_image_format{"bmp"};
+    bool        dump_resources_json_output_per_command{false};
+    float       dump_resources_scale{1.0f};
+    bool        flush_inside_measurement_range{false};
+    bool        flush_measurement_range{false};
+    std::string gpu{""};
+    std::string gpu_group{""};
+    bool        help{false};
+    std::string input_capture{""};
+    std::string load_pipeline_cache{""};
+    bool        log_debugview{false};
+#if defined(__ANDROID__)
+    std::string measurement_file{"/sdcard/gfxrecon-measurement.gfxr"};
+#else
+    std::string measurement_file{"gfxrecon-measurement.gfxr"};
+#endif
+    std::string measurement_frame_range{""};
+    std::string memory_translation{"none"};
+    bool        offscreen_swapchain_frame_boundary{false};
+    bool        omit_pipeline_cache_data{false};
+    int32_t     pause_frame{-1};
+    bool        paused{false};
+    bool        pbi_all{false};
+    std::string pbis{""};
+    int32_t     pipeline_creation_jobs{0};
+    bool        preload_measurement_range{false};
+    std::string quit_after_frame{""};
+    bool        quit_after_measurement_range{false};
+    bool        remove_unsupported{false};
+    std::string replace_shaders{""};
+    std::string save_pipeline_cache{""};
+    bool        screenshot_all{false};
+    bool        screenshot_ignore_FrameBoundaryANDROID{false};
+    std::string screenshot_prefix{"screenshot"};
+    float       screenshot_scale{1.0f};
+    std::string screenshot_size{""};
+    bool        skip_failed_allocations{false};
+    std::string swapchain{"virtual"};
+    bool        sync{false};
+    bool        use_captured_swapchain_indices{false};
+    bool        use_colorspace_fallback{false};
+    bool        validate{false};
+    bool        version{false};
+    bool        virtual_swapchain_skip_blit{false};
+    bool        wait_before_present{false};
+    std::string wsi{"auto"};
+
+    // D3D12-Specific
+    bool        debug_device_lost{false};
+    bool        discard_cached_psos{false};
+#if defined(__ANDROID__)
+    std::string dump_resources_dir{"/sdcard"};
+#else
+    std::string dump_resources_dir{""};
+#endif
+    bool        dump_resources_modifiable_state_only{false};
+    bool        dx12_ags_inject_markers{false};
+    bool        dx12_override_object_names{false};
+    bool        dx12_two_pass_replay{false};
+#if defined(WIN32)
+    std::string allowed_messages{""};
+    int32_t     batching_memory_usage{80};
+    std::string denied_messages{""};
+    std::string force_windowed{""};
+    std::string force_windowed_origin{""};
+    bool        use_cached_psos{false};
+#endif // defined(WIN32)
+
+    // Vulkan-Specific
+    std::string dump_resources_binary_file_compression_type{"none"};
+    std::string present_mode{"capture"};
+    std::string skip_get_fence_ranges{""};
+    int32_t     skip_get_fence_status{0};
+    int32_t     surface_index{-1};
+#if defined(__ANDROID__)
+    bool        omit_null_hardware_buffers{false};
+#endif // defined(__ANDROID__)
+#if defined(WIN32)
+    bool        create_dummy_allocations{false};
+    bool        no_debug_popup{false};
+#endif // defined(WIN32)
+
+    // OpenXR-Specific
+
+    // clang-format on
+};
+
 struct GfxrSettingsStruct
 {
     // clang-format off
     GfxrCaptureSettingsStruct capture_settings;
+    GfxrReplaySettingsStruct replay_settings;
     // clang-format on
 };
 

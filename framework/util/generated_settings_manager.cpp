@@ -519,6 +519,352 @@ void SettingsManager::ReadEnvironmentVariables()
         settings_struct_.capture_settings.page_guard_external_memory = SettingValueToBool(env_var_value);
     }
 #endif // defined(WIN32)
+
+    // -- Replay-specific
+    if (ReadEnvironmentVariable("replay_debug_device_lost", env_var_value))
+    {
+        settings_struct_.replay_settings.debug_device_lost = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_log_file", env_var_value))
+    {
+        settings_struct_.replay_settings.log_file = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_log_level", env_var_value))
+    {
+        settings_struct_.replay_settings.log_level = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_log_timestamps", env_var_value))
+    {
+        settings_struct_.replay_settings.log_timestamps = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_screenshot_dir", env_var_value))
+    {
+        settings_struct_.replay_settings.screenshot_dir = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_screenshot_format", env_var_value))
+    {
+        settings_struct_.replay_settings.screenshot_format = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_screenshots", env_var_value))
+    {
+        settings_struct_.replay_settings.screenshots = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_screenshot_interval", env_var_value))
+    {
+        settings_struct_.replay_settings.screenshot_interval = atoi(env_var_value.c_str());
+    }
+    if (ReadEnvironmentVariable("replay_add_new_pipeline_caches", env_var_value))
+    {
+        settings_struct_.replay_settings.add_new_pipeline_caches = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_capture", env_var_value))
+    {
+        settings_struct_.replay_settings.capture = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_cpu_mask", env_var_value))
+    {
+        settings_struct_.replay_settings.cpu_mask = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_debug_messenger_level", env_var_value))
+    {
+        settings_struct_.replay_settings.debug_messenger_level = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_deduplicate_device", env_var_value))
+    {
+        settings_struct_.replay_settings.deduplicate_device = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_discard_cached_psos", env_var_value))
+    {
+        settings_struct_.replay_settings.discard_cached_psos = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_before_draw", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_before_draw = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_binary_file_compression_type", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_binary_file_compression_type = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_dir", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_dir = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_dump_all_image_subresources", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_dump_all_image_subresources = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_dump_build_acceleration_structures_input_buffers", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_dump_build_acceleration_structures_input_buffers = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_dump_color_attachment_index", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_dump_color_attachment_index = atoi(env_var_value.c_str());
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_dump_depth_attachment", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_dump_depth_attachment = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_dump_raw_images", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_dump_raw_images = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_dump_separate_alpha", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_dump_separate_alpha = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_dump_unused_vertex_bindings", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_dump_unused_vertex_bindings = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_dump_vertex_index_buffers", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_dump_vertex_index_buffers = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_image_format", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_image_format = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_json_output_per_command", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_json_output_per_command = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_modifiable_state_only", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_modifiable_state_only = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dump_resources_scale", env_var_value))
+    {
+        settings_struct_.replay_settings.dump_resources_scale = static_cast<float>(atof(env_var_value.c_str()));
+    }
+    if (ReadEnvironmentVariable("replay_dx12_ags_inject_markers", env_var_value))
+    {
+        settings_struct_.replay_settings.dx12_ags_inject_markers = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dx12_override_object_names", env_var_value))
+    {
+        settings_struct_.replay_settings.dx12_override_object_names = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_dx12_two_pass_replay", env_var_value))
+    {
+        settings_struct_.replay_settings.dx12_two_pass_replay = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_flush_inside_measurement_range", env_var_value))
+    {
+        settings_struct_.replay_settings.flush_inside_measurement_range = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_flush_measurement_range", env_var_value))
+    {
+        settings_struct_.replay_settings.flush_measurement_range = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_gpu", env_var_value))
+    {
+        settings_struct_.replay_settings.gpu = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_gpu_group", env_var_value))
+    {
+        settings_struct_.replay_settings.gpu_group = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_help", env_var_value))
+    {
+        settings_struct_.replay_settings.help = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_input_capture", env_var_value))
+    {
+        settings_struct_.replay_settings.input_capture = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_load_pipeline_cache", env_var_value))
+    {
+        settings_struct_.replay_settings.load_pipeline_cache = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_log_debugview", env_var_value))
+    {
+        settings_struct_.replay_settings.log_debugview = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_measurement_file", env_var_value))
+    {
+        settings_struct_.replay_settings.measurement_file = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_measurement_frame_range", env_var_value))
+    {
+        settings_struct_.replay_settings.measurement_frame_range = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_memory_translation", env_var_value))
+    {
+        settings_struct_.replay_settings.memory_translation = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_offscreen_swapchain_frame_boundary", env_var_value))
+    {
+        settings_struct_.replay_settings.offscreen_swapchain_frame_boundary = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_omit_pipeline_cache_data", env_var_value))
+    {
+        settings_struct_.replay_settings.omit_pipeline_cache_data = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_pause_frame", env_var_value))
+    {
+        settings_struct_.replay_settings.pause_frame = atoi(env_var_value.c_str());
+    }
+    if (ReadEnvironmentVariable("replay_paused", env_var_value))
+    {
+        settings_struct_.replay_settings.paused = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_pbi_all", env_var_value))
+    {
+        settings_struct_.replay_settings.pbi_all = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_pbis", env_var_value))
+    {
+        settings_struct_.replay_settings.pbis = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_pipeline_creation_jobs", env_var_value))
+    {
+        settings_struct_.replay_settings.pipeline_creation_jobs = atoi(env_var_value.c_str());
+    }
+    if (ReadEnvironmentVariable("replay_preload_measurement_range", env_var_value))
+    {
+        settings_struct_.replay_settings.preload_measurement_range = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_present_mode", env_var_value))
+    {
+        settings_struct_.replay_settings.present_mode = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_quit_after_frame", env_var_value))
+    {
+        settings_struct_.replay_settings.quit_after_frame = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_quit_after_measurement_range", env_var_value))
+    {
+        settings_struct_.replay_settings.quit_after_measurement_range = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_remove_unsupported", env_var_value))
+    {
+        settings_struct_.replay_settings.remove_unsupported = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_replace_shaders", env_var_value))
+    {
+        settings_struct_.replay_settings.replace_shaders = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_save_pipeline_cache", env_var_value))
+    {
+        settings_struct_.replay_settings.save_pipeline_cache = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_screenshot_all", env_var_value))
+    {
+        settings_struct_.replay_settings.screenshot_all = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_screenshot_ignore_FrameBoundaryANDROID", env_var_value))
+    {
+        settings_struct_.replay_settings.screenshot_ignore_FrameBoundaryANDROID = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_screenshot_prefix", env_var_value))
+    {
+        settings_struct_.replay_settings.screenshot_prefix = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_screenshot_scale", env_var_value))
+    {
+        settings_struct_.replay_settings.screenshot_scale = static_cast<float>(atof(env_var_value.c_str()));
+    }
+    if (ReadEnvironmentVariable("replay_screenshot_size", env_var_value))
+    {
+        settings_struct_.replay_settings.screenshot_size = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_skip_failed_allocations", env_var_value))
+    {
+        settings_struct_.replay_settings.skip_failed_allocations = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_skip_get_fence_ranges", env_var_value))
+    {
+        settings_struct_.replay_settings.skip_get_fence_ranges = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_skip_get_fence_status", env_var_value))
+    {
+        settings_struct_.replay_settings.skip_get_fence_status = atoi(env_var_value.c_str());
+    }
+    if (ReadEnvironmentVariable("replay_surface_index", env_var_value))
+    {
+        settings_struct_.replay_settings.surface_index = atoi(env_var_value.c_str());
+    }
+    if (ReadEnvironmentVariable("replay_swapchain", env_var_value))
+    {
+        settings_struct_.replay_settings.swapchain = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_sync", env_var_value))
+    {
+        settings_struct_.replay_settings.sync = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_use_captured_swapchain_indices", env_var_value))
+    {
+        settings_struct_.replay_settings.use_captured_swapchain_indices = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_use_colorspace_fallback", env_var_value))
+    {
+        settings_struct_.replay_settings.use_colorspace_fallback = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_validate", env_var_value))
+    {
+        settings_struct_.replay_settings.validate = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_version", env_var_value))
+    {
+        settings_struct_.replay_settings.version = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_virtual_swapchain_skip_blit", env_var_value))
+    {
+        settings_struct_.replay_settings.virtual_swapchain_skip_blit = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_wait_before_present", env_var_value))
+    {
+        settings_struct_.replay_settings.wait_before_present = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_wsi", env_var_value))
+    {
+        settings_struct_.replay_settings.wsi = env_var_value;
+    }
+#if defined(__ANDROID__)
+    if (ReadEnvironmentVariable("replay_omit_null_hardware_buffers", env_var_value))
+    {
+        settings_struct_.replay_settings.omit_null_hardware_buffers = SettingValueToBool(env_var_value);
+    }
+#endif // defined(__ANDROID__)
+#if defined(WIN32)
+    if (ReadEnvironmentVariable("replay_allowed_messages", env_var_value))
+    {
+        settings_struct_.replay_settings.allowed_messages = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_batching_memory_usage", env_var_value))
+    {
+        settings_struct_.replay_settings.batching_memory_usage = atoi(env_var_value.c_str());
+    }
+    if (ReadEnvironmentVariable("replay_create_dummy_allocations", env_var_value))
+    {
+        settings_struct_.replay_settings.create_dummy_allocations = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_denied_messages", env_var_value))
+    {
+        settings_struct_.replay_settings.denied_messages = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_force_windowed", env_var_value))
+    {
+        settings_struct_.replay_settings.force_windowed = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_force_windowed_origin", env_var_value))
+    {
+        settings_struct_.replay_settings.force_windowed_origin = env_var_value;
+    }
+    if (ReadEnvironmentVariable("replay_no_debug_popup", env_var_value))
+    {
+        settings_struct_.replay_settings.no_debug_popup = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("replay_use_cached_psos", env_var_value))
+    {
+        settings_struct_.replay_settings.use_cached_psos = SettingValueToBool(env_var_value);
+    }
+#endif // defined(WIN32)
 }
 
 
@@ -548,5 +894,7 @@ void SettingsManager::UpdateDynamicEnvironmentVariables()
         settings_struct_.capture_settings.capture_android_trigger = SettingValueToBool(env_var_value);
     }
 #endif // defined(__ANDROID__)
+
+    // -- Replay-specific
 }
 

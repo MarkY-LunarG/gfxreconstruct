@@ -449,11 +449,15 @@
                 "description":
                     "Enables automatic injection of breadcrumbs into command buffers and page fault reporting. Used to debug device removed problems.",
                 "tools": [
-                    "CAPTURE"
+                    "CAPTURE",
+                    "REPLAY"
                 ],
                 "apis": [
                     "D3D12"
                 ],
+                "command-line": {
+                    "long": "debug-device-lost"
+                },
                 "type": {
                     "primitive": "BOOL",
                     "default": false
@@ -565,7 +569,8 @@
                 "label": "Log",
                 "description": "Control log messages.",
                 "tools": [
-                    "CAPTURE"
+                    "CAPTURE",
+                    "REPLAY"
                 ],
                 "type": {
                     "primitive": "GROUP"
@@ -636,10 +641,14 @@
                 "label": "Log File",
                 "description": "When set, log messages will be written to a file at the specified location.",
                 "tools": [
-                    "CAPTURE"
+                    "CAPTURE",
+                    "REPLAY"
                 ],
                 "parent": {
                     "key": "log"
+                },
+                "command-line": {
+                    "argument-label": "<log_file>"
                 },
                 "type": {
                     "primitive": "SAVE_FILE",
@@ -700,10 +709,14 @@
                 "description":
                     "Specify the highest level message to log.  The specified level and all levels listed after it will be enabled for logging.  For example, choosing the `warning` level will also enable the `error` and `fatal` levels.",
                 "tools": [
-                    "CAPTURE"
+                    "CAPTURE",
+                    "REPLAY"
                 ],
                 "parent": {
                     "key": "log"
+                },
+                "command-line": {
+                    "argument-label": "<level>"
                 },
                 "type": {
                     "primitive": "ENUM",
@@ -776,7 +789,8 @@
                 "label": "Log Timestamps",
                 "description": "Output a timestamp in front of each log message.",
                 "tools": [
-                    "CAPTURE"
+                    "CAPTURE",
+                    "REPLAY"
                 ],
                 "parent": {
                     "key": "log"
@@ -1113,7 +1127,8 @@
                 "label": "Screenshot",
                 "description": "Screenshot Control",
                 "tools": [
-                    "CAPTURE"
+                    "CAPTURE",
+                    "REPLAY"
                 ],
                 "type": {
                     "primitive": "GROUP"
@@ -1124,10 +1139,14 @@
                 "label": "Screenshot Directory",
                 "description": "Directory used where screenshots are saved to.  Default is the current working directory.",
                 "tools": [
-                    "CAPTURE"
+                    "CAPTURE",
+                    "REPLAY"
                 ],
                 "parent": {
                     "key": "screenshot"
+                },
+                "command-line": {
+                    "argument-label": "<dir>"
                 },
                 "type": {
                     "primitive": "SAVE_FOLDER",
@@ -1140,10 +1159,14 @@
                 "label": "Screenshot Format",
                 "description": "Image file format to use when saving screenshots.",
                 "tools": [
-                    "CAPTURE"
+                    "CAPTURE",
+                    "REPLAY"
                 ],
                 "parent": {
                     "key": "screenshot"
+                },
+                "command-line": {
+                    "argument-label": "<format>"
                 },
                 "type": {
                     "primitive": "ENUM",
@@ -1179,15 +1202,38 @@
                 }
             },
             {
+                "key": "screenshots",
+                "label": "Screenshot Specific Frames",
+                "description":
+                    "Generate screenshots for the specified frames. Target frames are specified as a comma separated list of frame ranges.  A frame range can be specified as a single value, to specify a single frame, or as two hyphenated values, to specify the first and last frames to process.  Frame ranges should be specified in ascending order and cannot overlap.  Note that frame numbering is 1-based (i.e. the first frame is frame 1). Example: 200,301-305 will generate six screenshots.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "parent": {
+                    "key": "screenshot"
+                },
+                "command-line": {
+                    "argument-label": "<N1[-N2][,...]>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
                 "key": "screenshot_interval",
                 "label": "Screenshot Interval",
                 "description":
                     "Sets the number between every screenshot taken.  1 means every frame is screenshot, 2 means every other, etc. Example: If screenshot range is 10-15 and interval is 2, screenshot will be generated for frames 10, 12 and 14.",
                 "tools": [
-                    "CAPTURE"
+                    "CAPTURE",
+                    "REPLAY"
                 ],
                 "parent": {
                     "key": "screenshot"
+                },
+                "command-line": {
+                    "argument-label": "<N>"
                 },
                 "type": {
                     "primitive": "INT",
@@ -1208,6 +1254,1383 @@
                 "type": {
                     "primitive": "BOOL",
                     "default": false
+                }
+            },
+            {
+                "key": "add_new_pipeline_caches",
+                "label": "Create vkPipelineCache for All Pipelines",
+                "description":
+                    "If set, allows gfxreconstruct to create new vkPipelineCache objects when it encounters a pipeline created without cache. This option can be used in coordination with `--save-pipeline-cache` and `--load-pipeline-cache`.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "allowed_messages",
+                "label": "Allowed Debug Messages",
+                "description": "Identify messages to allow D3D12 debugging to output",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "platforms": [
+                    "WINDOWS"
+                ],
+                "command-line": {
+                    "argument-label": "<messages>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "batching_memory_usage",
+                "label": "Percent Memory Allowed",
+                "description":
+                    "Max amount of memory consumption while loading a trimmed capture file. Acceptable values range from 0 to 100. 0 means no batching at all 100 means use all available system and GPU memory",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "platforms": [
+                    "WINDOWS"
+                ],
+                "command-line": {
+                    "argument-label": "<percentage>"
+                },
+                "type": {
+                    "primitive": "INT",
+                    "default": 80
+                }
+            },
+            {
+                "key": "capture",
+                "label": "Capture the Replaying File",
+                "description":
+                    "Capture the replaying GFXR file. Capture uses the same log options as replay. All other capture option behavior and usage is the same as when capturing with the GFXR layer. The capture functionality is included in the `gfxrecon-replay` executable -- no GFXR capture layer is added to the Vulkan layer chain.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "cpu_mask",
+                "label": "Set CPU Core Usage",
+                "description":
+                    "Set of CPU cores used by the replayer. `binary-mask` is a succession of '0' and '1' read from left to right that specifies used/unused cores. For example '10010' activates the first and fourth cores and deactivate all other cores. If the option is not set, all cores can be used. If the option is set only for some cores, the other cores are not used.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<binary-mask>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "create_dummy_allocations",
+                "label": "Create Dummy Allocations",
+                "description": "Enable creation of dummy heaps and resources for replay validation.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "platforms": [
+                    "WINDOWS"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "debug_messenger_level",
+                "label": "Debug Messenger Level",
+                "description":
+                    "Specify highest debug messenger severity level. Options are: debug, info, warning, and error.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<level>"
+                },
+                "type": {
+                    "primitive": "ENUM",
+                    "flags": [
+                        {
+                            "key": "debug",
+                            "label": "debug, info, warning, error, fatal",
+                            "description": "Messages with debug-severity and higher"
+                        },
+                        {
+                            "key": "info",
+                            "label": "info, warning, error, fatal",
+                            "description": "Messages with info-severity and higher"
+                        },
+                        {
+                            "key": "warning",
+                            "label": "warning, error, fatal",
+                            "description": "Messages with warning-severity and higher"
+                        },
+                        {
+                            "key": "error",
+                            "label": "error, fatal",
+                            "description": "Only Error/Fatal messages"
+                        },
+                        {
+                            "key": "fatal",
+                            "label": "fatal",
+                            "description": "Only Fatal messages"
+                        }
+                    ],
+                    "default": "warning"
+                }
+            },
+            {
+                "key": "denied_messages",
+                "label": "Denied Debug Messages",
+                "description": "Identify messages to deny D3D12 debugging to output",
+                "tools": [
+                    "REPLAY"
+                ],
+                "platforms": [
+                    "WINDOWS"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "command-line": {
+                    "argument-label": "<messages>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "deduplicate_device",
+                "label": "De-Duplicate Device",
+                "description":
+                    "If set, at most one VkDevice will be created for each VkPhysicalDevice for RenderDoc and DXVK case.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "discard_cached_psos",
+                "label": "Discard Cached PSOs",
+                "description": "Discard cached PSOs [Deprecated, please use '--use-cached-psos'].",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "command-line": {
+                    "short": "dcp"
+                },
+                "deprecated": true,
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources",
+                "label": "Enable Dump Resources",
+                "description": "Dump out resources during replay",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<args>",
+                    "argument-description-array": [
+                        {
+                            "arg": "<submit-index,command-index,draw-call-index>",
+                            "description":
+                                "The capture file will be examined, and <submit-index,command-index,draw-call-index> will be converted to <arg> as used in `--dump-resources` <arg> below. The converted args will be used as the args for dump resources."
+                        },
+                        {
+                            "arg": "<filename>.json",
+                            "description":
+                                "Extract `--dump-resources` block indices args from the specified json file. The format for the json file is documented in detail in the gfxreconstruct documentation."
+                        }
+                    ]
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "dump_resources_before_draw",
+                "label": "Dump Resource Before Draw Calls",
+                "description":
+                    "In addition to dumping GPU resources after the draw calls specified by the `--dump-resources` argument, also dump resources before the draw calls.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources_binary_file_compression_type",
+                "label": "Dump Resources Compression",
+                "description":
+                    "Compress files that are dumped as binary. ",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "VULKAN"
+                ],
+                "command-line": {
+                    "argument-label": "<compression-format>"
+                },
+                "type": {
+                    "primitive": "ENUM",
+                    "flags": [
+                        {
+                            "key": "lz4",
+                            "label": "LZ4",
+                            "description":
+                                "Fastest compression algorithm that favors performance over compression ratio."
+                        },
+                        {
+                            "key": "zlib",
+                            "label": "ZLIB",
+                            "description":
+                                "Widely used compression algorithm with better compression ratio than LZ4 but worse performance."
+                        },
+                        {
+                            "key": "zstd",
+                            "label": "ZSTD",
+                            "description":
+                                "Newer compression algorithm with better compression ratio and performance than ZLIB, though not as fast as LZ4."
+                        },
+                        {
+                            "key": "none",
+                            "label": "NONE",
+                            "description": "No compression (Default)"
+                        }
+                    ],
+                    "default": "none"
+                }
+            },
+            {
+                "key": "dump_resources_dir",
+                "label": "Dump Resources Directory",
+                "description":
+                    "Directory to write dump resources output files. Default is the current working directory.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "command-line": {
+                    "argument-label": "<dir>"
+                },
+                "type": {
+                    "primitive": "SAVE_FOLDER",
+                    "android-base": "/sdcard",
+                    "default": ""
+                }
+            },
+            {
+                "key": "dump_resources_dump_all_image_subresources",
+                "label": "Dump All Image Levels and Layers",
+                "description": "Dump all available mip levels and layers when dumping images.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources_dump_build_acceleration_structures_input_buffers",
+                "label": "Dump All Input Buffers Used to Build Acceleration Structs",
+                "description": "Dump all input buffers used in vkCmdBuildAccelerationStructures. This includes vertex, index, transformation matrix, AABB and instance buffers. Default is off.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources_dump_color_attachment_index",
+                "label": "Dump Color Attachments at Index",
+                "description":
+                    "Configures which color attachment to dump when dumping draw calls.  Default is all attachments.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<index>"
+                },
+                "type": {
+                    "primitive": "INT",
+                    "default": -1
+                }
+            },
+            {
+                "key": "dump_resources_dump_depth_attachment",
+                "label": "Dump the Depth Attachment of Draw Calls",
+                "description": "Configures whether to dump the depth attachment of draw calls. Default is false.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources_dump_raw_images",
+                "label": "Dump Raw Images",
+                "description":
+                    "Dump the images in raw format (without conversion), otherwise they will be transformed into a VK_FORMAT_B8G8R8A8_* format, more suitable for dumping in an image file.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources_dump_separate_alpha",
+                "label": "Dump Image Alpha Separately",
+                "description": "Dump the image alpha as a separate file from the main image.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources_dump_unused_vertex_bindings",
+                "label": "Dump Unused Vertex Bindings",
+                "description": "Dump a vertex binding even if no vertex attributes references it.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources_dump_vertex_index_buffers",
+                "label": "Dump Vertex/Index Buffers",
+                "description":
+                    "Enable dumping of vertex and index buffers while dumping draw call resources. Default is disabled.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources_image_format",
+                "label": "Dump Resources Image Format",
+                "description":
+                    "Image file format to use when dumping image resources. Available formats are: bmp, png.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<format>"
+                },
+                "type": {
+                    "primitive": "ENUM",
+                    "flags": [
+                        {
+                            "key": "BMP",
+                            "label": "BMP",
+                            "description": "Bitmap File Format."
+                        },
+                        {
+                            "key": "PNG",
+                            "label": "PNG",
+                            "description": "Portable Network Graphics Format."
+                        }
+                    ],
+                    "default": "BMP"
+                }
+            },
+            {
+                "key": "dump_resources_json_output_per_command",
+                "label": "Enable Dumped Command JSON",
+                "description":
+                    "Enable storing a json output file for each dumped command.  Overrides default behavior which is generating one output json file that contains the information for all dumped commands.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources_modifiable_state_only",
+                "label": "Dump Only Modifiable Resources",
+                "description": "Only dump resources that are in a modifiable state set by D3D12 ResourceBarrier.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dump_resources_scale",
+                "label": "Dump Resources Images Scale",
+                "description":
+                    "Scale images generated by dump resources by the given scale factor. The scale factor must be a floating point number greater than 0. Values greater than 10 are capped at 10. Default value is 1.0.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<scale>"
+                },
+                "type": {
+                    "primitive": "FLOAT",
+                    "default": 1.0
+                }
+            },
+            {
+                "key": "dx12_ags_inject_markers",
+                "label": "D3D12 Inject Debug Markers",
+                "description":
+                    "Label each API calls as block index of the trace Radeon GPU Detective could dump the label for debugging.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dx12_override_object_names",
+                "label": "D3D12 Override Object Names",
+                "description":
+                    "Generate unique names for all ID3D12Objects and assign each object the generated name.  This is intended to assist in replay debugging.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dx12_two_pass_replay",
+                "label": "D3D12 Two Pass Replay",
+                "description":
+                    "Enable D3D12 Two Pass Replay.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "flush_inside_measurement_range",
+                "label": "Flush Only Inside Measurement Range",
+                "description":
+                    "If this is specified the replayer will flush and wait for all current GPU work to finish at the end of each frame inside the measurement range.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "flush_measurement_range",
+                "label": "Range of Frames to Flush/Wait",
+                "description":
+                    "If this is specified the replayer will flush and wait for all current GPU work to finish at the start and end of the measurement range.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "short": "fmr"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "force_windowed",
+                "label": "Force Windowed",
+                "description": "Setup windowed and override resolution.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "platforms": [
+                    "WINDOWS"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "command-line": {
+                    "argument-label": "<width,height>",
+                    "short": "fw"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "force_windowed_origin",
+                "label": "Force Window Origin",
+                "description": "Setup windowed origin.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "platforms": [
+                    "WINDOWS"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "command-line": {
+                    "argument-label": "<x,y>",
+                    "short": "fwo"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "gpu",
+                "label": "Use GPU Index",
+                "description":
+                    "Use the specified device for replay, where index is the zero-based index to the array of physical devices returned by vkEnumeratePhysicalDevices or IDXGIFactory1::EnumAdapters1. Replay may fail if the specified device is not compatible with the original capture devices.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<index>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "gpu_group",
+                "label": "Use GPU Group Index",
+                "description":
+                    "Use the specified device group for replay, where index is the zero-based index to the array of physical device group returned by vkEnumeratePhysicalDeviceGroups.  Replay may fail if the specified device group is not compatible with the original capture device group.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<index>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "help",
+                "label": "Print Usage",
+                "description": "Print usage information and exit",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "short": "h"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "input_capture",
+                "label": "Input Capture File",
+                "description":
+                    "The name of the capture file to use for processing.  This overrides the non-tagged input filename that used to appear after all optional arguments",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<input_file>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "load_pipeline_cache",
+                "label": "Load Pipeline Cache",
+                "description":
+                    "If set, loads data created by the `--save-pipeline-cache` option in <cache-file> and uses it to create the pipelines instead of the pipeline caches saved at capture time.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<cache-file>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "log_debugview",
+                "label": "Log messages with OutputDebugStringA.",
+                "description": "Log messages with OutputDebugStringA.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "parent": {
+                    "key": "log"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "measurement_file",
+                "label": "Write Measurements To File",
+                "description":
+                    "Write measurements to a file at the specified path. Default is: '/sdcard/gfxrecon-measurements.json' on Android and'./gfxrecon-measurements.json' on desktop.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<file>"
+                },
+                "type": {
+                    "primitive": "SAVE_FILE",
+                    "filter": "*.gfxr",
+                    "android-base": "/sdcard/",
+                    "default": "gfxrecon-measurement.gfxr"
+                }
+            },
+            {
+                "key": "measurement_frame_range",
+                "label": "Write Measurements To File",
+                "description":
+                    "Custom framerange to measure FPS for. This range will include the start frame but not the end frame. The measurement frame range defaults to all frames except the loading frame but can be configured for any range. If the end frame is past the last frame in the trace it will be clamped to the frame after the last (so in that case the results would include the last frame).",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<start_frame>-<end_frame>",
+                    "short": "mfr"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "memory_translation",
+                "label": "Memory Translation",
+                "description":
+                    "Enable memory translation for replay on GPUs with memory types that are not compatible with the capture GPU's memory types",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<mode>",
+                    "short": "m"
+                },
+                "type": {
+                    "primitive": "ENUM",
+                    "flags": [
+                        {
+                            "key": "none",
+                            "label": "NONE",
+                            "description": "No memory translation is performed (Default)."
+                        },
+                        {
+                            "key": "remap",
+                            "label": "REMAP",
+                            "description":
+                                "Attempt to map capture memory types to compatible replay memory types, without altering memory allocation behavior."
+                        },
+                        {
+                            "key": "realign",
+                            "label": "REALIGN",
+                            "description":
+                                "Adjust memory allocation sizes and resource binding offsets based on replay memory properties."
+                        },
+                        {
+                            "key": "rebind",
+                            "label": "REBIND",
+                            "description":
+                                "Change memory allocation behavior based on resource usage and replay memory properties.  Resources may be bound to different allocations with different offsets.  Uses VMA to manage allocations and suballocations."
+                        }
+                    ],
+                    "default": "none"
+                }
+            },
+            {
+                "key": "no_debug_popup",
+                "label": "Disable Windows Debug Pop-up",
+                "description":
+                    "Disable the 'Abort, Retry, Ignore' message box displayed when abort() is called (Windows debug only).",
+                "tools": [
+                    "REPLAY"
+                ],
+                "platforms": [
+                    "WINDOWS"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "offscreen_swapchain_frame_boundary",
+                "label": "Insert Offscreen Frame Identifiers",
+                "description":
+                    "Should only be used with offscreen swapchain. Activates the extension VK_EXT_frame_boundary (always supported if trimming, checks for driver support otherwise) and inserts command buffer submission with VkFrameBoundaryEXT where vkQueuePresentKHR was called in the original capture.  This allows preserving frames when capturing a replay that uses offscreen swapchain.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "omit_null_hardware_buffers",
+                "label": "Omit NULL AHBs",
+                "description": "Omit calls that use a NULL AHardwareBuffer",
+                "tools": [
+                    "REPLAY"
+                ],
+                "platforms": [
+                    "ANDROID"
+                ],
+                "command-line": {
+                    "short": "onhb"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "omit_pipeline_cache_data",
+                "label": "Omit Using Pipeline Cache",
+                "description": "Omit pipeline cache data from calls to vkCreatePipelineCache and skip calls to vkGetPipelineCacheData",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "short": "opcd"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "pause_frame",
+                "label": "Pause At Frame",
+                "description": "Pause after replay frame number <frame>",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<frame>"
+                },
+                "type": {
+                    "primitive": "INT",
+                    "default": -1
+                }
+            },
+            {
+                "key": "paused",
+                "label": "Pause After First Frame",
+                "description": "Pause after replaying the first frame (same as `--pause-frame 1`).",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "pbi_all",
+                "label": "Print All Block Info",
+                "description": "Print all block information.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "pbis",
+                "label": "Print Block Info",
+                "description": "Print block information between block index1 and block index2.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<index1,index2>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "pipeline_creation_jobs",
+                "label": "Pipeline Creation Jobs",
+                "description":
+                    "Specify the number of asynchronous pipeline-creation jobs as integer. If <num_jobs> is negative it will be added to the number of cpu-cores Default: 0 (do not use asynchronous operations).",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<num_jobs>",
+                    "short": "pcj"
+                },
+                "type": {
+                    "primitive": "INT",
+                    "default": 0
+                }
+            },
+            {
+                "key": "preload_measurement_range",
+                "label": "Range of Frames To Pre-Load",
+                "description": "Preload the provided measurement range of frames.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "present_mode",
+                "label": "Present Mode",
+                "description": "Override the VkPresentModeKHR of the swapchain value during replay",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "VULKAN"
+                ],
+                "command-line": {
+                    "argument-label": "<mode>"
+                },
+                "type": {
+                    "primitive": "ENUM",
+                    "flags": [
+                        {
+                            "key": "capture",
+                            "label": "",
+                            "description": "Use whatever present mode the original application used."
+                        },
+                        {
+                            "key": "immediate",
+                            "label": "VK_PRESENT_MODE_IMMEDIATE_KHR",
+                            "description": "Force VK_PRESENT_MODE_IMMEDIATE_KHR"
+                        },
+                        {
+                            "key": "mailbox",
+                            "label": "VK_PRESENT_MODE_MAILBOX_KHR",
+                            "description": "Force VK_PRESENT_MODE_MAILBOX_KHR"
+                        },
+                        {
+                            "key": "fifo",
+                            "label": "VK_PRESENT_MODE_FIFO_KHR",
+                            "description": "Force VK_PRESENT_MODE_FIFO_KHR"
+                        },
+                        {
+                            "key": "fifo_relaxed",
+                            "label": "VK_PRESENT_MODE_FIFO_RELAXED_KHR",
+                            "description": "Force VK_PRESENT_MODE_FIFO_RELAXED_KHR"
+                        }
+                    ],
+                    "default": "capture"
+                }
+            },
+            {
+                "key": "quit_after_frame",
+                "label": "Quit Replay After Frame",
+                "description": "Quit replay after frame <frame> has completed.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<frame>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "quit_after_measurement_range",
+                "label": "Quit After Measurement Range",
+                "description": "If this is specified the replayer will abort when it reaches the <end_frame> specified in the `--measurement-frame-range` argument.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "short": "qamr"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "remove_unsupported",
+                "label": "Remove Unsupported Extensions/Features",
+                "description":
+                    "Remove unsupported extensions and features from instance and device creation parameters.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "replace_shaders",
+                "label": "Replace Shaders",
+                "description":
+                    "Replace the shader code in each CreateShaderModule with the contents of the file <dir>/sh<handle_id> if found, where <handle_id> is the handle id of the CreateShaderModule call. See gfxrecon-extract.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<dir>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "save_pipeline_cache",
+                "label": "Save Pipeline Cache",
+                "description":
+                    "If set, produces pipeline caches at replay time instead of using the one saved at capture time and save those caches in <cache-file>",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<cache-file>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "screenshot_all",
+                "label": "Screenshot All Frames",
+                "description":
+                    "Generate screenshots for all frames.  When this option is specified, other screenshot frame-related options are ignored.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "parent": {
+                    "key": "screenshot"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "screenshot_ignore_FrameBoundaryANDROID",
+                "label": "Ignore Frames Using vkFrameBoundANDROID",
+                "description":
+                    "If set, frames switched with vkFrameBoundANDROID will be ignored from the screenshot handler.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "screenshot_prefix",
+                "label": "Screenshot Prefix",
+                "description":
+                    "Prefix to apply to the screenshot file name.  Default is 'screenshot', producing file names similar to 'screenshot_frame_8049.bmp'",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<file-prefix>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": "screenshot"
+                }
+            },
+            {
+                "key": "screenshot_scale",
+                "label": "Screenshot Scale",
+                "description":
+                    "Specify a decimal factor which will determine screenshot sizes. The factor will be multiplied with the swapchain images dimension to determine the screenshot dimensions. Default value is 1.0.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<scale>"
+                },
+                "type": {
+                    "primitive": "FLOAT",
+                    "default": 1.0
+                }
+            },
+            {
+                "key": "screenshot_size",
+                "label": "Screenshot Size",
+                "description":
+                    "Specify desired screenshot dimensions. Leaving this unspecified screenshots will use the swapchain images dimensions. If `--screenshot-scale` is also specified then this option is ignored.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<width>x<height>"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "skip_failed_allocations",
+                "label": "Skip Failed Allocations",
+                "description":
+                    "Skip vkAllocateMemory, vkAllocateCommandBuffers, and vkAllocateDescriptorSets calls that failed during capture.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "short": "sfa"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "skip_get_fence_ranges",
+                "label": "Skip Get Fence Ranges",
+                "description": "Frame ranges where `--sgfs` applies. The format is: <frame-start-1>-<frame-end-1>[,<frame-start-1>-<frame-end-1>]*",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "VULKAN"
+                ],
+                "command-line": {
+                    "argument-label": "<frame-ranges>",
+                    "short": "sgfr"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "skip_get_fence_status",
+                "label": "Skip Get Fence Status",
+                "description": "Specify behaviour to skip calls to vkWaitForFences and vkGetFenceStatus. <status> = 0: Don't skip, <status> = 1: Skip unsuccessful calls, <status> = 2: Always Skip. If no skip frame range is specified (through `--sgfr`), the status applies to all frames. Skip vkGetFenceStatus calls that return a provided status",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "VULKAN"
+                ],
+                "command-line": {
+                    "argument-label": "<status>",
+                    "short": "sgfs"
+                },
+                "type": {
+                    "primitive": "INT",
+                    "default": 0
+                }
+            },
+            {
+                "key": "surface_index",
+                "label": "Restrict to Surface Index",
+                "description":
+                    "Restrict rendering to the Nth surface object created. Used with captures that include multiple surfaces.  Default is -1 (render to all surfaces).",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "VULKAN"
+                ],
+                "command-line": {
+                    "argument-label": "<N>"
+                },
+                "type": {
+                    "primitive": "INT",
+                    "default": -1
+                }
+            },
+            {
+                "key": "swapchain",
+                "label": "Swapchain Type",
+                "description": "Choose a swapchain mode to replay.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<mode>"
+                },
+                "type": {
+                    "primitive": "ENUM",
+                    "flags": [
+                        {
+                            "key": "captured",
+                            "label": "CAPTURED",
+                            "description":
+                                "Use the swapchain indices stored in the capture directly on the swapchain setup for replay."
+                        },
+                        {
+                            "key": "offscreen",
+                            "label": "OFFSCREEN",
+                            "description":
+                                "Disable creating swapchains, surfaces and windows. To see rendering, add the --screenshots option."
+                        },
+                        {
+                            "key": "virtual",
+                            "label": "VIRTUAL",
+                            "description":
+                                "Virtual Swapchain of images which match the swapchain in effect at capture time and which are copied to the underlying swapchain of the implementation being replayed on (Default)."
+                        }
+                    ],
+                    "default": "virtual"
+                }
+            },
+            {
+                "key": "sync",
+                "label": "Sync After Queue Submits",
+                "description": "Synchronize after each queue submission with vkQueueWaitIdle.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "use_cached_psos",
+                "label": "Permit Using Cached PSOs",
+                "description":
+                    "Permit using cached PSOs when creating graphics or compute pipelines.  Using cached PSOs may reduce PSO creation time but may result in replay errors.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "platforms": [
+                    "WINDOWS"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "use_captured_swapchain_indices",
+                "label": "Use Captured Swapchain Indicies",
+                "description": "Same as `--swapchain captured`.  Ignored if the `--swapchain` option is used.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "use_colorspace_fallback",
+                "label": "Fallback Swapchain Colorspace For Replay Device",
+                "description":
+                    "Swap the swapchain color space if unsupported by replay device. Check if color space is not supported by replay device and fallback to VK_COLOR_SPACE_SRGB_NONLINEAR_KHR.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "validate",
+                "label": "Enable Validation",
+                "description":
+                    "Enable the Khronos Vulkan validation layer when replaying a Vulkan capture or the Direct3D debug layer when replaying a Direct3D 12 capture.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "version",
+                "label": "Print Version",
+                "description": "Print version information and exit.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "virtual_swapchain_skip_blit",
+                "label": "Skip BLTs in Virtual Swapchain",
+                "description": "If using Virtual Swapchain, skip the actual BLTs to the actual HW surface to gain performance during replay.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "short": "vssb"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "wait_before_present",
+                "label": "Wait Before Presenting",
+                "description":
+                    "Force wait on completion of queue operations for all queues before calling Present. This is needed for accurate acquisition of instrumentation data on some platforms.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "wsi",
+                "label": "Force WSI",
+                "description": "Force replay to use the specified wsi platform.",
+                "tools": [
+                    "REPLAY"
+                ],
+                "command-line": {
+                    "argument-label": "<platform>"
+                },
+                "type": {
+                    "primitive": "ENUM",
+                    "flags": [
+                        {
+                            "key": "auto",
+                            "label": "AUTO",
+                            "description": "Automatically attempt to determine WSI used based on platform (Default)."
+                        },
+                        {
+                            "key": "win32",
+                            "label": "WIN32",
+                            "description": "Force WIN32 WSI type WSI (Valid on Windows)."
+                        },
+                        {
+                            "key": "xlib",
+                            "label": "XLIB",
+                            "description": "Force using XLIB WSI (Valid on Linux)."
+                        },
+                        {
+                            "key": "xcb",
+                            "label": "XCB",
+                            "description": "Force using XCB WSI (Valid on Linux)."
+                        },
+                        {
+                            "key": "wayland",
+                            "label": "WAYLAND",
+                            "description": "Force using Wayland WSI (Valid on Linux)."
+                        },
+                        {
+                            "key": "display",
+                            "label": "DISPLAY",
+                            "description": "Force using Display WSI."
+                        },
+                        {
+                            "key": "headless",
+                            "label": "HEADLESS",
+                            "description": "Force using headless WSI."
+                        }
+                    ],
+                    "default": "auto"
                 }
             }
        ]

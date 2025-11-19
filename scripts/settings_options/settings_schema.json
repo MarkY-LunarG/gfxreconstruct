@@ -179,6 +179,27 @@
                 }
             }
         },
+        "SettingCommandLine": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "argument-label": {
+                    "type": "string"
+                },
+                "argument-description-array": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ArgumentDescription"
+                    }
+                },
+                "long": {
+                    "type": "string"
+                },
+                "short": {
+                    "type": "string"
+                }
+            }
+        },
         "Setting": {
             "type": "object",
             "additionalProperties": false,
@@ -218,13 +239,17 @@
                         ]
                     }
                 },
-                "dynamic": {
-                    "type": "boolean",
-                    "description": "This setting may change during the course of executing one or more tools"
+                "command-line": {
+                    "$ref": "#/definitions/SettingCommandLine",
+                    "description": "Command-line arguments for this setting"
                 },
                 "deprecated": {
                     "type": "boolean",
                     "description": "This settings is deprecated and may have been replaced with another"
+                },
+                "dynamic": {
+                    "type": "boolean",
+                    "description": "This setting may change during the course of executing one or more tools"
                 },
                 "tools": {
                     "type": "array",
