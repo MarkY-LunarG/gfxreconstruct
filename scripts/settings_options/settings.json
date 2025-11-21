@@ -1213,7 +1213,7 @@
                     "key": "screenshot"
                 },
                 "command-line": {
-                    "argument-label": "<N1[-N2][,...]>"
+                    "argument-label": "<range>"
                 },
                 "type": {
                     "primitive": "STRING",
@@ -1543,9 +1543,6 @@
                     "Directory to write dump resources output files. Default is the current working directory.",
                 "tools": [
                     "REPLAY"
-                ],
-                "apis": [
-                    "D3D12"
                 ],
                 "command-line": {
                     "argument-label": "<dir>"

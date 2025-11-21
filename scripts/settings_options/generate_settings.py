@@ -45,6 +45,7 @@ layer_settings_filename: str = GFXR_ROOT_DIR / "layer/vk_layer_settings.txt"
 generated_replay_settings_filename: str = GFXR_ROOT_DIR / "tools/replay/generated_replay_settings.h"
 generated_settings_struct_filename: str = GFXR_ROOT_DIR / "framework/util/generated_settings_struct.h"
 generated_settings_manager_filename: str = GFXR_ROOT_DIR / "framework/util/generated_settings_manager.cpp"
+android_gfxrecon_python_script_filename: str = GFXR_ROOT_DIR / "android/scripts/gfxrecon.py"
 
 # Documents
 android_usage_doc_filename: str = GFXR_ROOT_DIR / "USAGE_android.md"
@@ -65,11 +66,15 @@ empty_usage_string = "    GFXRECON_WRITE_CONSOLE(\"\\t\\t\\t"
 empty_ending_string = "\");\n"
 
 # Strings used to identify Markdown/HTML docs sections that need to be replaced
-# during the codegen phanse
-capture_gen_begin_str = "<!-- CAPTURE_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->"
-capture_gen_end_str = "<!-- CAPTURE_SETTINGS_OPTIONS TABLE CODEGEN END -->"
-replay_gen_begin_str = "<!-- REPLAY_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->"
-replay_gen_end_str = "<!-- REPLAY_SETTINGS_OPTIONS TABLE CODEGEN END -->"
+# during the codegen phase
+capture_markdown_gen_begin_str = "<!-- CAPTURE_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->"
+capture_markdown_gen_end_str = "<!-- CAPTURE_SETTINGS_OPTIONS TABLE CODEGEN END -->"
+replay_markdown_gen_begin_str = "<!-- REPLAY_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->"
+replay_markdown_gen_end_str = "<!-- REPLAY_SETTINGS_OPTIONS TABLE CODEGEN END -->"
+
+# Strings used to identify Android script repplay options codegen areas
+replay_android_script_begin_str = "    # START REPLAY CODEGEN INSERT"
+replay_android_script_end_str = "    # END REPLAY CODEGEN INSERT"
 
 generated_source_copyright = f"""
 /*
@@ -1242,6 +1247,104 @@ class ParsedSetting():
         envvar_read_lines.append("}")
         return envvar_read_lines
 
+    # Generate the replay tool usage information for parser arguments
+    # in the Android gfxrecon.py script.
+    # Parameters:
+    #   None
+    # Returns:
+    #   android_script_entry : List of strings necessary to
+    #                          write the parser add_argument line
+    #                          for this setting.
+    def GenerateAndroidScriptReplayParserArguments(self):
+        android_script_entry = []
+        if ((self.tools is None or "REPLAY" in self.tools)
+                and (self.type.primitive_type != "GROUP")
+                and ("ALL" in self.apis or "VULKAN" in self.apis)
+                and (self.command_line.has_command_line)
+                and ("ALL" in self.platforms or "ANDROID" in self.platforms)):
+
+            command_line_string = "'"
+            if self.command_line.short:
+                command_line_string += self.command_line.short
+                command_line_string += "', '"
+            if self.command_line.long:
+                command_line_string += self.command_line.long
+            command_line_string += "'"
+
+            variable_string_info = ""
+            if self.type.primitive_type == "BOOL":
+                variable_string_info = "action='store_true', default="
+                if self.type.default is None:
+                    variable_string_info += "False"
+                else:
+                    if self.type.default:
+                        variable_string_info += "True"
+                    else:
+                        variable_string_info += "False"
+            elif self.type.primitive_type == "ENUM":
+                variable_string_info = "metavar='"
+                var_name = self.command_line.argument_label.upper()
+                var_name = var_name.replace("<", "")
+                variable_string_info += var_name.replace(">", "")
+                variable_string_info += "', choices='"
+
+                add_comma = False
+                for flag in self.type.flags:
+                    if add_comma:
+                        variable_string_info += ","
+                    else:
+                        add_comma = True
+                    variable_string_info += flag.key.lower()
+                variable_string_info += "'"
+            else:
+                variable_string_info = "metavar='"
+                var_name = self.command_line.argument_label.upper()
+                var_name = var_name.replace("<", "")
+                variable_string_info += var_name.replace(">", "")
+                variable_string_info += "'"
+
+            clean_desc = self.description.replace("'", "\"")
+            clean_desc = clean_desc.replace("'", "\"")
+            clean_desc += " (forwarded to gfxrecon-replay tool)"
+            android_script_entry.append(
+                f"    parser.add_argument({command_line_string}, {variable_string_info}, help='{clean_desc}')"
+            )
+        return android_script_entry
+
+    # Generate the replay argument list generation for parser arguments
+    # in the Android gfxrecon.py script.
+    # Parameters:
+    #   None
+    # Returns:
+    #   android_script_entry : List of strings necessary to
+    #                          write the parser add_argument line
+    #                          for this setting.
+    def GenerateAndroidScriptReplayArgListGenerator(self):
+        android_script_entry = []
+        if ((self.tools is None or "REPLAY" in self.tools)
+                and (self.type.primitive_type != "GROUP")
+                and ("ALL" in self.apis or "VULKAN" in self.apis)
+                and (self.command_line.has_command_line)
+                and ("ALL" in self.platforms or "ANDROID" in self.platforms)):
+
+            command_line_string = "'"
+            if self.command_line.short:
+                command_line_string += self.command_line.short
+            elif self.command_line.long:
+                command_line_string += self.command_line.long
+            command_line_string += "'"
+
+            android_script_entry.append("")
+            android_script_entry.append(f"    if args.{self.key}:")
+            android_script_entry.append(
+                f"        arg_list.append({command_line_string})")
+
+            if self.type.primitive_type != "BOOL":
+                android_script_entry.append(
+                    f"        arg_list.append('{{}}'.format(args.{self.key}))")
+
+        return android_script_entry
+
 
 # Build up the list of children in each parent setting
 # Parameters:
@@ -2148,15 +2251,18 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
 
 # Update a USAGE_android.md options/settings tables for the
 # capture library and replay tool with the latest settings info.
-#   parsed_settings : The dictionary of all settings parsed from the
-#                     JSON file.
+# Parameters:
+#   parsed_settings :    The dictionary of all settings parsed from the
+#                        JSON file.
+# Returns:
+#   None
 def UpdateAndroidUsageSettingsTable(parsed_settings):
     print(f"Updating (GFXReconstruct)/USAGE_android.md")
 
     capture_markdown_table_lines = []
     replay_markdown_table_lines = []
 
-    capture_markdown_table_lines.append(capture_gen_begin_str)
+    capture_markdown_table_lines.append(capture_markdown_gen_begin_str)
     capture_markdown_table_lines.append(
         "| Setting/Options | Property | Type | Default | Description |")
     capture_markdown_table_lines.append(
@@ -2166,9 +2272,9 @@ def UpdateAndroidUsageSettingsTable(parsed_settings):
         capture_markdown_table_lines.extend(
             parsed_setting.GenerateAndroidCaptureUsageSettingsEntry())
 
-    capture_markdown_table_lines.append(capture_gen_end_str)
+    capture_markdown_table_lines.append(capture_markdown_gen_end_str)
 
-    replay_markdown_table_lines.append(replay_gen_begin_str)
+    replay_markdown_table_lines.append(replay_markdown_gen_begin_str)
     replay_markdown_table_lines.append(
         "| Command-Line Argument | Required | Description | Default | Valid for APIs |"
     )
@@ -2180,7 +2286,7 @@ def UpdateAndroidUsageSettingsTable(parsed_settings):
         replay_markdown_table_lines.extend(
             parsed_setting.GenerateAndroidReplayUsageSettingsEntry())
 
-    replay_markdown_table_lines.append(replay_gen_end_str)
+    replay_markdown_table_lines.append(replay_markdown_gen_end_str)
 
     # Now, read the current capture settings source file and replace the old
     # settings information with the new settings
@@ -2189,17 +2295,18 @@ def UpdateAndroidUsageSettingsTable(parsed_settings):
         record_lines = True
         while line := markdown_doc.readline():
             stripped_line = line.rstrip()
-            if record_lines and (stripped_line == capture_gen_begin_str
-                                 or stripped_line == replay_gen_begin_str):
+            if record_lines and (
+                    stripped_line == capture_markdown_gen_begin_str
+                    or stripped_line == replay_markdown_gen_begin_str):
                 record_lines = False
 
             if record_lines:
                 markdown_lines.append(stripped_line)
             else:
-                if stripped_line == capture_gen_end_str:
+                if stripped_line == capture_markdown_gen_end_str:
                     markdown_lines.extend(capture_markdown_table_lines)
                     record_lines = True
-                elif stripped_line == replay_gen_end_str:
+                elif stripped_line == replay_markdown_gen_end_str:
                     markdown_lines.extend(replay_markdown_table_lines)
                     record_lines = True
 
@@ -2209,9 +2316,12 @@ def UpdateAndroidUsageSettingsTable(parsed_settings):
 
 # Update a desktop USAGE.md options/settings tables for the
 # capture library and replay tool with the latest settings info.
+# Parameters:
 #   parsed_settings : The dictionary of all settings parsed from the
 #                     JSON file.
 #   api             : The current API who's info we need to output
+# Returns:
+#   None
 def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
     source_file = desktop_d3d12_usage_doc_filename
     if api == "VULKAN":
@@ -2222,7 +2332,7 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
     capture_markdown_table_lines = []
     replay_markdown_table_lines = []
 
-    capture_markdown_table_lines.append(capture_gen_begin_str)
+    capture_markdown_table_lines.append(capture_markdown_gen_begin_str)
     capture_markdown_table_lines.append(
         "| Setting/Options | Environment Variable | Type | Default | Description |"
     )
@@ -2233,9 +2343,9 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
         capture_markdown_table_lines.extend(
             parsed_setting.GenerateDesktopCaptureUsageSettingsEntry(api))
 
-    capture_markdown_table_lines.append(capture_gen_end_str)
+    capture_markdown_table_lines.append(capture_markdown_gen_end_str)
 
-    replay_markdown_table_lines.append(replay_gen_begin_str)
+    replay_markdown_table_lines.append(replay_markdown_gen_begin_str)
     replay_markdown_table_lines.append(
         "| Command-Line Argument | Required | Description | Default | Valid for APIs |"
     )
@@ -2247,7 +2357,7 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
         replay_markdown_table_lines.extend(
             parsed_setting.GenerateDesktopReplayUsageSettingsEntry(api))
 
-    replay_markdown_table_lines.append(replay_gen_end_str)
+    replay_markdown_table_lines.append(replay_markdown_gen_end_str)
 
     # Now, read the current capture settings source file and replace the old
     # settings information with the new settings
@@ -2256,22 +2366,94 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
         record_lines = True
         while line := markdown_doc.readline():
             stripped_line = line.rstrip()
-            if record_lines and (stripped_line == capture_gen_begin_str
-                                 or stripped_line == replay_gen_begin_str):
+            if record_lines and (
+                    stripped_line == capture_markdown_gen_begin_str
+                    or stripped_line == replay_markdown_gen_begin_str):
                 record_lines = False
 
             if record_lines:
                 markdown_lines.append(stripped_line)
             else:
-                if stripped_line == capture_gen_end_str:
+                if stripped_line == capture_markdown_gen_end_str:
                     markdown_lines.extend(capture_markdown_table_lines)
                     record_lines = True
-                elif stripped_line == replay_gen_end_str:
+                elif stripped_line == replay_markdown_gen_end_str:
                     markdown_lines.extend(replay_markdown_table_lines)
                     record_lines = True
 
     with open(source_file, 'w') as markdown_doc:
         markdown_doc.write('\n'.join(markdown_lines))
+
+
+# Update the replay settings defined in the gfxrecon.py Android script.
+# Parameters:
+#   parsed_settings :    The dictionary of all settings parsed from the
+#                        JSON file.
+# Returns:
+#   None
+def UpdateAndroidReplayScriptArguments(parsed_settings):
+    print(
+        f"Updating {android_gfxrecon_python_script_filename}"
+    )
+
+    replay_script_lines = []
+
+    replay_script_lines.append(
+        "    # **WARNING** Do not manually edit the following code.")
+    replay_script_lines.append(
+        f"    # *********** This code was added by the {SCRIPT_NAME} script using the"
+    )
+    replay_script_lines.append(
+        "    # *********** settings.json input file.  Please add new settings there."
+    )
+
+    for key, parsed_setting in parsed_settings.items():
+        replay_script_lines.extend(
+            parsed_setting.GenerateAndroidScriptReplayParserArguments())
+
+    replay_script_lines.append("")
+    replay_script_lines.append("    return parser")
+    replay_script_lines.append("")
+    replay_script_lines.append("# Handle replay parser")
+    replay_script_lines.append("def MakeExtrasString(args):")
+    replay_script_lines.append("    arg_list = []")
+
+    for key, parsed_setting in parsed_settings.items():
+        replay_script_lines.extend(
+            parsed_setting.GenerateAndroidScriptReplayArgListGenerator())
+
+    replay_script_lines.append("")
+    replay_script_lines.append(
+        "    # **WARNING** Do not manually edit the above code.")
+    replay_script_lines.append(
+        f"    # *********** This code was added by the {SCRIPT_NAME} script using the"
+    )
+    replay_script_lines.append(
+        "    # *********** settings.json input file.  Please add new settings there."
+    )
+    replay_script_lines.append(replay_android_script_end_str)
+
+    # Now, read the current replay Android script and replace the old
+    # settings information with the new settings
+    android_script_lines = []
+    with open(android_gfxrecon_python_script_filename,
+              'r') as android_script_doc:
+        record_lines = True
+        while line := android_script_doc.readline():
+            stripped_line = line.rstrip()
+            if record_lines:
+                if stripped_line == replay_android_script_begin_str:
+                    record_lines = False
+                android_script_lines.append(stripped_line)
+            elif stripped_line == replay_android_script_end_str:
+                android_script_lines.extend(replay_script_lines)
+                record_lines = True
+
+    android_script_doc.close()
+
+    with open(android_gfxrecon_python_script_filename,
+              'w') as android_script_doc:
+        android_script_doc.write('\n'.join(android_script_lines))
 
 
 if __name__ == "__main__":
@@ -2321,6 +2503,7 @@ if __name__ == "__main__":
     UpdateAndroidUsageSettingsTable(parsed_settings)
     UpdateDesktopUsageSettingsTable(parsed_settings, "D3D12")
     UpdateDesktopUsageSettingsTable(parsed_settings, "VULKAN")
+    UpdateAndroidReplayScriptArguments(parsed_settings)
 
     # Generate supporting code
     GenerateSettingsStruct(parsed_settings, settings_tools, settings_apis,

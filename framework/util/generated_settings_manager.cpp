@@ -954,19 +954,6 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 settings_struct_.replay_settings.discard_cached_psos = true;
                 goto early_out;
             }
-            if (arg_opt == "dump-resources-dir")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.dump_resources_dir = command_line_args[++cur_arg];
-                }
-                else
-                {
-                    valid_arg = false;
-                    GFXRECON_LOG_ERROR("Command-line argument \"dump-resources-dir\" missing expected argument");
-                }
-                goto early_out;
-            }
             if (arg_opt == "dump-resources-modifiable-state-only")
             {
                 settings_struct_.replay_settings.dump_resources_modifiable_state_only = true;
@@ -1264,6 +1251,19 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "dump-resources-before-draw")
             {
                 settings_struct_.replay_settings.dump_resources_before_draw = true;
+                goto early_out;
+            }
+            if (arg_opt == "dump-resources-dir")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.dump_resources_dir = command_line_args[++cur_arg];
+                }
+                else
+                {
+                    valid_arg = false;
+                    GFXRECON_LOG_ERROR("Command-line argument \"dump-resources-dir\" missing expected argument");
+                }
                 goto early_out;
             }
             if (arg_opt == "dump-resources-dump-all-image-subresources")

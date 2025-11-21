@@ -145,6 +145,11 @@ struct GfxrReplaySettingsStruct
     bool        deduplicate_device{false};
     std::string dump_resources{""};
     bool        dump_resources_before_draw{false};
+#if defined(__ANDROID__)
+    std::string dump_resources_dir{"/sdcard"};
+#else
+    std::string dump_resources_dir{""};
+#endif
     bool        dump_resources_dump_all_image_subresources{false};
     bool        dump_resources_dump_build_acceleration_structures_input_buffers{false};
     int32_t     dump_resources_dump_color_attachment_index{-1};
@@ -203,11 +208,6 @@ struct GfxrReplaySettingsStruct
     // D3D12-Specific
     bool        debug_device_lost{false};
     bool        discard_cached_psos{false};
-#if defined(__ANDROID__)
-    std::string dump_resources_dir{"/sdcard"};
-#else
-    std::string dump_resources_dir{""};
-#endif
     bool        dump_resources_modifiable_state_only{false};
     bool        dx12_ags_inject_markers{false};
     bool        dx12_override_object_names{false};
