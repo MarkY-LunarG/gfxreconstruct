@@ -1320,11 +1320,11 @@ ToolSettings::GetVulkanReplayOptions(const std::string&                         
             gfxrecon::util::GetUintRanges(skip_get_fence_ranges.c_str(), "skip-get-fence-ranges");
     }
 
-    if (!dump_resources.empty() && dump_resources.find_first_not_of("0123456789,") == std::string::npos)
+    if (!dump_resources.empty())
     {
-        replay_options.enable_dump_resources = true;
         if (dump_resources.find_first_not_of("0123456789,") == std::string::npos)
         {
+            replay_options.enable_dump_resources = true;
             std::vector<std::string> values = gfxrecon::util::strings::SplitString(dump_resources, ',');
             if (values.size() == 3)
             {
@@ -1337,6 +1337,24 @@ ToolSettings::GetVulkanReplayOptions(const std::string&                         
         else
         {
             replay_options.dump_resources_block_indices = dump_resources;
+
+            // See if the dump resources string ends lists a JSON file (i.e. ends with a JSON suffix) and use it as a
+            // config file.
+            const std::string suffix         = ".json";
+            std::string       compare_string = dump_resources;
+            transform(compare_string.begin(), compare_string.end(), compare_string.begin(), ::tolower);
+            if (compare_string.size() >= suffix.size() &&
+                (compare_string.compare(compare_string.size() - suffix.size(), suffix.size(), suffix) == 0))
+            {
+                replay_options.dump_resources_json_config_file = dump_resources;
+                replay_options.enable_dump_resources           = true;
+            }
+            else
+            {
+                GFXRECON_LOG_WARNING("Invalid dump resources value of \"%s\".  Expected either list of indices or JSON "
+                                     "file name (with .json suffix)",
+                                     dump_resources.c_str());
+            }
         }
     }
 
@@ -1370,7 +1388,7 @@ std::vector<int32_t> ToolSettings::GetFilteredMsgs(const std::string& messages)
             }
             else
             {
-                GFXRECON_LOG_WARNING("Ignoring invalid filter messages\"%s\", which contains non-numeric values",
+                GFXRECON_LOG_WARNING("Ignoring invalid filter messages \"%s\", which contains non-numeric values",
                                      val.c_str());
                 break;
             }

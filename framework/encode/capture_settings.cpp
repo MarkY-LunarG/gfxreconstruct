@@ -89,6 +89,7 @@ void CaptureSettings::LoadDynamicSettings(CaptureSettings* settings, bool initia
 #endif
         }
 
+        // This was set in the past, or it is being set now.
         if (settings->trace_settings_.runtime_capture_trigger != RuntimeTriggerState::kNotUsed || trigger_defined)
         {
             CaptureSettings::RuntimeTriggerState new_result =

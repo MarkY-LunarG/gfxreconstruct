@@ -542,9 +542,9 @@ class ParsedSetting():
     #   setting_json_dict : None or a new dictionary containing the
     #                       contents of the setting
     def GenerateVulkanSettingJsonDict(self, is_child: bool = False):
-        if ("ALL" in self.apis
-                or "VULKAN" in self.apis) and (self.tools is None
-                                               or "CAPTURE" in self.tools):
+        if ("ALL" in self.apis or "VULKAN"
+                                 in self.apis) and (self.tools is None or
+                                                    "CAPTURE" in self.tools):
             setting_json_dict = dict()
             setting_json_dict["key"] = self.key
             if self.type.primitive_type != "GROUP":
@@ -1661,9 +1661,7 @@ def PrintUsageFileOptionDescriptions(settings_options,
 #   None
 def GenerateReplaySettingsHeader(parsed_settings, settings_apis,
                                  settings_platforms):
-    print(
-        f"Generating {generated_replay_settings_filename}"
-    )
+    print(f"Generating {generated_replay_settings_filename}")
 
     # Determine how many different lists we need to track individual
     # settings organizing based on platform and api
@@ -2392,9 +2390,7 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
 # Returns:
 #   None
 def UpdateAndroidReplayScriptArguments(parsed_settings):
-    print(
-        f"Updating {android_gfxrecon_python_script_filename}"
-    )
+    print(f"Updating {android_gfxrecon_python_script_filename}")
 
     replay_script_lines = []
 

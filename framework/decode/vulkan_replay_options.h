@@ -141,6 +141,7 @@ struct VulkanReplayOptions : public ReplayOptions
     std::vector<ExecuteCommands> ExecuteCommands_Indices;
 
     std::string            dump_resources_block_indices;
+    std::string            dump_resources_json_config_file;
     util::ScreenshotFormat dump_resources_image_format{ util::ScreenshotFormat::kBmp };
 
     // Flag to quickly check whether the feature is enabled or not

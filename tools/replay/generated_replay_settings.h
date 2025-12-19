@@ -170,10 +170,11 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE("          \t\t                <submit-index,command-index,draw-call-index>");
     GFXRECON_WRITE_CONSOLE("          \t\t                will be used to dump resources for the");
     GFXRECON_WRITE_CONSOLE("          \t\t                given submit, command and draw indices.");
-    GFXRECON_WRITE_CONSOLE("          \t\t   <filename>.json Extract `--dump-resources` block indices");
-    GFXRECON_WRITE_CONSOLE("          \t\t                args from the specified json file. The");
-    GFXRECON_WRITE_CONSOLE("          \t\t                format for the json file is documented in");
-    GFXRECON_WRITE_CONSOLE("          \t\t                detail in the gfxreconstruct documentation.");
+    GFXRECON_WRITE_CONSOLE("          \t\t   <filename> Extract `--dump-resources` block indices args");
+    GFXRECON_WRITE_CONSOLE("          \t\t                from the specified json file (must end in");
+    GFXRECON_WRITE_CONSOLE("          \t\t                .json). The format for the json file is");
+    GFXRECON_WRITE_CONSOLE("          \t\t                documented in detail in the gfxreconstruct");
+    GFXRECON_WRITE_CONSOLE("          \t\t                documentation.");
     GFXRECON_WRITE_CONSOLE("  --dump-resources-before-draw");
     GFXRECON_WRITE_CONSOLE("          \t\tIn addition to dumping GPU resources after the draw calls");
     GFXRECON_WRITE_CONSOLE("          \t\tspecified by the `--dump-resources` argument, also dump");

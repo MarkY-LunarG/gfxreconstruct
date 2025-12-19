@@ -43,25 +43,6 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(parse_dump_resources)
 
-static std::string to_lower(std::string s)
-{
-    for (char& c : s)
-    {
-        c = tolower(c);
-    }
-    return s;
-}
-
-static bool ends_with(std::string const& fullString, std::string const& ending)
-{
-    bool rval = false;
-    if (fullString.length() >= ending.length())
-    {
-        rval = (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
-    }
-    return rval;
-}
-
 static bool AreIndicesSorted(const std::vector<uint64_t>& indices)
 {
     if (indices.size() == 1)
@@ -457,13 +438,13 @@ bool parse_dump_resources_arg(gfxrecon::decode::VulkanReplayOptions& vulkan_repl
     }
 
     // Vulkan dump resources expects only a json file
-    if (ends_with(to_lower(vulkan_replay_options.dump_resources_block_indices), ".json"))
+    if (!vulkan_replay_options.dump_resources_json_config_file.empty())
     {
-        std::ifstream dr_json_file(vulkan_replay_options.dump_resources_block_indices, std::ifstream::binary);
+        std::ifstream dr_json_file(vulkan_replay_options.dump_resources_json_config_file, std::ifstream::binary);
         if (!dr_json_file.is_open())
         {
             GFXRECON_LOG_ERROR("Could not open \"%s\" for input",
-                               vulkan_replay_options.dump_resources_block_indices.c_str());
+                               vulkan_replay_options.dump_resources_json_config_file.c_str());
             vulkan_replay_options.dumping_resources = false;
             return false;
         }

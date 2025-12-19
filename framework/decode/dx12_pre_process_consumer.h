@@ -251,7 +251,7 @@ class Dx12PreProcessConsumer : public Dx12Consumer
         check_dx12_consumer_usage_complete_ = true;
     }
 
-    void EnableDumpResources(const DumpResourcesTarget& dump_resources_target)
+    void EnableDumpResourcesTarget(const DumpResourcesTarget& dump_resources_target)
     {
         enable_dump_resources_         = true;
         check_dump_resources_complete_ = false;

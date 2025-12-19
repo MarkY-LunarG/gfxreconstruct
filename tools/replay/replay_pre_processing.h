@@ -74,7 +74,7 @@ void RunPreProcessConsumer(const std::string& input_filename,
 
         if (replay_options.vk_replay_options->using_dump_resources_target)
         {
-            vk_pre_process_consumer.EnableDumpResources(replay_options.vk_replay_options->dump_resources_target);
+            vk_pre_process_consumer.EnableDumpResourcesTarget(replay_options.vk_replay_options->dump_resources_target);
         }
 
         gfxrecon::decode::VulkanDecoder vk_decoder;
@@ -86,10 +86,12 @@ void RunPreProcessConsumer(const std::string& input_filename,
                         replay_consumer.dx12_replay_consumer != nullptr);
 
         gfxrecon::decode::Dx12PreProcessConsumer dx12_pre_process_consumer;
+
         if (replay_options.dx12_replay_options->enable_dump_resources)
         {
-            dx12_pre_process_consumer.EnableDumpResources(replay_options.dx12_replay_options->dump_resources_target);
+            vk_pre_process_consumer.EnableDumpResourcesTarget(replay_options.dx12_replay_options->dump_resources_target);
         }
+
         gfxrecon::decode::Dx12Decoder dx12_decoder;
         dx12_decoder.AddConsumer(&dx12_pre_process_consumer);
         file_processor.AddDecoder(&dx12_decoder);
