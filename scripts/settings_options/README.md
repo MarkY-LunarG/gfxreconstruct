@@ -32,10 +32,12 @@ python3 scripts/settings_options/generate_settings.py
 
 This will update the settings in the following locations:
 
+ - [android/scripts/gfxrecon.py](../../android/scripts/gfxrecon.py)
  - [framework/util/generated_settings_manager.cpp](../../framework/util/generated_settings_manager.cpp)
  - [framework/util/generated_settings_struct.h](../../framework/util/generated_settings_struct.h)
  - [layer/json/VkLayer_gfxreconstruct.json.in](../../layer/json/VkLayer_gfxreconstruct.json.in)
  - [layer/vk_layer_settings.txt](../../layer/vk_layer_settings.txt)
+ - [tools/replay/generated_replay_settings.h](../../tools/replay/generated_replay_settings.h)
  - [USAGE_android.md](../../USAGE_android.md)
  - [USAGE_desktop_D3D12.md](../../USAGE_desktop_D3D12.md)
  - [USAGE_desktop_Vulkan.md](../../USAGE_desktop_Vulkan.md)
@@ -207,14 +209,6 @@ For example:
 The following are optional fields that may be used to help define and
 organize the settings.
 
-#### Tools
-
-"tools" is a list type that identifies all the tools this setting is valid for.
-If it is not set, then it implies that the setting is valid for all tools.
-
-Examples of a tool might be "CAPTURE" for the capture layer, or "REPLAY"
-for the replay tool.
-
 #### APIs
 
 "apis" is a list type that identifies all the APIs this setting is valid for.
@@ -222,6 +216,14 @@ If it is not set, then it implies that the setting is valid for all APIs
 GFXReconstruct supports.
 
 Examples of a tool might be "D3D12", "VULKAN" or "OPENXR.
+
+#### Tools
+
+"tools" is a list type that identifies all the tools this setting is valid for.
+If it is not set, then it implies that the setting is valid for all tools.
+
+Examples of a tool might be "CAPTURE" for the capture layer, or "REPLAY"
+for the replay tool.
 
 #### Parent
 
@@ -243,6 +245,64 @@ Here is an example parent object definition:
 In this case, "key" is the "key" of the parent setting.
 "value" is optional, but if defined, it indicates that this setting is
 only valid if the parent setting is set to the defined value.
+
+#### Command-Line
+
+Settings typically associated with a tool (versus with the only being specific
+to the capture library/layer), can also be defined through command-line arguments.
+By default, the command-line argument for a given setting will use the setting
+key (for example `debug_device_lost`) and replace the underscores with dashes
+and prefix it all with double dashes (`--debug-device-lost`).
+Command-line arguments may also have a shorter version for quicker enablement,
+for example the `memory_translation` setting may be set with either of the following
+command-lines: `--memory-translation`, `-m`.
+
+Command-line settings can be separated into "options" and "arguments".
+A setting is an "option" if it is defined with type of `BOOL`.
+Because it is a boolean, to change the value from the default, simply
+passing in the correct long or short form of the command-line enables
+it, for example `--no-debug-popup` enables the "no_debug_popup" setting.
+
+If the setting requires additional information, this means it is an
+"argument".
+This additional information will need to be passed in, in addition to the
+command-line itself, for example `-m rebind` where `-m` is the setting
+short command-line and `rebind` is the argument value.
+
+The command-line portion of the setting JSON may look like the following:
+
+```json
+   "command-line": {
+       "argument-label": "<mode>",
+       "short": "m"
+   },
+```
+
+##### Argument Label
+
+"argument-label" is used only for settings that are arguments.
+The label is what is displayed in either the command-line Usage output for the
+tool, or the documentation of the command-line.
+Typically, the value should be surrounded by the less-than '<' and greater-than '>'
+symbols because it indicates this is a value that should be supplied.
+
+##### Long Command-Line Argument
+
+If the long-version of the command-line does not match the typical behavior
+of replacing the underscores with dashes in the key name, then it can be defined
+in the "command-line" section with the "long" option:
+
+```json
+   "command-line": {
+        "long": "the-real-cmd-line-argument"
+   },
+```
+
+##### Short Command-Line Argument
+
+If the short-version of the command-line exists, it can be defined with the "short"
+option in the "command-line" section of the JSON as in the above example where
+"short" is set to "m".
 
 #### Additional Dependencies
 
