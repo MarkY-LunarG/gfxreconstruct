@@ -542,7 +542,7 @@ class ParsedSetting():
     #   setting_json_dict : None or a new dictionary containing the
     #                       contents of the setting
     def GenerateVulkanSettingJsonDict(self, is_child: bool = False):
-        if ("ALL" in self.apis or "VULKAN"
+        if not self.dynamic and ("ALL" in self.apis or "VULKAN"
                                  in self.apis) and (self.tools is None or
                                                     "CAPTURE" in self.tools):
             setting_json_dict = dict()
