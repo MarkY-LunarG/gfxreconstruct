@@ -994,6 +994,8 @@ class ParsedSetting():
             if self.type.primitive_type == "BOOL":
                 settings_command_line_options.append(indent +
                                                      f"{tool_prefix}true;")
+                settings_command_line_options.append(indent +
+                                                     "valid_arg = true;")
             else:
                 settings_command_line_options.append(
                     indent +
@@ -1013,11 +1015,11 @@ class ParsedSetting():
                     settings_command_line_options.append(
                         indent +
                         f"    {tool_prefix}command_line_args[++cur_arg];")
+                settings_command_line_options.append(indent +
+                                                     "    valid_arg = true;")
                 settings_command_line_options.append(indent + "}")
                 settings_command_line_options.append(indent + "else")
                 settings_command_line_options.append(indent + "{")
-                settings_command_line_options.append(indent +
-                                                     "    valid_arg = false;")
                 settings_command_line_options.append(
                     indent +
                     f"    GFXRECON_LOG_ERROR(\"Command-line argument '{short_command}' missing expected argument\");"
@@ -1067,6 +1069,8 @@ class ParsedSetting():
                 settings_command_line_options.append(indent + tool_prefix +
                                                      "true;")
                 settings_command_line_options.append(indent +
+                                                     "valid_arg = true;")
+                settings_command_line_options.append(indent +
                                                      "goto early_out;")
             else:
                 settings_command_line_options.append(
@@ -1087,11 +1091,11 @@ class ParsedSetting():
                     settings_command_line_options.append(
                         indent +
                         f"    {tool_prefix}command_line_args[++cur_arg];")
+                settings_command_line_options.append(indent +
+                                                     "    valid_arg = true;")
                 settings_command_line_options.append(indent + "}")
                 settings_command_line_options.append(indent + "else")
                 settings_command_line_options.append(indent + "{")
-                settings_command_line_options.append(indent +
-                                                     "    valid_arg = false;")
                 settings_command_line_options.append(
                     indent +
                     f"    GFXRECON_LOG_ERROR(\"Command-line argument \\\"{arguments}\\\" missing expected argument\");"
@@ -2140,7 +2144,7 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
         )
 
         setting_manager_source.write("{\n")
-        setting_manager_source.write("    bool valid_arg = true;\n")
+        setting_manager_source.write("    bool valid_arg = false;\n")
         setting_manager_source.write("\n")
         setting_manager_source.write(
             "    // If this is a string or a single char\n")

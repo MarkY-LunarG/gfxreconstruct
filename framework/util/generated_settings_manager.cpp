@@ -902,7 +902,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                                             const std::vector<std::string>& command_line_args,
                                             size_t&                         cur_arg)
 {
-    bool valid_arg = true;
+    bool valid_arg = false;
 
     // If this is a string or a single char
     if (command_line_args[cur_arg].size() == 2)
@@ -919,15 +919,16 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
 #endif // defined(WIN32)
                 case ('h'):
                     settings_struct_.replay_settings.help = true;
+                    valid_arg = true;
                     break;
                 case ('m'):
                     if (HasArgumentParameter(command_line_args, cur_arg))
                     {
                         settings_struct_.replay_settings.memory_translation = command_line_args[++cur_arg];
+                        valid_arg = true;
                     }
                     else
                     {
-                        valid_arg = false;
                         GFXRECON_LOG_ERROR("Command-line argument 'm' missing expected argument");
                     }
                     break;
@@ -947,31 +948,37 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "debug-device-lost")
             {
                 settings_struct_.replay_settings.debug_device_lost = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dcp" || arg_opt == "discard-cached-psos")
             {
                 settings_struct_.replay_settings.discard_cached_psos = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources-modifiable-state-only")
             {
                 settings_struct_.replay_settings.dump_resources_modifiable_state_only = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dx12-ags-inject-markers")
             {
                 settings_struct_.replay_settings.dx12_ags_inject_markers = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dx12-override-object-names")
             {
                 settings_struct_.replay_settings.dx12_override_object_names = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dx12-two-pass-replay")
             {
                 settings_struct_.replay_settings.dx12_two_pass_replay = true;
+                valid_arg = true;
                 goto early_out;
             }
 #if defined(WIN32)
@@ -980,10 +987,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.allowed_messages = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"allowed-messages\" missing expected argument");
                 }
                 goto early_out;
@@ -993,10 +1000,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.batching_memory_usage = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"batching-memory-usage\" missing expected argument");
                 }
                 goto early_out;
@@ -1006,10 +1013,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.denied_messages = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"denied-messages\" missing expected argument");
                 }
                 goto early_out;
@@ -1019,10 +1026,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.force_windowed = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"fw|force-windowed\" missing expected argument");
                 }
                 goto early_out;
@@ -1032,10 +1039,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.force_windowed_origin = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"fwo|force-windowed-origin\" missing expected argument");
                 }
                 goto early_out;
@@ -1043,6 +1050,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "use-cached-psos")
             {
                 settings_struct_.replay_settings.use_cached_psos = true;
+                valid_arg = true;
                 goto early_out;
             }
 #endif // defined(WIN32)
@@ -1051,10 +1059,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.dump_resources_binary_file_compression_type = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"dump-resources-binary-file-compression-type\" missing expected argument");
                 }
                 goto early_out;
@@ -1064,10 +1072,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.present_mode = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"present-mode\" missing expected argument");
                 }
                 goto early_out;
@@ -1077,10 +1085,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.skip_get_fence_ranges = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"sgfr|skip-get-fence-ranges\" missing expected argument");
                 }
                 goto early_out;
@@ -1090,10 +1098,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.skip_get_fence_status = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"sgfs|skip-get-fence-status\" missing expected argument");
                 }
                 goto early_out;
@@ -1103,10 +1111,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.surface_index = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"surface-index\" missing expected argument");
                 }
                 goto early_out;
@@ -1116,10 +1124,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.log_file = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"log-file\" missing expected argument");
                 }
                 goto early_out;
@@ -1129,10 +1137,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.log_level = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"log-level\" missing expected argument");
                 }
                 goto early_out;
@@ -1140,6 +1148,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "log-timestamps")
             {
                 settings_struct_.replay_settings.log_timestamps = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "screenshot-dir")
@@ -1147,10 +1156,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.screenshot_dir = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"screenshot-dir\" missing expected argument");
                 }
                 goto early_out;
@@ -1160,10 +1169,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.screenshot_format = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"screenshot-format\" missing expected argument");
                 }
                 goto early_out;
@@ -1173,10 +1182,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.screenshots = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"screenshots\" missing expected argument");
                 }
                 goto early_out;
@@ -1186,10 +1195,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.screenshot_interval = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"screenshot-interval\" missing expected argument");
                 }
                 goto early_out;
@@ -1197,11 +1206,13 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "add-new-pipeline-caches")
             {
                 settings_struct_.replay_settings.add_new_pipeline_caches = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "capture")
             {
                 settings_struct_.replay_settings.capture = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "cpu-mask")
@@ -1209,10 +1220,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.cpu_mask = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"cpu-mask\" missing expected argument");
                 }
                 goto early_out;
@@ -1222,10 +1233,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.debug_messenger_level = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"debug-messenger-level\" missing expected argument");
                 }
                 goto early_out;
@@ -1233,6 +1244,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "deduplicate-device")
             {
                 settings_struct_.replay_settings.deduplicate_device = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources")
@@ -1240,10 +1252,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.dump_resources = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"dump-resources\" missing expected argument");
                 }
                 goto early_out;
@@ -1251,6 +1263,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "dump-resources-before-draw")
             {
                 settings_struct_.replay_settings.dump_resources_before_draw = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources-dir")
@@ -1258,10 +1271,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.dump_resources_dir = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"dump-resources-dir\" missing expected argument");
                 }
                 goto early_out;
@@ -1269,11 +1282,13 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "dump-resources-dump-all-image-subresources")
             {
                 settings_struct_.replay_settings.dump_resources_dump_all_image_subresources = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources-dump-build-acceleration-structures-input-buffers")
             {
                 settings_struct_.replay_settings.dump_resources_dump_build_acceleration_structures_input_buffers = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources-dump-color-attachment-index")
@@ -1281,10 +1296,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.dump_resources_dump_color_attachment_index = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"dump-resources-dump-color-attachment-index\" missing expected argument");
                 }
                 goto early_out;
@@ -1292,26 +1307,31 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "dump-resources-dump-depth-attachment")
             {
                 settings_struct_.replay_settings.dump_resources_dump_depth_attachment = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources-dump-raw-images")
             {
                 settings_struct_.replay_settings.dump_resources_dump_raw_images = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources-dump-separate-alpha")
             {
                 settings_struct_.replay_settings.dump_resources_dump_separate_alpha = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources-dump-unused-vertex-bindings")
             {
                 settings_struct_.replay_settings.dump_resources_dump_unused_vertex_bindings = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources-dump-vertex-index-buffers")
             {
                 settings_struct_.replay_settings.dump_resources_dump_vertex_index_buffers = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources-image-format")
@@ -1319,10 +1339,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.dump_resources_image_format = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"dump-resources-image-format\" missing expected argument");
                 }
                 goto early_out;
@@ -1330,6 +1350,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "dump-resources-json-output-per-command")
             {
                 settings_struct_.replay_settings.dump_resources_json_output_per_command = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "dump-resources-scale")
@@ -1337,10 +1358,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.dump_resources_scale = static_cast<float>(atof(command_line_args[++cur_arg].c_str()));
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"dump-resources-scale\" missing expected argument");
                 }
                 goto early_out;
@@ -1348,11 +1369,13 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "flush-inside-measurement-range")
             {
                 settings_struct_.replay_settings.flush_inside_measurement_range = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "fmr" || arg_opt == "flush-measurement-range")
             {
                 settings_struct_.replay_settings.flush_measurement_range = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "gpu")
@@ -1360,10 +1383,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.gpu = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"gpu\" missing expected argument");
                 }
                 goto early_out;
@@ -1373,10 +1396,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.gpu_group = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"gpu-group\" missing expected argument");
                 }
                 goto early_out;
@@ -1384,6 +1407,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "help")
             {
                 settings_struct_.replay_settings.help = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "input-capture")
@@ -1391,10 +1415,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.input_capture = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"input-capture\" missing expected argument");
                 }
                 goto early_out;
@@ -1404,10 +1428,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.load_pipeline_cache = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"load-pipeline-cache\" missing expected argument");
                 }
                 goto early_out;
@@ -1415,6 +1439,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "log-debugview")
             {
                 settings_struct_.replay_settings.log_debugview = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "measurement-file")
@@ -1422,10 +1447,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.measurement_file = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"measurement-file\" missing expected argument");
                 }
                 goto early_out;
@@ -1435,10 +1460,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.measurement_frame_range = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"mfr|measurement-frame-range\" missing expected argument");
                 }
                 goto early_out;
@@ -1448,10 +1473,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.memory_translation = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"memory-translation\" missing expected argument");
                 }
                 goto early_out;
@@ -1459,11 +1484,13 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "offscreen-swapchain-frame-boundary")
             {
                 settings_struct_.replay_settings.offscreen_swapchain_frame_boundary = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "opcd" || arg_opt == "omit-pipeline-cache-data")
             {
                 settings_struct_.replay_settings.omit_pipeline_cache_data = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "pause-frame")
@@ -1471,10 +1498,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.pause_frame = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"pause-frame\" missing expected argument");
                 }
                 goto early_out;
@@ -1482,11 +1509,13 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "paused")
             {
                 settings_struct_.replay_settings.paused = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "pbi-all")
             {
                 settings_struct_.replay_settings.pbi_all = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "pbis")
@@ -1494,10 +1523,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.pbis = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"pbis\" missing expected argument");
                 }
                 goto early_out;
@@ -1507,10 +1536,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.pipeline_creation_jobs = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"pcj|pipeline-creation-jobs\" missing expected argument");
                 }
                 goto early_out;
@@ -1518,6 +1547,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "preload-measurement-range")
             {
                 settings_struct_.replay_settings.preload_measurement_range = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "quit-after-frame")
@@ -1525,10 +1555,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.quit_after_frame = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"quit-after-frame\" missing expected argument");
                 }
                 goto early_out;
@@ -1536,11 +1566,13 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "qamr" || arg_opt == "quit-after-measurement-range")
             {
                 settings_struct_.replay_settings.quit_after_measurement_range = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "remove-unsupported")
             {
                 settings_struct_.replay_settings.remove_unsupported = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "replace-shaders")
@@ -1548,10 +1580,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.replace_shaders = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"replace-shaders\" missing expected argument");
                 }
                 goto early_out;
@@ -1561,10 +1593,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.save_pipeline_cache = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"save-pipeline-cache\" missing expected argument");
                 }
                 goto early_out;
@@ -1572,11 +1604,13 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "screenshot-all")
             {
                 settings_struct_.replay_settings.screenshot_all = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "screenshot-ignore-FrameBoundaryANDROID")
             {
                 settings_struct_.replay_settings.screenshot_ignore_FrameBoundaryANDROID = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "screenshot-prefix")
@@ -1584,10 +1618,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.screenshot_prefix = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"screenshot-prefix\" missing expected argument");
                 }
                 goto early_out;
@@ -1597,10 +1631,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.screenshot_scale = static_cast<float>(atof(command_line_args[++cur_arg].c_str()));
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"screenshot-scale\" missing expected argument");
                 }
                 goto early_out;
@@ -1610,10 +1644,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.screenshot_size = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"screenshot-size\" missing expected argument");
                 }
                 goto early_out;
@@ -1621,6 +1655,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "sfa" || arg_opt == "skip-failed-allocations")
             {
                 settings_struct_.replay_settings.skip_failed_allocations = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "swapchain")
@@ -1628,10 +1663,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.swapchain = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"swapchain\" missing expected argument");
                 }
                 goto early_out;
@@ -1639,36 +1674,43 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "sync")
             {
                 settings_struct_.replay_settings.sync = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "use-captured-swapchain-indices")
             {
                 settings_struct_.replay_settings.use_captured_swapchain_indices = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "use-colorspace-fallback")
             {
                 settings_struct_.replay_settings.use_colorspace_fallback = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "validate")
             {
                 settings_struct_.replay_settings.validate = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "version")
             {
                 settings_struct_.replay_settings.version = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "vssb" || arg_opt == "virtual-swapchain-skip-blit")
             {
                 settings_struct_.replay_settings.virtual_swapchain_skip_blit = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "wait-before-present")
             {
                 settings_struct_.replay_settings.wait_before_present = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "wsi")
@@ -1676,10 +1718,10 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
                     settings_struct_.replay_settings.wsi = command_line_args[++cur_arg];
+                    valid_arg = true;
                 }
                 else
                 {
-                    valid_arg = false;
                     GFXRECON_LOG_ERROR("Command-line argument \"wsi\" missing expected argument");
                 }
                 goto early_out;
@@ -1688,6 +1730,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "onhb" || arg_opt == "omit-null-hardware-buffers")
             {
                 settings_struct_.replay_settings.omit_null_hardware_buffers = true;
+                valid_arg = true;
                 goto early_out;
             }
 #endif // defined(__ANDROID__)
@@ -1695,11 +1738,13 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "create-dummy-allocations")
             {
                 settings_struct_.replay_settings.create_dummy_allocations = true;
+                valid_arg = true;
                 goto early_out;
             }
             if (arg_opt == "no-debug-popup")
             {
                 settings_struct_.replay_settings.no_debug_popup = true;
+                valid_arg = true;
                 goto early_out;
             }
 #endif // defined(WIN32)
