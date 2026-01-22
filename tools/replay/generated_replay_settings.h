@@ -303,12 +303,11 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE("          \t\tall current GPU work to finish at the start and end of the");
     GFXRECON_WRITE_CONSOLE("          \t\tmeasurement range.");
     GFXRECON_WRITE_CONSOLE("  --gpu <index>");
-    GFXRECON_WRITE_CONSOLE("          \t\tUse the specified device for replay, where index is the");
-    GFXRECON_WRITE_CONSOLE("          \t\tzero-based index to the array of physical devices returned");
-    GFXRECON_WRITE_CONSOLE("          \t\tby vkEnumeratePhysicalDevices or");
-    GFXRECON_WRITE_CONSOLE("          \t\tIDXGIFactory1::EnumAdapters1. Replay may fail if the");
-    GFXRECON_WRITE_CONSOLE("          \t\tspecified device is not compatible with the original");
-    GFXRECON_WRITE_CONSOLE("          \t\tcapture devices.");
+    GFXRECON_WRITE_CONSOLE("          \t\tUse the specified device, where index is the zero-based");
+    GFXRECON_WRITE_CONSOLE("          \t\tindex to the array of physical devices returned by");
+    GFXRECON_WRITE_CONSOLE("          \t\tvkEnumeratePhysicalDevices or IDXGIFactory1::EnumAdapters1.");
+    GFXRECON_WRITE_CONSOLE("          \t\tMay fail if the specified device is not compatible with the");
+    GFXRECON_WRITE_CONSOLE("          \t\toriginal capture devices.");
     GFXRECON_WRITE_CONSOLE("  --gpu-group <index>");
     GFXRECON_WRITE_CONSOLE("          \t\tUse the specified device group for replay, where index is");
     GFXRECON_WRITE_CONSOLE("          \t\tthe zero-based index to the array of physical device group");

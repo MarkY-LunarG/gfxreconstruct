@@ -865,6 +865,126 @@ void SettingsManager::ReadEnvironmentVariables()
         settings_struct_.replay_settings.use_cached_psos = SettingValueToBool(env_var_value);
     }
 #endif // defined(WIN32)
+
+    // -- Compress-specific
+    if (ReadEnvironmentVariable("compress_log_level", env_var_value))
+    {
+        settings_struct_.compress_settings.log_level = env_var_value;
+    }
+#if defined(WIN32)
+    if (ReadEnvironmentVariable("compress_no_debug_popup", env_var_value))
+    {
+        settings_struct_.compress_settings.no_debug_popup = SettingValueToBool(env_var_value);
+    }
+#endif // defined(WIN32)
+
+    // -- Convert-specific
+    if (ReadEnvironmentVariable("convert_log_level", env_var_value))
+    {
+        settings_struct_.convert_settings.log_level = env_var_value;
+    }
+    if (ReadEnvironmentVariable("convert_expand_flags", env_var_value))
+    {
+        settings_struct_.convert_settings.expand_flags = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("convert_file_per_frame", env_var_value))
+    {
+        settings_struct_.convert_settings.file_per_frame = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("convert_frame_range", env_var_value))
+    {
+        settings_struct_.convert_settings.frame_range = env_var_value;
+    }
+    if (ReadEnvironmentVariable("convert_include_binaries", env_var_value))
+    {
+        settings_struct_.convert_settings.include_binaries = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("convert_json_output", env_var_value))
+    {
+        settings_struct_.convert_settings.json_output = env_var_value;
+    }
+    if (ReadEnvironmentVariable("convert_json_format", env_var_value))
+    {
+        settings_struct_.convert_settings.json_format = env_var_value;
+    }
+#if defined(WIN32)
+    if (ReadEnvironmentVariable("convert_no_debug_popup", env_var_value))
+    {
+        settings_struct_.convert_settings.no_debug_popup = SettingValueToBool(env_var_value);
+    }
+#endif // defined(WIN32)
+
+    // -- Extract-specific
+    if (ReadEnvironmentVariable("extract_log_level", env_var_value))
+    {
+        settings_struct_.extract_settings.log_level = env_var_value;
+    }
+    if (ReadEnvironmentVariable("extract_extract_dir", env_var_value))
+    {
+        settings_struct_.extract_settings.extract_dir = env_var_value;
+    }
+#if defined(WIN32)
+    if (ReadEnvironmentVariable("extract_no_debug_popup", env_var_value))
+    {
+        settings_struct_.extract_settings.no_debug_popup = SettingValueToBool(env_var_value);
+    }
+#endif // defined(WIN32)
+
+    // -- Info-specific
+    if (ReadEnvironmentVariable("info_log_level", env_var_value))
+    {
+        settings_struct_.info_settings.log_level = env_var_value;
+    }
+    if (ReadEnvironmentVariable("info_exe_info_only", env_var_value))
+    {
+        settings_struct_.info_settings.exe_info_only = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("info_env_vars_only", env_var_value))
+    {
+        settings_struct_.info_settings.env_vars_only = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("info_file_format_only", env_var_value))
+    {
+        settings_struct_.info_settings.file_format_only = SettingValueToBool(env_var_value);
+    }
+#if defined(WIN32)
+    if (ReadEnvironmentVariable("info_no_debug_popup", env_var_value))
+    {
+        settings_struct_.info_settings.no_debug_popup = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("info_enum_gpu_indices", env_var_value))
+    {
+        settings_struct_.info_settings.enum_gpu_indices = SettingValueToBool(env_var_value);
+    }
+#endif // defined(WIN32)
+
+    // -- Optimize-specific
+    if (ReadEnvironmentVariable("optimize_log_level", env_var_value))
+    {
+        settings_struct_.optimize_settings.log_level = env_var_value;
+    }
+    if (ReadEnvironmentVariable("optimize_gpu", env_var_value))
+    {
+        settings_struct_.optimize_settings.gpu = env_var_value;
+    }
+    if (ReadEnvironmentVariable("optimize_d3d12_pso_removal", env_var_value))
+    {
+        settings_struct_.optimize_settings.d3d12_pso_removal = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("optimize_dxr", env_var_value))
+    {
+        settings_struct_.optimize_settings.dxr = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("optimize_dxr_experimental", env_var_value))
+    {
+        settings_struct_.optimize_settings.dxr_experimental = SettingValueToBool(env_var_value);
+    }
+#if defined(WIN32)
+    if (ReadEnvironmentVariable("optimize_no_debug_popup", env_var_value))
+    {
+        settings_struct_.optimize_settings.no_debug_popup = SettingValueToBool(env_var_value);
+    }
+#endif // defined(WIN32)
 }
 
 
@@ -896,6 +1016,16 @@ void SettingsManager::UpdateDynamicEnvironmentVariables()
 #endif // defined(__ANDROID__)
 
     // -- Replay-specific
+
+    // -- Compress-specific
+
+    // -- Convert-specific
+
+    // -- Extract-specific
+
+    // -- Info-specific
+
+    // -- Optimize-specific
 }
 
 bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool_type,
@@ -929,6 +1059,56 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                     {
                         GFXRECON_LOG_ERROR("Command-line argument 'm' missing expected argument");
                     }
+                    break;
+            }
+        }
+        if (tool_type == kGfxrToolType_Compress_Tool)
+        {
+            switch (command_line_args[cur_arg].at(1))
+            {
+                default:
+                    GFXRECON_LOG_WARNING("Invalid argument %s", command_line_args[cur_arg].c_str());
+                    valid_arg = false;
+                    break;
+            }
+        }
+        if (tool_type == kGfxrToolType_Convert_Tool)
+        {
+            switch (command_line_args[cur_arg].at(1))
+            {
+                default:
+                    GFXRECON_LOG_WARNING("Invalid argument %s", command_line_args[cur_arg].c_str());
+                    valid_arg = false;
+                    break;
+            }
+        }
+        if (tool_type == kGfxrToolType_Extract_Tool)
+        {
+            switch (command_line_args[cur_arg].at(1))
+            {
+                default:
+                    GFXRECON_LOG_WARNING("Invalid argument %s", command_line_args[cur_arg].c_str());
+                    valid_arg = false;
+                    break;
+            }
+        }
+        if (tool_type == kGfxrToolType_Info_Tool)
+        {
+            switch (command_line_args[cur_arg].at(1))
+            {
+                default:
+                    GFXRECON_LOG_WARNING("Invalid argument %s", command_line_args[cur_arg].c_str());
+                    valid_arg = false;
+                    break;
+            }
+        }
+        if (tool_type == kGfxrToolType_Optimize_Tool)
+        {
+            switch (command_line_args[cur_arg].at(1))
+            {
+                default:
+                    GFXRECON_LOG_WARNING("Invalid argument %s", command_line_args[cur_arg].c_str());
+                    valid_arg = false;
                     break;
             }
         }
@@ -1738,6 +1918,253 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             if (arg_opt == "no-debug-popup")
             {
                 settings_struct_.replay_settings.no_debug_popup = true;
+                valid_arg = true;
+                goto early_out;
+            }
+#endif // defined(WIN32)
+        }
+        if (tool_type == kGfxrToolType_Compress_Tool)
+        {
+            if (arg_opt == "log-level")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.compress_settings.log_level = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"log-level\" missing expected argument");
+                }
+                goto early_out;
+            }
+#if defined(WIN32)
+            if (arg_opt == "no-debug-popup")
+            {
+                settings_struct_.compress_settings.no_debug_popup = true;
+                valid_arg = true;
+                goto early_out;
+            }
+#endif // defined(WIN32)
+        }
+        if (tool_type == kGfxrToolType_Convert_Tool)
+        {
+            if (arg_opt == "log-level")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.convert_settings.log_level = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"log-level\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "expand-flags")
+            {
+                settings_struct_.convert_settings.expand_flags = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "file-per-frame")
+            {
+                settings_struct_.convert_settings.file_per_frame = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "frame-range")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.convert_settings.frame_range = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"frame-range\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "include-binaries")
+            {
+                settings_struct_.convert_settings.include_binaries = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "output")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.convert_settings.json_output = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"output\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "format")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.convert_settings.json_format = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"format\" missing expected argument");
+                }
+                goto early_out;
+            }
+#if defined(WIN32)
+            if (arg_opt == "no-debug-popup")
+            {
+                settings_struct_.convert_settings.no_debug_popup = true;
+                valid_arg = true;
+                goto early_out;
+            }
+#endif // defined(WIN32)
+        }
+        if (tool_type == kGfxrToolType_Extract_Tool)
+        {
+            if (arg_opt == "log-level")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.extract_settings.log_level = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"log-level\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "dir")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.extract_settings.extract_dir = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"dir\" missing expected argument");
+                }
+                goto early_out;
+            }
+#if defined(WIN32)
+            if (arg_opt == "no-debug-popup")
+            {
+                settings_struct_.extract_settings.no_debug_popup = true;
+                valid_arg = true;
+                goto early_out;
+            }
+#endif // defined(WIN32)
+        }
+        if (tool_type == kGfxrToolType_Info_Tool)
+        {
+            if (arg_opt == "log-level")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.info_settings.log_level = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"log-level\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "exe-info-only")
+            {
+                settings_struct_.info_settings.exe_info_only = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "env-vars-only")
+            {
+                settings_struct_.info_settings.env_vars_only = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "file-format-only")
+            {
+                settings_struct_.info_settings.file_format_only = true;
+                valid_arg = true;
+                goto early_out;
+            }
+#if defined(WIN32)
+            if (arg_opt == "enum-gpu-indices")
+            {
+                settings_struct_.info_settings.enum_gpu_indices = true;
+                valid_arg = true;
+                goto early_out;
+            }
+#endif // defined(WIN32)
+#if defined(WIN32)
+            if (arg_opt == "no-debug-popup")
+            {
+                settings_struct_.info_settings.no_debug_popup = true;
+                valid_arg = true;
+                goto early_out;
+            }
+#endif // defined(WIN32)
+        }
+        if (tool_type == kGfxrToolType_Optimize_Tool)
+        {
+            if (arg_opt == "log-level")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.optimize_settings.log_level = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"log-level\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "gpu")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.optimize_settings.gpu = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"gpu\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "d3d12-pso-removal")
+            {
+                settings_struct_.optimize_settings.d3d12_pso_removal = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "dxr")
+            {
+                settings_struct_.optimize_settings.dxr = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "dxr-experimental")
+            {
+                settings_struct_.optimize_settings.dxr_experimental = true;
+                valid_arg = true;
+                goto early_out;
+            }
+#if defined(WIN32)
+            if (arg_opt == "no-debug-popup")
+            {
+                settings_struct_.optimize_settings.no_debug_popup = true;
                 valid_arg = true;
                 goto early_out;
             }

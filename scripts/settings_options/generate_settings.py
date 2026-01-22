@@ -1676,8 +1676,40 @@ def GenerateToolSettingsHeaders(parsed_settings, settings_apis,
             tool_description.append("A tool to replay GFXReconstruct capture files.")
             additional_required_arguments.append("<file>")
             additional_required_argument_descs.append("   <file>\\t\\tPath to the capture file to replay.")
-        else:
-            continue
+        elif tool_name == "INFO":
+            tool_description.append("Print statistics for a GFXReconstruct capture file.")
+            additional_required_arguments.append("<file>")
+            additional_required_argument_descs.append("   <file>\\t\\tThe GFXReconstruct capture file to be processed.")
+        elif tool_name == "COMPRESS":
+            tool_description.append("A tool to compress/decompress GFXReconstruct capture files.")
+            additional_required_arguments.append("<input_file> ")
+            additional_required_arguments.append("<output_file> ")
+            additional_required_arguments.append("<compression_format>")
+            additional_required_argument_descs.append("  <input_file>\t\tPath to the input file to process.")
+            additional_required_argument_descs.append("  <output_file>\t\tPath to the output file to generate.")
+            additional_required_argument_descs.append("  <compression_format>\tCompression format to apply to the output file.")
+        elif tool_name == "CONVERT":
+            tool_description.append("A tool to convert the contents of GFXReconstruct capture files to JSON.")
+            additional_required_arguments.append("<file>")
+            additional_required_argument_descs.append("   <file>\\t\\tPath to the GFXReconstruct capture file to be converted")
+            additional_required_argument_descs.append("        \t\tto text");
+        elif tool_name == "EXTRACT":
+            tool_description.append("Extract shaders from a GFXReconstruct capture file.")
+            additional_required_arguments.append("<file>")
+            additional_required_argument_descs.append("   <file>\\t\\tThe GFXReconstruct capture file to be processed.")
+            tool_description.append("A tool to replay GFXReconstruct capture files.")
+        elif tool_name == "OPTIMIZE":
+            tool_description.append("Produce new captures with enhanced performance characteristics.")
+            tool_description.append("\t\t\tFor Vulkan, the optimizer will remove unused buffer and image initialization data (for trimmed captures)");
+            tool_description.append("\t\t\tFor D3D12, the optimizer will improve DXR replay performance and remove unused PSOs (for all captures)");
+            additional_required_arguments.append("<input-file> ")
+            additional_required_arguments.append("<output-file>")
+            additional_required_argument_descs.append("  <input-file>\t\tThe path to input GFXReconstruct capture file to be processed.")
+            additional_required_argument_descs.append("  <output-file>\t\tThe path to output GFXReconstruct capture file to be created.")
+        elif tool_name == "TOCPP":
+            tool_description.append("A tool to convert GFXReconstruct capture files to Vulkan source.")
+            additional_required_arguments.append("<capture_file>")
+            additional_required_argument_descs.append("   <capture_file>\\t\\tPath to a valid GFXReconstruct capture file to be converted")
 
         tool_lower = tool_name.lower()
         file_name = GFXR_ROOT_DIR / f"tools/{tool_lower}/generated_{tool_lower}_settings.h"

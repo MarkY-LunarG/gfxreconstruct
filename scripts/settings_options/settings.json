@@ -710,6 +710,11 @@
                     "Specify the highest level message to log.  The specified level and all levels listed after it will be enabled for logging.  For example, choosing the `warning` level will also enable the `error` and `fatal` levels.",
                 "tools": [
                     "CAPTURE",
+                    "COMPRESS",
+                    "CONVERT",
+                    "EXTRACT",
+                    "INFO",
+                    "OPTIMIZE",
                     "REPLAY"
                 ],
                 "parent": {
@@ -1852,8 +1857,9 @@
                 "key": "gpu",
                 "label": "Use GPU Index",
                 "description":
-                    "Use the specified device for replay, where index is the zero-based index to the array of physical devices returned by vkEnumeratePhysicalDevices or IDXGIFactory1::EnumAdapters1. Replay may fail if the specified device is not compatible with the original capture devices.",
+                    "Use the specified device, where index is the zero-based index to the array of physical devices returned by vkEnumeratePhysicalDevices or IDXGIFactory1::EnumAdapters1. May fail if the specified device is not compatible with the original capture devices.",
                 "tools": [
+                    "OPTIMIZE",
                     "REPLAY"
                 ],
                 "command-line": {
@@ -2025,6 +2031,11 @@
                 "description":
                     "Disable the 'Abort, Retry, Ignore' message box displayed when abort() is called (Windows debug only).",
                 "tools": [
+                    "COMPRESS",
+                    "CONVERT",
+                    "EXTRACT",
+                    "INFO",
+                    "OPTIMIZE",
                     "REPLAY"
                 ],
                 "platforms": [
@@ -2628,6 +2639,220 @@
                         }
                     ],
                     "default": "auto"
+                }
+            },
+            {
+                "key": "extract_dir",
+                "label": "Extract Output Directory",
+                "description": "Place extracted shaders into directory <dir>. Otherwise use <file>.shaders in working directory. Create directory if necessary. Each shader is placed in individual file named sh<handle_id> where handle_id is handle id of the CreateShaderModule call. See gfxrecon-replay --replace-shaders.",
+                "tools": [
+                    "EXTRACT"
+                ],
+                "command-line": {
+                    "argument-label": "<dir>",
+                     "long": "dir"
+               },
+                "type": {
+                    "primitive": "SAVE_FOLDER",
+                    "default": ""
+                }
+            },
+            {
+                "key": "expand_flags",
+                "label": "Print Flag Details",
+                "description": "Print flags values from Vulkan traces with its correspondent symbolic representation. Otherwise, the flags are printed as hexadecimal value.",
+                "tools": [
+                    "CONVERT"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "file_per_frame",
+                "label": "New File Per Frame",
+                "description": "Creates a new file for every frame processed. Frame number is added as a suffix to the output file name.",
+                "tools": [
+                    "CONVERT"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "frame_range",
+                "label": "Converter Specific Frames",
+                "description":
+                    "Frame ranges to be converted. In order to retrieve trim trace state, frame 0 has to be in frame range. Frame ranges should be specified in ascending order and cannot overlap. Frame numbering is zero-indexed and inclusive. Example: 0-2,5,8-10 will generate data for 7 frames.",
+                "tools": [
+                    "CONVERT"
+                ],
+                "command-line": {
+                    "argument-label": "<N1[-N2][,...]>"
+               },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "include_binaries",
+                "label": "Dump Binaries",
+                "description": "Dump binaries from Vulkan traces in a separate file with an unique name. The main JSON file will include a reference with the file name. The binary files are dumped in a subdirectory",
+                "tools": [
+                    "CONVERT"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "json_output",
+                "label": "Output File",
+                "description": "Place extracted shaders into directory <dir>. Otherwise use <file>.shaders in working directory. Create directory if necessary. Each shader is placed in individual file named sh<handle_id> where handle_id is handle id of the CreateShaderModule call. See gfxrecon-replay --replace-shaders.",
+                "tools": [
+                    "CONVERT"
+                ],
+                "command-line": {
+                    "argument-label": "<file>",
+                     "long": "output"
+                },
+                "type": {
+                    "primitive": "SAVE_FILE",
+                    "filter": "*",
+                    "default": ""
+                }
+            },
+            {
+                "key": "json_format",
+                "label": "JSON Output Format",
+                "description": "JSON format to write.",
+                "tools": [
+                    "CONVERT"
+                ],
+                "command-line": {
+                    "argument-label": "<format>",
+                     "long": "format"
+               },
+               "type": {
+                    "primitive": "ENUM",
+                    "flags": [
+                        {
+                            "key": "JSON",
+                            "label": "JSON",
+                            "description":
+                                "Standard JSON format (indented)"
+                        },
+                        {
+                            "key": "JSONL",
+                            "label": "JSONL",
+                            "description":
+                                "JSON lines format (every object in a single line)"
+                        }
+                    ],
+                    "default": "JSON"
+                }
+            },
+            {
+                "key": "enum_gpu_indices",
+                "label": "Only Print GPU Indices",
+                "description": "Print GPU indices and exit.",
+                "tools": [
+                    "INFO"
+                ],
+                "platforms": [
+                    "WINDOWS"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "exe_info_only",
+                "label": "Only Output Exe Info",
+                "description": "Quickly exit after extracting captured application's executable name.",
+                "tools": [
+                    "INFO"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "env_vars_only",
+                "label": "Only Output Env Vars",
+                "description": "Quickly exit after extracting captured application's environment variables.",
+                "tools": [
+                    "INFO"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "file_format_only",
+                "label": "Only Output File Format",
+                "description": "Quickly exit after extracting file format information.",
+                "tools": [
+                    "INFO"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "d3d12_pso_removal",
+                "label": "Remove Unreferenced PSOs",
+                "description": "Remove creation of unreferenced PSOs.",
+                "tools": [
+                    "OPTIMIZE"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dxr",
+                "label": "Optimize DXR",
+                "description": "Optimize for DXR and ExecuteIndirect replay.",
+                "tools": [
+                    "OPTIMIZE"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "dxr_experimental",
+                "label": "Experimental DXR",
+                "description": "Experimental DXR optimization and should only be used if --dxr does not produce a valid capture file.",
+                "tools": [
+                    "OPTIMIZE"
+                ],
+                "apis": [
+                    "D3D12"
+                ],
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
                 }
             }
        ]

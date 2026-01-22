@@ -240,11 +240,118 @@ struct GfxrReplaySettingsStruct
     // clang-format on
 };
 
+struct GfxrCompressSettingsStruct
+{
+    // clang-format off
+    std::string log_level{"info"};
+
+    // D3D12-Specific
+
+    // Vulkan-Specific
+#if defined(WIN32)
+    bool        no_debug_popup{false};
+#endif // defined(WIN32)
+
+    // OpenXR-Specific
+
+    // clang-format on
+};
+
+struct GfxrConvertSettingsStruct
+{
+    // clang-format off
+    std::string log_level{"info"};
+    bool        expand_flags{false};
+    bool        file_per_frame{false};
+    std::string frame_range{""};
+    bool        include_binaries{false};
+    std::string json_output{""};
+    std::string json_format{"json"};
+
+    // D3D12-Specific
+
+    // Vulkan-Specific
+#if defined(WIN32)
+    bool        no_debug_popup{false};
+#endif // defined(WIN32)
+
+    // OpenXR-Specific
+
+    // clang-format on
+};
+
+struct GfxrExtractSettingsStruct
+{
+    // clang-format off
+    std::string log_level{"info"};
+    std::string extract_dir{""};
+
+    // D3D12-Specific
+
+    // Vulkan-Specific
+#if defined(WIN32)
+    bool        no_debug_popup{false};
+#endif // defined(WIN32)
+
+    // OpenXR-Specific
+
+    // clang-format on
+};
+
+struct GfxrInfoSettingsStruct
+{
+    // clang-format off
+    std::string log_level{"info"};
+    bool        exe_info_only{false};
+    bool        env_vars_only{false};
+    bool        file_format_only{false};
+
+    // D3D12-Specific
+#if defined(WIN32)
+    bool        enum_gpu_indices{false};
+#endif // defined(WIN32)
+
+    // Vulkan-Specific
+#if defined(WIN32)
+    bool        no_debug_popup{false};
+#endif // defined(WIN32)
+
+    // OpenXR-Specific
+
+    // clang-format on
+};
+
+struct GfxrOptimizeSettingsStruct
+{
+    // clang-format off
+    std::string log_level{"info"};
+    std::string gpu{""};
+
+    // D3D12-Specific
+    bool        d3d12_pso_removal{false};
+    bool        dxr{false};
+    bool        dxr_experimental{false};
+
+    // Vulkan-Specific
+#if defined(WIN32)
+    bool        no_debug_popup{false};
+#endif // defined(WIN32)
+
+    // OpenXR-Specific
+
+    // clang-format on
+};
+
 struct GfxrSettingsStruct
 {
     // clang-format off
     GfxrCaptureSettingsStruct capture_settings;
     GfxrReplaySettingsStruct replay_settings;
+    GfxrCompressSettingsStruct compress_settings;
+    GfxrConvertSettingsStruct convert_settings;
+    GfxrExtractSettingsStruct extract_settings;
+    GfxrInfoSettingsStruct info_settings;
+    GfxrOptimizeSettingsStruct optimize_settings;
     // clang-format on
 };
 
