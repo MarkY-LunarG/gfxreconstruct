@@ -23,13 +23,13 @@
 */
 #include <string>
 #include PROJECT_VERSION_HEADER_FILE
-#include "tool_settings.h"
 #include "decode/json_writer.h" /// @todo move to util?
 #include "decode/decode_api_detection.h"
 #include "format/format.h"
 #include "util/file_output_stream.h"
 #include "util/file_path.h"
 #include "util/platform.h"
+#include "util/strings.h"
 
 #if ENABLE_OPENXR_SUPPORT
 #include "generated/generated_openxr_json_consumer.h"
@@ -41,6 +41,8 @@
 #if defined(D3D12_SUPPORT)
 #include "generated/generated_dx12_json_consumer.h"
 #endif
+
+#include "generated_convert_settings.h"
 
 using gfxrecon::util::JsonFormat;
 
@@ -57,70 +59,17 @@ using Dx12JsonConsumer =
     gfxrecon::decode::MetadataJsonConsumer<gfxrecon::decode::MarkerJsonConsumer<gfxrecon::decode::Dx12JsonConsumer>>;
 #endif
 
-const char kOptions[] = "-h|--help,--version,--no-debug-popup,--file-per-frame,--include-binaries,--expand-flags";
-
-const char kArguments[] = "--output,--format,--log-level,--frame-range";
-
-static void PrintUsage(const char* exe_name)
+static void GetOutputFileName(const std::string& output_dir,
+                              const std::string& input_filename,
+                              JsonFormat         output_format,
+                              bool&              output_to_stdout,
+                              std::string&       output_stem,
+                              std::string&       output_filename,
+                              std::string&       output_data_dir)
 {
-    std::string app_name     = exe_name;
-    size_t      dir_location = app_name.find_last_of("/\\");
-    if (dir_location >= 0)
+    if (!output_dir.empty())
     {
-        app_name.replace(0, dir_location + 1, "");
-    }
-    GFXRECON_WRITE_CONSOLE("\n%s - A tool to convert the contents of GFXReconstruct capture files to JSON.\n",
-                           app_name.c_str());
-    GFXRECON_WRITE_CONSOLE("Usage:");
-    GFXRECON_WRITE_CONSOLE("  %s [-h | --help] [--version] <file>\n", app_name.c_str());
-    GFXRECON_WRITE_CONSOLE("Required arguments:");
-    GFXRECON_WRITE_CONSOLE("  <file>\t\tPath to the GFXReconstruct capture file to be converted");
-    GFXRECON_WRITE_CONSOLE("        \t\tto text.");
-    GFXRECON_WRITE_CONSOLE("\nOptional arguments:");
-    GFXRECON_WRITE_CONSOLE("  -h\t\t\tPrint usage information and exit (same as --help).");
-    GFXRECON_WRITE_CONSOLE("  --version\t\tPrint version information and exit.");
-    GFXRECON_WRITE_CONSOLE("  --output file\t\t'stdout' or a path to a file to write JSON output");
-    GFXRECON_WRITE_CONSOLE("        \t\tto. Default is the input filepath with \"gfxr\" replaced by \"json\".");
-    GFXRECON_WRITE_CONSOLE("  --format <format>\tJSON format to write.");
-    GFXRECON_WRITE_CONSOLE("           json\t\tStandard JSON format (indented)");
-    GFXRECON_WRITE_CONSOLE("           jsonl\tJSON lines format (every object in a single line)");
-    GFXRECON_WRITE_CONSOLE("  --include-binaries\tDump binaries from Vulkan traces in a separate file with an unique "
-                           "name. The main JSON file");
-    GFXRECON_WRITE_CONSOLE("                    \twill include a reference with the file name. The binary files are "
-                           "dumped in a subdirectory");
-    GFXRECON_WRITE_CONSOLE("  --expand-flags\tPrint flags values from Vulkan traces with its correspondent symbolic "
-                           "representation. Otherwise,");
-    GFXRECON_WRITE_CONSOLE("                \tthe flags are printed as hexadecimal value.");
-    GFXRECON_WRITE_CONSOLE(
-        "  --file-per-frame\tCreates a new file for every frame processed. Frame number is added as a suffix");
-    GFXRECON_WRITE_CONSOLE("                  \tto the output file name.");
-    GFXRECON_WRITE_CONSOLE("  --frame-range <N1[-N2][,...]>");
-    GFXRECON_WRITE_CONSOLE("                  \tFrame ranges to be converted. In order to retrieve trim trace state,"
-                           " frame 0 has to be in frame range.");
-    GFXRECON_WRITE_CONSOLE("                  \tFrame ranges should be specified in ascending order and cannot "
-                           "overlap. Frame numbering is zero-indexed and inclusive.");
-    GFXRECON_WRITE_CONSOLE("                  \tExample: 0-2,5,8-10 will generate data for 7 frames.");
-    GFXRECON_WRITE_CONSOLE("  --log-level <level>\tSpecify highest level message to log. Options are:");
-    GFXRECON_WRITE_CONSOLE("                  \t\tdebug, info, warning, error, and fatal. Default is info.");
-
-#if defined(WIN32) && defined(_DEBUG)
-    GFXRECON_WRITE_CONSOLE("  --no-debug-popup\tDisable the 'Abort, Retry, Ignore' message box");
-    GFXRECON_WRITE_CONSOLE("        \t\tdisplayed when abort() is called (Windows debug only).");
-#endif
-}
-
-static void GetOutputFileName(const gfxrecon::util::ArgumentParser& arg_parser,
-                              const std::string&                    input_filename,
-                              JsonFormat                            output_format,
-                              bool&                                 output_to_stdout,
-                              std::string&                          output_stem,
-                              std::string&                          output_filename,
-                              std::string&                          output_data_dir)
-{
-    if (arg_parser.IsArgumentSet(kOutput))
-    {
-        output_filename = arg_parser.GetArgumentValue(kOutput);
-
+        output_filename = output_dir;
         output_to_stdout = (output_filename == "stdout");
     }
     else
@@ -139,35 +88,23 @@ static void GetOutputFileName(const gfxrecon::util::ArgumentParser& arg_parser,
 
     // If we're outputing to stdout, we still need to use a data filename using the
     // capture file prefix
-    std::string output_dir;
+    std::string output_base;
     if (output_to_stdout)
     {
         output_stem = gfxrecon::util::filepath::GetFilenameStem(input_filename);
-        output_dir  = gfxrecon::util::filepath::GetBasedir(input_filename);
+        output_base = gfxrecon::util::filepath::GetBasedir(input_filename);
     }
     else
     {
         output_stem = gfxrecon::util::filepath::GetFilenameStem(output_filename);
-        output_dir  = gfxrecon::util::filepath::GetBasedir(output_filename);
+        output_base = gfxrecon::util::filepath::GetBasedir(output_filename);
     }
-    output_data_dir = gfxrecon::util::filepath::Join(output_dir, output_stem);
+    output_data_dir = gfxrecon::util::filepath::Join(output_base, output_stem);
 }
 
-static gfxrecon::util::JsonFormat GetOutputFormat(const gfxrecon::util::ArgumentParser& arg_parser)
+static bool GetFrameIndices(const std::string& input_ranges, std::vector<uint32_t>& indices)
 {
-    std::string output_format;
-    if (arg_parser.IsArgumentSet(kFormatArgument))
-    {
-        output_format = arg_parser.GetArgumentValue(kFormatArgument);
-        return gfxrecon::util::get_json_format(output_format);
-    }
-    return JsonFormat::JSON;
-}
-
-static bool GetFrameIndices(const gfxrecon::util::ArgumentParser& arg_parser, std::vector<uint32_t>& indices)
-{
-    bool               indices_present = false;
-    const std::string& input_ranges    = arg_parser.GetArgumentValue(kFrameRange);
+    bool indices_present = false;
     if (!input_ranges.empty())
     {
         std::vector<gfxrecon::util::UintRange> frame_ranges =
@@ -205,54 +142,58 @@ int main(int argc, const char** argv)
 {
     int ret_code = 0;
 
-    gfxrecon::util::Log::Init();
+    // Create the tool settings using a smart pointer so it is automatically cleaned up on exit
+    std::unique_ptr<gfxrecon::tools::ToolSettings> tool_settings =
+        std::make_unique<gfxrecon::tools::ToolSettings>(gfxrecon::util::settings::kGfxrToolType_Convert_Tool);
 
-    gfxrecon::util::ArgumentParser arg_parser(argc, argv, kOptions, kArguments);
+    std::vector<std::string>        extra_args;
+    gfxrecon::tools::CmdLineRetType ret_type = tool_settings->ProcessCommandLine(argc, argv, 1, extra_args);
 
-    if (CheckOptionPrintUsage(argv[0], arg_parser, PrintUsage) || CheckOptionPrintVersion(argv[0], arg_parser))
-    {
-        gfxrecon::util::Log::Release();
-        exit(0);
-    }
-    if (arg_parser.IsInvalid() || (arg_parser.GetPositionalArgumentsCount() != 1))
+    if (ret_type == gfxrecon::tools::CmdLineRetType_PrintUsage)
     {
         PrintUsage(argv[0]);
-        gfxrecon::util::Log::Release();
-        exit(1);
+        exit(0);
     }
-    if (arg_parser.IsArgumentSet(kOutput) && arg_parser.GetArgumentValue(kOutput).empty())
+    else if (ret_type == gfxrecon::tools::CmdLineRetType_PrintVersion)
     {
-        GFXRECON_LOG_ERROR("Empty string given for argument \"--output\"; must be a valid path or 'stdout'");
-        gfxrecon::util::Log::Release();
-        exit(1);
+        gfxrecon::tools::PrintVersion(argv[0]);
+        exit(0);
     }
-#if defined(WIN32) && defined(_DEBUG)
-    if (arg_parser.IsOptionSet(kNoDebugPopup))
+    else if (ret_type == gfxrecon::tools::CmdLineRetType_Error)
     {
-        _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+        PrintUsage(argv[0]);
+        exit(-1);
     }
-#endif
+    tool_settings->ProcessDisableDebugPopup();
 
-    // Update logging with values retrieved from command line arguments
-    gfxrecon::util::Log::Settings log_settings;
-    GetLogSettings(arg_parser, log_settings);
-    gfxrecon::util::Log::UpdateWithSettings(log_settings);
+    const auto& convert_settings =
+        gfxrecon::util::settings::SettingsManager::GetSingleton().GetSettingsStruct()->convert_settings;
+
+    if (convert_settings.json_output.empty())
+    {
+        exit(1);
+    }
 
     std::string filename_stem;
     std::string output_filename;
     std::string output_dir;
     bool        output_to_stdout;
-    const auto& positional_arguments = arg_parser.GetPositionalArguments();
-    std::string input_filename       = positional_arguments[0];
-    JsonFormat  output_format        = GetOutputFormat(arg_parser);
-    GetOutputFileName(
-        arg_parser, input_filename, output_format, output_to_stdout, filename_stem, output_filename, output_dir);
+    std::string input_filename = extra_args[0];
+    JsonFormat  output_format  = gfxrecon::util::get_json_format(convert_settings.json_format);
 
-    bool                  dump_binaries  = arg_parser.IsOptionSet(kIncludeBinariesOption);
-    bool                  expand_flags   = arg_parser.IsOptionSet(kExpandFlagsOption);
-    bool                  file_per_frame = arg_parser.IsOptionSet(kFilePerFrameOption);
+    GetOutputFileName(convert_settings.json_output,
+                      input_filename,
+                      output_format,
+                      output_to_stdout,
+                      filename_stem,
+                      output_filename,
+                      output_dir);
+
+    bool                  dump_binaries  = convert_settings.include_binaries;
+    bool                  expand_flags   = convert_settings.expand_flags;
+    bool                  file_per_frame = convert_settings.file_per_frame;
     std::vector<uint32_t> frame_indices;
-    bool                  frame_range_option = GetFrameIndices(arg_parser, frame_indices);
+    bool                  frame_range_option = GetFrameIndices(convert_settings.frame_range, frame_indices);
 
     bool   is_asset_file = false;
     size_t last_dot_pos  = input_filename.find_last_of(".");

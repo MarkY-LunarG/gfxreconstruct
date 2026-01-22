@@ -31,6 +31,8 @@ add_executable(gfxrecon-info "")
 target_sources(gfxrecon-info
                PRIVATE
                    ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+                   ${CMAKE_CURRENT_LIST_DIR}/../tool_settings.h
+                   ${CMAKE_CURRENT_LIST_DIR}/../tool_settings.cpp
                    ${CMAKE_CURRENT_LIST_DIR}/../platform_debug_helper.cpp
                    $<$<BOOL:WIN32>:${PROJECT_SOURCE_DIR}/version.rc>
                    $<$<BOOL:WIN32>:${GFXRECON_WIN_MANIFEST}>
@@ -47,6 +49,7 @@ if (MSVC)
 endif()
 
 target_include_directories(gfxrecon-info PUBLIC ${CMAKE_BINARY_DIR})
+
 target_compile_definitions(gfxrecon_decode PUBLIC VULKAN_HPP_NO_STRUCT_SETTERS)
 
 target_link_libraries(gfxrecon-info

@@ -113,17 +113,17 @@ int main(int argc, const char** argv)
 
     if (ret_type == gfxrecon::tools::CmdLineRetType_PrintUsage)
     {
-        PrintUsage(kApplicationName);
+        PrintUsage(argv[0]);
         exit(0);
     }
     if (ret_type == gfxrecon::tools::CmdLineRetType_PrintVersion)
     {
-        gfxrecon::tools::PrintVersion(kApplicationName);
+        gfxrecon::tools::PrintVersion(argv[0]);
         exit(0);
     }
     else if (ret_type == gfxrecon::tools::CmdLineRetType_Error)
     {
-        PrintUsage(kApplicationName);
+        PrintUsage(argv[0]);
         exit(-1);
     }
 

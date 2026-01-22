@@ -31,9 +31,11 @@ add_executable(gfxrecon-extract "")
 target_sources(gfxrecon-extract
                PRIVATE
                    ${CMAKE_CURRENT_LIST_DIR}/main.cpp
-                    ${CMAKE_CURRENT_LIST_DIR}/../platform_debug_helper.cpp
-                    $<$<BOOL:WIN32>:${PROJECT_SOURCE_DIR}/version.rc>
-                    $<$<BOOL:WIN32>:${GFXRECON_WIN_MANIFEST}>
+                   ${CMAKE_CURRENT_LIST_DIR}/../tool_settings.h
+                   ${CMAKE_CURRENT_LIST_DIR}/../tool_settings.cpp
+                   ${CMAKE_CURRENT_LIST_DIR}/../platform_debug_helper.cpp
+                   $<$<BOOL:WIN32>:${PROJECT_SOURCE_DIR}/version.rc>
+                   $<$<BOOL:WIN32>:${GFXRECON_WIN_MANIFEST}>
               )
 
 if (MSVC)

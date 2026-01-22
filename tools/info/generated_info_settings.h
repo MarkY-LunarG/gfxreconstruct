@@ -51,6 +51,8 @@ static void PrintUsage(const char* exe_name)
     high_level_usage.push_back("[--exe-info-only] ");
     high_level_usage.push_back("[--env-vars-only] ");
     high_level_usage.push_back("[--file-format-only] ");
+    high_level_usage.push_back("[--verbose] ");
+    high_level_usage.push_back("[--output <file>] ");
 #if defined(WIN32)
     high_level_usage.push_back("[--enum-gpu-indices] ");
     high_level_usage.push_back("[--no-debug-popup] ");
@@ -97,6 +99,11 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE("          \t\tenvironment variables.");
     GFXRECON_WRITE_CONSOLE("  --file-format-only");
     GFXRECON_WRITE_CONSOLE("          \t\tQuickly exit after extracting file format information.");
+    GFXRECON_WRITE_CONSOLE("  --verbose");
+    GFXRECON_WRITE_CONSOLE("          \t\tOutput more information in JSON format.");
+    GFXRECON_WRITE_CONSOLE("  --output <file>");
+    GFXRECON_WRITE_CONSOLE("          \t\tOutput generated information to the provided file. If not");
+    GFXRECON_WRITE_CONSOLE("          \t\tdefined output goes to std::out.");
 #if defined(WIN32)
     GFXRECON_WRITE_CONSOLE("  --no-debug-popup");
     GFXRECON_WRITE_CONSOLE("          \t\t[Windows Only] Disable the 'Abort, Retry, Ignore' message");

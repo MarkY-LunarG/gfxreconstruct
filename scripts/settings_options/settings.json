@@ -2811,6 +2811,39 @@
                 }
             },
             {
+                "key": "info_verbose",
+                "label": "Verbose JSON Output",
+                "description": "Output more information in JSON format.",
+                "tools": [
+                    "INFO"
+                ],
+                "command-line": {
+                    "long": "verbose"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "info_output",
+                "label": "Output File",
+                "description":
+                    "Output generated information to the provided file. If not defined output goes to std::out.",
+                "tools": [
+                    "INFO"
+                ],
+                "command-line": {
+                    "long": "output",
+                    "argument-label": "<file>"
+                },
+                "type": {
+                    "primitive": "SAVE_FILE",
+                    "filter": "*.*",
+                    "default": ""
+                }
+            },
+            {
                 "key": "d3d12_pso_removal",
                 "label": "Remove Unreferenced PSOs",
                 "description": "Remove creation of unreferenced PSOs.",

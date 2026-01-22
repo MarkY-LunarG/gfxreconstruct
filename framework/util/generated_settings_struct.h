@@ -305,6 +305,8 @@ struct GfxrInfoSettingsStruct
     bool        exe_info_only{false};
     bool        env_vars_only{false};
     bool        file_format_only{false};
+    bool        info_verbose{false};
+    std::string info_output{""};
 
     // D3D12-Specific
 #if defined(WIN32)

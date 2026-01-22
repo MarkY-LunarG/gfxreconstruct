@@ -24,8 +24,6 @@
 #include PROJECT_VERSION_HEADER_FILE
 #include "file_optimizer.h"
 
-#include "../tool_settings.h"
-
 #if defined(D3D12_SUPPORT)
 #include "dx12_optimize_util.h"
 #endif
@@ -43,6 +41,8 @@
 
 #include "vulkan/vulkan.h"
 
+#include "generated_optimize_settings.h"
+
 #include <cassert>
 #include <stdexcept>
 #include <string>
@@ -59,59 +59,6 @@ extern "C"
     __declspec(dllexport) extern const char* D3D12SDKPath = reinterpret_cast<const char*>(u8".\\D3D12\\");
 }
 #endif
-
-const char kOptions[]   = "-h|--help,--version,--no-debug-popup,--d3d12-pso-removal,--dxr,--dxr-experimental";
-const char kArguments[] = "--gpu";
-
-const char kD3d12PsoRemoval[]             = "--d3d12-pso-removal";
-const char kDx12OptimizeDxr[]             = "--dxr";
-const char kDx12OptimizeDxrExperimental[] = "--dxr-experimental";
-
-static void PrintUsage(const char* exe_name)
-{
-    std::string app_name     = exe_name;
-    size_t      dir_location = app_name.find_last_of("/\\");
-    if (dir_location >= 0)
-    {
-        app_name.replace(0, dir_location + 1, "");
-    }
-    GFXRECON_WRITE_CONSOLE("\n%s - Produce new captures with enhanced performance characteristics", app_name.c_str());
-
-    GFXRECON_WRITE_CONSOLE("\t\t\tFor Vulkan, the optimizer will remove unused buffer and image initialization data "
-                           "(for trimmed captures)");
-    GFXRECON_WRITE_CONSOLE(
-        "\t\t\tFor D3D12, the optimizer will improve DXR replay performance and remove unused PSOs (for all captures)");
-    GFXRECON_WRITE_CONSOLE("");
-    GFXRECON_WRITE_CONSOLE("Usage:");
-    GFXRECON_WRITE_CONSOLE(
-        "  %s [-h | --help] [--version] [--d3d12-pso-removal] [--dxr] [--gpu <index>] <input-file> <output-file>",
-        app_name.c_str());
-    GFXRECON_WRITE_CONSOLE("");
-    GFXRECON_WRITE_CONSOLE("Required arguments:");
-    GFXRECON_WRITE_CONSOLE("  <input-file>\t\tThe path to input GFXReconstruct capture file to be processed.");
-    GFXRECON_WRITE_CONSOLE("  <output-file>\t\tThe path to output GFXReconstruct capture file to be created.");
-    GFXRECON_WRITE_CONSOLE("");
-    GFXRECON_WRITE_CONSOLE("Optional arguments:");
-    GFXRECON_WRITE_CONSOLE("  -h\t\t\tPrint usage information and exit (same as --help).");
-    GFXRECON_WRITE_CONSOLE("  --version\t\tPrint version information and exit.");
-#if defined(WIN32)
-#if defined(_DEBUG)
-    GFXRECON_WRITE_CONSOLE("  --no-debug-popup\tDisable the 'Abort, Retry, Ignore' message box");
-    GFXRECON_WRITE_CONSOLE("        \t\tdisplayed when abort() is called (Windows debug only).");
-#endif
-    GFXRECON_WRITE_CONSOLE("  --d3d12-pso-removal\tD3D12-only: Remove creation of unreferenced PSOs.");
-    GFXRECON_WRITE_CONSOLE("  --dxr\t\t\tD3D12-only: Optimize for DXR and ExecuteIndirect replay.");
-    GFXRECON_WRITE_CONSOLE("  --gpu <index>\t\tUse the specified device for the optimizer replay, where index");
-    GFXRECON_WRITE_CONSOLE("          \t\tis the zero-based index to the array of physical devices");
-    GFXRECON_WRITE_CONSOLE("          \t\treturned by vkEnumeratePhysicalDevices or IDXGIFactory1::EnumAdapters1.");
-    GFXRECON_WRITE_CONSOLE(
-        "          \t\tThe optimizer replay may fail if the specified device is not compatible with the");
-    GFXRECON_WRITE_CONSOLE("          \t\toriginal capture devices.");
-    GFXRECON_WRITE_CONSOLE("");
-    GFXRECON_WRITE_CONSOLE("Note: running without optional arguments will instruct the optimizer to detect API and run "
-                           "all available optimizations.");
-#endif
-}
 
 void GetUnreferencedResources(const std::string&                              input_filename,
                               std::unordered_set<gfxrecon::format::HandleId>* unreferenced_ids)
@@ -216,45 +163,44 @@ int main(int argc, const char** argv)
 {
     int64_t start_time = gfxrecon::util::datetime::GetTimestamp();
 
-    gfxrecon::util::Log::Init();
+    // Create the tool settings using a smart pointer so it is automatically cleaned up on exit
+    std::unique_ptr<gfxrecon::tools::ToolSettings> tool_settings =
+        std::make_unique<gfxrecon::tools::ToolSettings>(gfxrecon::util::settings::kGfxrToolType_Optimize_Tool);
 
-    gfxrecon::util::ArgumentParser arg_parser(argc, argv, kOptions, kArguments);
+    std::vector<std::string>        extra_args;
+    gfxrecon::tools::CmdLineRetType ret_type = tool_settings->ProcessCommandLine(argc, argv, 2, extra_args);
 
-    if (CheckOptionPrintUsage(argv[0], arg_parser, PrintUsage) || CheckOptionPrintVersion(argv[0], arg_parser))
-    {
-        gfxrecon::util::Log::Release();
-        exit(0);
-    }
-    else if (arg_parser.IsInvalid() || (arg_parser.GetPositionalArgumentsCount() != 2))
+    if (ret_type == gfxrecon::tools::CmdLineRetType_PrintUsage)
     {
         PrintUsage(argv[0]);
-        gfxrecon::util::Log::Release();
+        exit(0);
+    }
+    else if (ret_type == gfxrecon::tools::CmdLineRetType_PrintVersion)
+    {
+        gfxrecon::tools::PrintVersion(argv[0]);
+        exit(0);
+    }
+    else if (ret_type == gfxrecon::tools::CmdLineRetType_Error)
+    {
+        PrintUsage(argv[0]);
         exit(-1);
     }
-    else
-    {
-#if defined(WIN32) && defined(_DEBUG)
-        if (arg_parser.IsOptionSet(kNoDebugPopup))
-        {
-            _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
-        }
-#endif
-    }
+    tool_settings->ProcessDisableDebugPopup();
+
+    const auto& optimize_settings =
+        gfxrecon::util::settings::SettingsManager::GetSingleton().GetSettingsStruct()->optimize_settings;
 
     try
     {
-        std::string                     input_filename;
-        std::string                     output_filename;
-        const std::vector<std::string>& positional_arguments = arg_parser.GetPositionalArguments();
-        input_filename                                       = positional_arguments[0];
-        output_filename                                      = positional_arguments[1];
+        std::string input_filename  = extra_args[0];
+        std::string output_filename = extra_args[1];
 
         // Parameter checking and API detection
         gfxrecon::decode::Dx12OptimizationOptions dx12_options;
-        dx12_options.optimize_resource_values              = arg_parser.IsOptionSet(kDx12OptimizeDxr);
-        dx12_options.optimize_resource_values_experimental = arg_parser.IsOptionSet(kDx12OptimizeDxrExperimental);
-        dx12_options.remove_redundant_psos                 = arg_parser.IsOptionSet(kD3d12PsoRemoval);
-        const auto& override_gpu                           = arg_parser.GetArgumentValue(kOverrideGpuArgument);
+        dx12_options.optimize_resource_values              = optimize_settings.dxr;
+        dx12_options.optimize_resource_values_experimental = optimize_settings.dxr_experimental;
+        dx12_options.remove_redundant_psos                 = optimize_settings.d3d12_pso_removal;
+        const auto& override_gpu                           = optimize_settings.gpu;
         if (!override_gpu.empty())
         {
             dx12_options.override_gpu_index = std::stoi(override_gpu);

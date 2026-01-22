@@ -154,17 +154,36 @@ CmdLineRetType ToolSettings::ProcessCommandLine(const std::vector<std::string>& 
 void ToolSettings::ProcessDisableDebugPopup()
 {
 #if defined(WIN32) && defined(_DEBUG)
+    bool disable_popup = false;
     const auto settings_struct = gfxrecon::util::settings::SettingsManager::GetSingleton().GetSettingsStruct();
     switch (tool_type_)
     {
+        case gfxrecon::util::settings::kGfxrToolType_Compress_Tool:
+            disable_popup = settings_struct->compress_settings.no_debug_popup;
+            break;
+        case gfxrecon::util::settings::kGfxrToolType_Convert_Tool:
+            disable_popup = settings_struct->convert_settings.no_debug_popup;
+            break;
+        case gfxrecon::util::settings::kGfxrToolType_Extract_Tool:
+            disable_popup = settings_struct->extract_settings.no_debug_popup;
+            break;
+        case gfxrecon::util::settings::kGfxrToolType_Info_Tool:
+            disable_popup = settings_struct->info_settings.no_debug_popup;
+            break;
+        case gfxrecon::util::settings::kGfxrToolType_Optimize_Tool:
+            disable_popup = settings_struct->optimize_settings.no_debug_popup;
+            break;
         case gfxrecon::util::settings::kGfxrToolType_Replay_Tool:
-            if (settings_struct->replay_settings.no_debug_popup)
-            {
-                _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
-            }
+            disable_popup = settings_struct->replay_settings.no_debug_popup;
             break;
         default:
+            GFXRECON_LOG_WARNING("Disable debug popup not supported for tool type %d", tool_type_);
             break;
+    }
+
+    if (disable_popup)
+    {
+        _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
 #endif
 }
@@ -540,6 +559,21 @@ void ToolSettings::GetLogSettings(gfxrecon::util::Log::Settings& log_settings)
     const auto settings_struct = gfxrecon::util::settings::SettingsManager::GetSingleton().GetSettingsStruct();
     switch (tool_type_)
     {
+        case gfxrecon::util::settings::kGfxrToolType_Compress_Tool:
+            log_level_str = settings_struct->compress_settings.log_level;
+            break;
+        case gfxrecon::util::settings::kGfxrToolType_Convert_Tool:
+            log_level_str = settings_struct->convert_settings.log_level;
+            break;
+        case gfxrecon::util::settings::kGfxrToolType_Extract_Tool:
+            log_level_str = settings_struct->extract_settings.log_level;
+            break;
+        case gfxrecon::util::settings::kGfxrToolType_Info_Tool:
+            log_level_str = settings_struct->info_settings.log_level;
+            break;
+        case gfxrecon::util::settings::kGfxrToolType_Optimize_Tool:
+            log_level_str = settings_struct->optimize_settings.log_level;
+            break;
         case gfxrecon::util::settings::kGfxrToolType_Replay_Tool:
             log_level_str                          = settings_struct->replay_settings.log_level;
             log_settings.output_timestamps         = settings_struct->replay_settings.log_timestamps;
@@ -1035,6 +1069,7 @@ bool ToolSettings::GetQuitAfterFrame(uint32_t& quit_frame)
 
     return false;
 }
+
 void ToolSettings::GetReplayOptions(gfxrecon::decode::ReplayOptions& options, const std::string& filename)
 {
     options.capture_filename = filename;

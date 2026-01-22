@@ -947,6 +947,14 @@ void SettingsManager::ReadEnvironmentVariables()
     {
         settings_struct_.info_settings.file_format_only = SettingValueToBool(env_var_value);
     }
+    if (ReadEnvironmentVariable("info_info_verbose", env_var_value))
+    {
+        settings_struct_.info_settings.info_verbose = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("info_info_output", env_var_value))
+    {
+        settings_struct_.info_settings.info_output = env_var_value;
+    }
 #if defined(WIN32)
     if (ReadEnvironmentVariable("info_no_debug_popup", env_var_value))
     {
@@ -2096,6 +2104,25 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             {
                 settings_struct_.info_settings.file_format_only = true;
                 valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "verbose")
+            {
+                settings_struct_.info_settings.info_verbose = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "output")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.info_settings.info_output = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"output\" missing expected argument");
+                }
                 goto early_out;
             }
 #if defined(WIN32)
