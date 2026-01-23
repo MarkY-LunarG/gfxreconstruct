@@ -41,7 +41,6 @@
 #endif
 
 #include "graphics/fps_info.h"
-#include "util/argument_parser.h"
 #include "util/logging.h"
 
 #if defined(D3D12_SUPPORT)

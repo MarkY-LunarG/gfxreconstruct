@@ -57,7 +57,7 @@ gfxrecon-tocpp <command-line-args> <capture-file>
 | Command-Line Argument | Required | Description | Default | Valid for APIs |
 | --------------------- | -------- | ----------- | ------- | -------------- |
 | -a\|--android-template &lt;dir&gt; | Required | Directory path containing the Android application template files. [Only required if generating for Android] | <empty> | ALL |
-| -c\|--command-limit &lt;num_commands&gt; | Optional | Maximum number of API commands recorded per C++ file. The intent is to adjust compilation load per file. (Defaults to 1000 commands per file) | <empty> | ALL |
+| -c\|--command-limit &lt;num_commands&gt; | Optional | Maximum number of API commands recorded per C++ file. The intent is to adjust compilation load per file. (Defaults to 1000 commands per file) | 4294967295 | ALL |
 | -d\|--max-window-dimensions &lt;width,height&gt; | Optional | Maximum dimensions of the created window. (For example '-d <width>,<height>') | <empty> | ALL |
 | -f\|--frame-limit &lt;num_frames&gt; | Optional | Maximum number of frames to convert to C++ code from the capture file. | 4294967295 | ALL |
 | -o\|--output &lt;dir&gt; | Required | Directory path where the output will be generated into. | <empty> | ALL |

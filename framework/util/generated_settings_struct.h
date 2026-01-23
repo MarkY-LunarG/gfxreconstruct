@@ -348,7 +348,7 @@ struct GfxrTocppSettingsStruct
 {
     // clang-format off
     std::string android_template{""};
-    std::string command_limit{""};
+    uint32_t    command_limit{4294967295};
     std::string max_window_dimensions{""};
     uint32_t    frame_limit{4294967295};
     std::string tocpp_output{""};

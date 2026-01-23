@@ -1001,7 +1001,7 @@ void SettingsManager::ReadEnvironmentVariables()
     }
     if (ReadEnvironmentVariable("tocpp_command_limit", env_var_value))
     {
-        settings_struct_.tocpp_settings.command_limit = env_var_value;
+        settings_struct_.tocpp_settings.command_limit = atoi(env_var_value.c_str());
     }
     if (ReadEnvironmentVariable("tocpp_max_window_dimensions", env_var_value))
     {
@@ -1174,7 +1174,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 case ('c'):
                     if (HasArgumentParameter(command_line_args, cur_arg))
                     {
-                        settings_struct_.tocpp_settings.command_limit = command_line_args[++cur_arg];
+                        settings_struct_.tocpp_settings.command_limit = atoi(command_line_args[++cur_arg].c_str());
                         valid_arg = true;
                     }
                     else
@@ -2328,7 +2328,7 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
             {
                 if (HasArgumentParameter(command_line_args, cur_arg))
                 {
-                    settings_struct_.tocpp_settings.command_limit = command_line_args[++cur_arg];
+                    settings_struct_.tocpp_settings.command_limit = atoi(command_line_args[++cur_arg].c_str());
                     valid_arg = true;
                 }
                 else

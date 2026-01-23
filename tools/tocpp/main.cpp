@@ -26,85 +26,12 @@
 #include "format/format.h"
 #include "generated/generated_vulkan_cpp_consumer.h"
 #include "generated/generated_vulkan_decoder.h"
-#include "util/argument_parser.h"
 #include "util/file_path.h"
 #include "util/logging.h"
 
 #include "vulkan/vulkan_core.h"
 
-struct CommandLineArgument
-{
-    bool       required;
-    bool       expects_argument;
-    const char short_option[8];
-    const char long_option[32];
-    const char additional[16];
-    const char restrictions[64];
-    const char description[512];
-};
-
-CommandLineArgument g_help_argument = {
-    false, false, "-h", "--help", "\t\t\t\t\t", "", "Print usage information and exit."
-};
-CommandLineArgument g_version_argument = {
-    false, false, "-v", "--version", "\t\t\t\t", "", "Print version information and exit."
-};
-CommandLineArgument g_android_template_argument = {
-    false,
-    true,
-    "-a",
-    "--android-template",
-    "<dir>\t\t\t",
-    " (Only valid for Android targets)",
-    "Directory path containing the Android application template files."
-};
-CommandLineArgument g_target_argument = { true,
-                                          true,
-                                          "-t",
-                                          "--target",
-                                          "<platform>\t\t\t",
-                                          " (Defaults to xcb)",
-                                          "The type of platform for the intended target Vulkan source.\n"
-                                          "\t\t\t\t\t\t\t  Available Platforms:\n"
-                                          "\t\t\t\t\t\t\t     android    Generate for Android.\n"
-                                          "\t\t\t\t\t\t\t     xcb        Generate for XCB." };
-CommandLineArgument g_output_argument = {
-    true, true, "-o", "--output", "<dir>\t\t\t\t", "", "Directory path where the output will be generated into."
-};
-CommandLineArgument g_max_window_dimensions_argument = {
-    false, true, "-d", "--max-window-dimensions", "<width,height>\t", "", "Maximum dimensions of the created window."
-};
-CommandLineArgument g_frame_limit_argument = {
-    false,
-    true,
-    "-f",
-    "--frame-limit",
-    "<number>\t\t\t",
-    "",
-    "Maximum number of frames to convert to C++ code from the capture file."
-};
-CommandLineArgument g_command_limit_argument = {
-    false,
-    true,
-    "-c",
-    "--command-limit",
-    "<number>\t\t\t",
-    " (Defaults to 1000)",
-    "Maximum number of API commands recorded per C++ file.  The intent is to"
-    " adjust compilation load per file."
-};
-
-CommandLineArgument g_captured_swapchain_argument = {
-    false,
-    false,
-    "-s",
-    "--captured-swapchain",
-    "\t\t\t",
-    "",
-    "Use the swapchain as it was captured during toCpp replay instead of using the \"Virtual Swapchain\" paths."
-};
-
-std::vector<CommandLineArgument> g_argument_list;
+#include "generated_tocpp_settings.h"
 
 #if defined(WIN32)
 const char kPathSep = '\\';
@@ -120,115 +47,6 @@ const std::string path_vulkanmain = "app/src/main/jni/";
 
 // Directory structure where the image data will be generated in the output directory.
 const std::string path_assets = "app/src/main/assets/";
-
-static bool CheckOptionPrintVersion(const char* exe_name, const gfxrecon::util::ArgumentParser& arg_parser)
-{
-    // We can just check for the short option because the argument parser will assign even
-    // the long option to either one for easier detecting.
-    if (arg_parser.IsOptionSet(g_version_argument.short_option))
-    {
-        std::string app_name     = exe_name;
-        size_t      dir_location = app_name.find_last_of("/\\");
-
-        if (dir_location >= 0)
-        {
-            app_name.replace(0, dir_location + 1, "");
-        }
-
-        GFXRECON_WRITE_CONSOLE("%s version info:", app_name.c_str());
-        GFXRECON_WRITE_CONSOLE("  GFXReconstruct Version %s", GetProjectVersionString());
-        GFXRECON_WRITE_CONSOLE("  Vulkan Header Version %u.%u.%u",
-                               VK_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE),
-                               VK_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE),
-                               VK_VERSION_PATCH(VK_HEADER_VERSION_COMPLETE));
-
-        return true;
-    }
-
-    return false;
-}
-
-static void PrintUsage(const char* exe_name)
-{
-    std::string app_name     = exe_name;
-    size_t      dir_location = app_name.find_last_of("/\\");
-    if (dir_location >= 0)
-    {
-        app_name.replace(0, dir_location + 1, "");
-    }
-    GFXRECON_WRITE_CONSOLE("\n%s - A tool to convert GFXReconstruct capture files to Vulkan source.\n",
-                           app_name.c_str());
-    GFXRECON_WRITE_CONSOLE("Usage:");
-    GFXRECON_WRITE_CONSOLE("  %s [arguments] <capture_file>\n", app_name.c_str());
-    GFXRECON_WRITE_CONSOLE("     <capture_file> must be a valid GFXReconstruct capture file\n", app_name.c_str());
-    GFXRECON_WRITE_CONSOLE("     Required Arguments:");
-
-    for (auto& argument : g_argument_list)
-    {
-        if (argument.required)
-        {
-            GFXRECON_WRITE_CONSOLE("\t[%s | %s] %s %s%s",
-                                   argument.short_option,
-                                   argument.long_option,
-                                   argument.additional,
-                                   argument.description,
-                                   argument.restrictions);
-        }
-    }
-
-    GFXRECON_WRITE_CONSOLE("\n     Optional Arguments:");
-    for (auto& argument : g_argument_list)
-    {
-        if (!argument.required)
-        {
-            GFXRECON_WRITE_CONSOLE("\t[%s | %s] %s %s%s",
-                                   argument.short_option,
-                                   argument.long_option,
-                                   argument.additional,
-                                   argument.description,
-                                   argument.restrictions);
-        }
-    }
-}
-
-static bool CheckOptionPrintUsage(const char* exe_name, const gfxrecon::util::ArgumentParser& arg_parser)
-{
-    // We can just check for the short option because the argument parser will assign even
-    // the long option to either one for easier detecting.
-    if (arg_parser.IsOptionSet(g_help_argument.short_option))
-    {
-        PrintUsage(exe_name);
-        return true;
-    }
-
-    return false;
-}
-
-static gfxrecon::decode::GfxToCppPlatform GetCppTargetPlatform(const gfxrecon::util::ArgumentParser& arg_parser)
-{
-    std::string platform;
-
-    // We can just check for the short argument because the argument parser will assign even
-    // the long argument to either one for easier detecting.
-    if (arg_parser.IsArgumentSet(g_target_argument.short_option))
-    {
-        platform = arg_parser.GetArgumentValue(g_target_argument.short_option);
-        printf("Platform set to %s\n", platform.c_str());
-
-        if (gfxrecon::decode::kTargetPlatformByName.count(platform) == 0)
-        {
-            GFXRECON_LOG_ERROR("The specified platform \"%s\" is not known!", platform.c_str());
-            exit(1);
-        }
-
-        return gfxrecon::decode::kTargetPlatformByName.at(platform);
-    }
-    else
-    {
-        GFXRECON_LOG_INFO("Platform not specified, defaulting to XCB.");
-        return gfxrecon::decode::GfxToCppPlatform::PLATFORM_XCB;
-    }
-}
 
 static bool OutputDirectoryIsValid(std::string& out_dir)
 {
@@ -377,65 +195,42 @@ int main(int argc, const char** argv)
 {
     std::string input_filename;
 
-    // Generate the entire list of valid arguments/options
-    std::string arguments_string;
-    std::string options_string;
-    g_argument_list.push_back(g_help_argument);
-    g_argument_list.push_back(g_version_argument);
-    g_argument_list.push_back(g_target_argument);
-    g_argument_list.push_back(g_output_argument);
-    g_argument_list.push_back(g_android_template_argument);
-    g_argument_list.push_back(g_max_window_dimensions_argument);
-    g_argument_list.push_back(g_frame_limit_argument);
-    g_argument_list.push_back(g_command_limit_argument);
-    g_argument_list.push_back(g_captured_swapchain_argument);
+    // Create the tool settings using a smart pointer so it is automatically cleaned up on exit
+    std::unique_ptr<gfxrecon::tools::ToolSettings> tool_settings =
+        std::make_unique<gfxrecon::tools::ToolSettings>(gfxrecon::util::settings::kGfxrToolType_Optimize_Tool);
 
-    for (auto& argument : g_argument_list)
+    std::vector<std::string>        extra_args;
+    gfxrecon::tools::CmdLineRetType ret_type = tool_settings->ProcessCommandLine(argc, argv, 1, extra_args);
+
+    if (ret_type == gfxrecon::tools::CmdLineRetType_PrintUsage)
     {
-        if (argument.expects_argument)
-        {
-            if (arguments_string.length() > 0)
-            {
-                arguments_string += ",";
-            }
-            arguments_string += argument.short_option + std::string("|") + argument.long_option;
-        }
-        else
-        {
-            if (options_string.length() > 0)
-            {
-                options_string += ",";
-            }
-            options_string += argument.short_option + std::string("|") + argument.long_option;
-        }
+        PrintUsage(argv[0]);
+        exit(0);
     }
-    gfxrecon::util::ArgumentParser arg_parser(argc, argv, options_string, arguments_string);
-
-    gfxrecon::util::Log::Init();
-
-    // --output
-    output_dirname = arg_parser.GetArgumentValue(g_output_argument.short_option);
-
-    // --target
-    gfxrecon::decode::GfxToCppPlatform target_platform = GetCppTargetPlatform(arg_parser);
-
-    // --android-template
-    android_template_root = arg_parser.GetArgumentValue(g_android_template_argument.short_option);
-
-    // --command-limit
-    uint32_t    command_limit          = 0;
-    std::string command_limit_argument = arg_parser.GetArgumentValue(g_command_limit_argument.short_option);
-    if (command_limit_argument.size() != 0)
+    else if (ret_type == gfxrecon::tools::CmdLineRetType_PrintVersion)
     {
-        command_limit =
-            ValidateAndConvertNumericArgument(command_limit_argument, "The given command limit is invalid!");
+        gfxrecon::tools::PrintVersion(argv[0]);
+        exit(0);
     }
+    else if (ret_type == gfxrecon::tools::CmdLineRetType_Error)
+    {
+        PrintUsage(argv[0]);
+        exit(-1);
+    }
+    tool_settings->ProcessDisableDebugPopup();
 
-    // --frame-limit
-    std::string frame_limit_argument = arg_parser.GetArgumentValue(g_frame_limit_argument.short_option);
+    const auto& tocpp_settings =
+        gfxrecon::util::settings::SettingsManager::GetSingleton().GetSettingsStruct()->tocpp_settings;
 
-    // --max-window-dimensions
-    std::string max_dimensions_argument = arg_parser.GetArgumentValue(g_max_window_dimensions_argument.short_option);
+    uint32_t command_limit = tocpp_settings.command_limit;
+    uint32_t frame_limit   = tocpp_settings.frame_limit;
+    android_template_root  = tocpp_settings.android_template;
+    output_dirname         = tocpp_settings.tocpp_output;
+
+    gfxrecon::decode::GfxToCppPlatform target_platform =
+        tocpp_settings.platform_target.empty()
+            ? gfxrecon::decode::GfxToCppPlatform::PLATFORM_XCB
+            : gfxrecon::decode::kTargetPlatformByName.at(tocpp_settings.platform_target);
 
     // Remove the consecutive path separators from the end of the path.
     if (target_platform == gfxrecon::decode::GfxToCppPlatform::PLATFORM_ANDROID)
@@ -446,33 +241,20 @@ int main(int argc, const char** argv)
         }
     }
 
-    if (CheckOptionPrintVersion(argv[0], arg_parser))
+    if (!OutputDirectoryIsValid(output_dirname))
     {
-        gfxrecon::util::Log::Release();
-        exit(0);
-    }
-    else if (arg_parser.IsInvalid() || (arg_parser.GetPositionalArgumentsCount() != 1))
-    {
-        PrintUsage(argv[0]);
-        gfxrecon::util::Log::Release();
-        exit(-1);
-    }
-    else if (!OutputDirectoryIsValid(output_dirname))
-    {
-        gfxrecon::util::Log::Release();
+        GFXRECON_LOG_ERROR("Invalid output directory!");
         exit(-1);
     }
     else if (target_platform == gfxrecon::decode::GfxToCppPlatform::PLATFORM_ANDROID &&
              !AndroidDirsExist(android_template_root))
     {
         GFXRECON_LOG_ERROR("The specified path to --android-template option is missing or wrong!");
-        gfxrecon::util::Log::Release();
         exit(-1);
     }
     else
     {
-        const std::vector<std::string>& positional_arguments = arg_parser.GetPositionalArguments();
-        input_filename                                       = positional_arguments[0];
+        input_filename = extra_args[0];
     }
 
     // Determine the output files.
@@ -501,16 +283,13 @@ int main(int argc, const char** argv)
         output_filename = GetOutputFilename(input_filename);
     }
 
-    uint32_t frame_limit = ValidateAndConvertNumericArgument(frame_limit_argument, "The given frame limit is invalid!");
-
     std::vector<uint32_t> dimensions;
-    ValidateAndConvertDimensionArgument(max_dimensions_argument, dimensions);
+    ValidateAndConvertDimensionArgument(tocpp_settings.max_window_dimensions, dimensions);
 
     gfxrecon::decode::VulkanCppConsumer cpp_consumer;
     bool                                result;
 
-    // --captured-swapchain
-    if (arg_parser.IsOptionSet(g_captured_swapchain_argument.short_option))
+    if (tocpp_settings.captured_swapchain)
     {
         cpp_consumer.DisableVirtualSwapchain();
     }

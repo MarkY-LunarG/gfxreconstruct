@@ -30,6 +30,8 @@ add_executable(gfxrecon-tocpp "")
 target_sources(gfxrecon-tocpp
                PRIVATE
                    main.cpp
+                   ${CMAKE_CURRENT_LIST_DIR}/../tool_settings.h
+                   ${CMAKE_CURRENT_LIST_DIR}/../tool_settings.cpp
                    $<$<BOOL:WIN32>:${PROJECT_SOURCE_DIR}/version.rc>
                    $<$<BOOL:WIN32>:${GFXRECON_WIN_MANIFEST}>
               )

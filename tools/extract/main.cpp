@@ -26,7 +26,6 @@
 #include "format/format.h"
 #include "generated/generated_vulkan_consumer.h"
 #include "generated/generated_vulkan_decoder.h"
-#include "util/argument_parser.h"
 #include "util/file_path.h"
 #include "util/logging.h"
 

@@ -46,7 +46,6 @@
 #include "generated/generated_vulkan_replay_consumer.h"
 #include "util/android/activity.h"
 #include "util/android/intent.h"
-#include "util/argument_parser.h"
 #include "util/logging.h"
 #include "util/platform.h"
 #include "parse_dump_resources_cli.h"

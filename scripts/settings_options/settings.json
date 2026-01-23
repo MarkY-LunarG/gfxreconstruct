@@ -2917,8 +2917,8 @@
                      "short": "c"
                },
                 "type": {
-                    "primitive": "SAVE_FOLDER",
-                    "default": ""
+                    "primitive": "UINT",
+                    "default": 4294967295
                 }
             },
             {

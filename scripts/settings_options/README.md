@@ -44,6 +44,8 @@ This will update the settings in the following locations:
  - [tools/info/generated_info_settings.h](../../tools/info/generated_info_settings.h)
  - [tools/optimize/generated_optimize_settings.h](../../tools/optimize/generated_optimize_settings.h)
  - [tools/replay/generated_replay_settings.h](../../tools/replay/generated_replay_settings.h)
+ - [tools/tocpp/generated_tocpp_settings.h](../../tools/tocpp/generated_tocpp_settings.h)
+ - [tools/tocpp/README.md](../../tools/tocpp/README.md)
  - [USAGE_android.md](../../USAGE_android.md)
  - [USAGE_desktop_D3D12.md](../../USAGE_desktop_D3D12.md)
  - [USAGE_desktop_Vulkan.md](../../USAGE_desktop_Vulkan.md)

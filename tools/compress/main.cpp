@@ -26,7 +26,6 @@
 
 #include "decode/file_processor.h"
 #include "format/format.h"
-#include "util/argument_parser.h"
 #include "util/compressor.h"
 #include "util/logging.h"
 
