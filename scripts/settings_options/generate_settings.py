@@ -50,6 +50,7 @@ android_gfxrecon_python_script_filename: str = GFXR_ROOT_DIR / "android/scripts/
 android_usage_doc_filename: str = GFXR_ROOT_DIR / "USAGE_android.md"
 desktop_d3d12_usage_doc_filename: str = GFXR_ROOT_DIR / "USAGE_desktop_D3D12.md"
 desktop_vulkan_usage_doc_filename: str = GFXR_ROOT_DIR / "USAGE_desktop_Vulkan.md"
+convert_readme_doc_filename: str = GFXR_ROOT_DIR / "tools/convert/README.md"
 
 # Commonly used strings
 settings_env_var_prefix = "GFXRECON_"
@@ -70,6 +71,8 @@ capture_markdown_gen_begin_str = "<!-- CAPTURE_SETTINGS_OPTIONS TABLE CODEGEN BE
 capture_markdown_gen_end_str = "<!-- CAPTURE_SETTINGS_OPTIONS TABLE CODEGEN END -->"
 replay_markdown_gen_begin_str = "<!-- REPLAY_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->"
 replay_markdown_gen_end_str = "<!-- REPLAY_SETTINGS_OPTIONS TABLE CODEGEN END -->"
+convert_markdown_gen_begin_str = "<!-- CONVERT_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->"
+convert_markdown_gen_end_str = "<!-- CONVERT_SETTINGS_OPTIONS TABLE CODEGEN END -->"
 
 # Strings used to identify Android script repplay options codegen areas
 replay_android_script_begin_str = "    # START REPLAY CODEGEN INSERT"
@@ -910,6 +913,30 @@ class ParsedSetting():
             ("ALL" in self.platforms or "MACOS" in self.platforms
              or "LINUX" in self.platforms or "WINDOWS" in self.platforms)
                 and ("ALL" in self.apis or api in self.apis)):
+
+            options = self.GenerateCommandLineOptions(False, True)
+            default_label, default_value = self.GetDefaultLabelAndValue(True)
+            full_description = ' '.join(
+                self.GenerateFullUsageDescription(30, " ", True))
+            required_string = 'Required' if self.command_line.is_required else 'Optional'
+            table_string = f"| {options} | {required_string} | {full_description} | {default_label} | {','.join(self.apis)} |"
+
+            markdown_setting_table_entry.append(table_string)
+        return markdown_setting_table_entry
+
+    # Generate the general tool usage information into a Markdown format
+    # for Android
+    # Parameters:
+    #   tool : Name of tool to generate usage info for.
+    # Returns:
+    #   markdown_setting_table_entry : List of strings necessary to
+    #                                  write the setting information to
+    #                                  a replay usage markdown table.
+    def GenerateToolUsageDocSettingsEntry(self, tool):
+        markdown_setting_table_entry = []
+        if ((self.tools is None or tool in self.tools)
+                and (self.type.primitive_type != "GROUP")
+                and (self.command_line.has_command_line)):
 
             options = self.GenerateCommandLineOptions(False, True)
             default_label, default_value = self.GetDefaultLabelAndValue(True)
@@ -2561,6 +2588,53 @@ def UpdateAndroidReplayScriptArguments(parsed_settings):
         android_script_doc.write('\n'.join(android_script_lines))
 
 
+# Update a tool README.md options/settings tables with the latest
+# settings info.
+# Parameters:
+#   parsed_settings :    The dictionary of all settings parsed from the
+#                        JSON file.
+# Returns:
+#   None
+def UpdateToolUsageDocSettingsTable(parsed_settings, tool_name, filename, markdown_begin_label, markdown_end_label):
+    print(f"Updating {filename}")
+
+    readme_markdown_table_lines = []
+
+    readme_markdown_table_lines.append(markdown_begin_label)
+    readme_markdown_table_lines.append(
+        "| Command-Line Argument | Required | Description | Default | Valid for APIs |"
+    )
+    readme_markdown_table_lines.append(
+        "| --------------------- | -------- | ----------- | ------- | -------------- |"
+    )
+
+    for key, parsed_setting in parsed_settings.items():
+        readme_markdown_table_lines.extend(
+            parsed_setting.GenerateToolUsageDocSettingsEntry(tool_name))
+
+    readme_markdown_table_lines.append(markdown_end_label)
+
+    # Now, read the current convert file and replace the old
+    # settings information with the new settings
+    existing_markdown_lines = []
+    with open(filename, 'r') as markdown_doc:
+        record_lines = True
+        while line := markdown_doc.readline():
+            stripped_line = line.rstrip()
+            if record_lines and (stripped_line == markdown_begin_label):
+                record_lines = False
+
+            if record_lines:
+                existing_markdown_lines.append(stripped_line)
+            else:
+                if stripped_line == markdown_end_label:
+                    existing_markdown_lines.extend(readme_markdown_table_lines)
+                    record_lines = True
+
+    with open(filename, 'w') as markdown_doc:
+        markdown_doc.write('\n'.join(existing_markdown_lines))
+
+
 if __name__ == "__main__":
     # Load the JSON data from a file
     with open(settings_input_json_filename, 'r') as data_file:
@@ -2609,6 +2683,7 @@ if __name__ == "__main__":
     UpdateDesktopUsageSettingsTable(parsed_settings, "D3D12")
     UpdateDesktopUsageSettingsTable(parsed_settings, "VULKAN")
     UpdateAndroidReplayScriptArguments(parsed_settings)
+    UpdateToolUsageDocSettingsTable(parsed_settings, "CONVERT", convert_readme_doc_filename, convert_markdown_gen_begin_str, convert_markdown_gen_end_str)
 
     # Generate supporting code
     GenerateSettingsStruct(parsed_settings, settings_tools, settings_apis,

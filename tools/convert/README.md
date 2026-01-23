@@ -8,35 +8,31 @@ The text output is written by default to a .json file in the directory of the
 specified GFXReconstruct capture file. Use `--output` to override the default
 filename for the output.
 
+
+## Command Line
+
+The `gfxrecon-convert` command has the following usage:
+
 ```text
-gfxrecon-convert - A tool to convert GFXReconstruct capture files to text.
-
-Usage:
-  gfxrecon-convert [-h | --help] [--version] <file>
-
-Required arguments:
-  <file>                Path to the GFXReconstruct capture file to be converted
-                        to text.
-
-Optional arguments:
-  -h                    Print usage information and exit (same as --help).
-  --version             Print version information and exit.
-  --output filename     'stdout' or a path to a file to write JSON output
-                        to. Default is the input filepath with "gfxr" replaced
-                        by "jsonl".
-  --format <format>     JSON format to write.
-           json         Standard JSON format (indented)
-           jsonl        JSON lines format (every object in a single line)
-  --include-binaries    Dump binaries from Vulkan traces in a separate file with an unique name. The main JSON file
-                        will include a reference with the file name. The binary files are dumped in a subdirectory
-  --expand-flags        Print flags values from Vulkan traces with its correspondent symbolic representation. Otherwise,
-                        the flags are printed as hexadecimal value.
-  --file-per-frame      Creates a new file for every frame processed. Frame number is added as a suffix
-                        to the output file name.
-  --no-debug-popup      Disable the 'Abort, Retry, Ignore' message box
-                        displayed when abort() is called (Windows debug only).
+gfxrecon-convert <options> <file>
 ```
 
+With `<file>` being the name of the required input capture file.
+
+`<options>` can be any of the following:
+
+<!-- CONVERT_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->
+| Command-Line Argument | Required | Description | Default | Valid for APIs |
+| --------------------- | -------- | ----------- | ------- | -------------- |
+| --log-level &lt;level&gt; | Optional | Specify the highest level message to log.  The specified level and all levels listed after it will be enabled for logging.  For example, choosing the `warning` level will also enable the `error` and `fatal` levels. <level> may be the following: <ul>    <li>`debug`  :  Messages  with debug-severity and  higher </li>    <li>`info`  :  Messages  with info-severity and  higher </li>    <li>`warning`  :  Messages  with warning-severity and  higher </li>    <li>`error`  :  Only  Error/Fatal messages </li>    <li>`fatal`  :  Only Fatal  messages </li> </ul> | info | ALL |
+| --no-debug-popup | Optional | [Windows Only] Disable the 'Abort, Retry, Ignore' message box displayed when abort() is called (Windows debug only). | false | ALL |
+| --expand-flags | Optional | Print flags values from Vulkan traces with its correspondent symbolic representation. Otherwise, the flags are printed as hexadecimal value. | false | ALL |
+| --file-per-frame | Optional | Creates a new file for every frame processed. Frame number is added as a suffix to the output file name. | false | ALL |
+| --frame-range &lt;N1[-N2][,...]&gt; | Optional | Frame ranges to be converted. In order to retrieve trim trace state, frame 0 has to be in frame range. Frame ranges should be specified in ascending order and cannot overlap. Frame numbering is zero-indexed and inclusive. Example: 0-2,5,8-10 will generate data for 7 frames. | <empty> | ALL |
+| --include-binaries | Optional | Dump binaries from Vulkan traces in a separate file with an unique name. The main JSON file will include a reference with the file name. The binary files are dumped in a subdirectory | false | ALL |
+| --output &lt;file&gt; | Optional | Place extracted shaders into directory <dir>. Otherwise use <file>.shaders in working directory. Create directory if necessary. Each shader is placed in individual file named sh<handle_id> where handle_id is handle id of the CreateShaderModule call. See gfxrecon-replay --replace-shaders. | <empty> | ALL |
+| --format &lt;format&gt; | Optional | JSON format to write. <format> may be the following: <ul>    <li>`json`  :  Standard  JSON format (indented) </li>    <li>`jsonl`  :  JSON lines  format (every object in a  single line) </li> </ul> | json | ALL |
+<!-- CONVERT_SETTINGS_OPTIONS TABLE CODEGEN END -->
 
 The JSON document is designed to be parsed by tools such as simple
 Python scripts as well as being useful for inspecting by eye after pretty
@@ -448,7 +444,7 @@ Each element in that array is a JSON object for the corresponding C struct.
 #### D3D12 method
 D3D12 method objects are nearly identical to their Vulkan counterparts.
 They use the `"method"` key instead of `"function"`, and have an `"object"` field detailing
-the corresponding object type and handle value. 
+the corresponding object type and handle value.
 See the example below.
 
 ```json
