@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2025 LunarG, Inc.
+ * Copyright (c) 2025-2026 LunarG, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -41,56 +41,124 @@ static void PrintUsage(const char* exe_name)
 
     GFXRECON_WRITE_CONSOLE("\n%s - A tool to replay GFXReconstruct capture files.\n", app_name.c_str());
     GFXRECON_WRITE_CONSOLE("Usage:");
-    GFXRECON_WRITE_CONSOLE("  %s\t[--log-file <log_file>] [--log-level <level>] [--log-timestamps]", app_name.c_str());
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--screenshot-format <format>] [--screenshots <range>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--add-new-pipeline-caches] [--capture] [--cpu-mask <binary-mask>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--deduplicate-device] [--dump-resources <args>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-dir <dir>] [--dump-resources-dump-all-image-subresources]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-dump-color-attachment-index <index>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-dump-raw-images] [--dump-resources-dump-separate-alpha]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-dump-vertex-index-buffers]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-json-output-per-command] [--dump-resources-scale <scale>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--fmr|--flush-measurement-range] [--gpu <index>] [--gpu-group <index>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--input-capture <input_file>] [--load-pipeline-cache <cache-file>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--measurement-file <file>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[-m|--memory-translation <mode>] [--offscreen-swapchain-frame-boundary]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--pause-frame <frame>] [--paused] [--pbi-all] [--pbis <index1,index2>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--preload-measurement-range] [--quit-after-frame <frame>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--remove-unsupported] [--replace-shaders <dir>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--screenshot-all] [--screenshot-ignore-FrameBoundaryANDROID]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--screenshot-scale <scale>] [--screenshot-size <width>x<height>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--swapchain <mode>] [--sync] [--use-captured-swapchain-indices]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--validate] [--version] [--vssb|--virtual-swapchain-skip-blit]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--wsi <platform>] [--debug-device-lost] [--dcp|--discard-cached-psos]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dx12-ags-inject-markers] [--dx12-override-object-names]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-binary-file-compression-type <compression-format>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--sgfr|--skip-get-fence-ranges <frame-ranges>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--surface-index <N>] [--log-file <log_file>] [--log-level <level>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--screenshot-dir <dir>] [--screenshot-format <format>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--screenshot-interval <N>] [--add-new-pipeline-caches] [--capture]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--debug-messenger-level <level>] [--deduplicate-device]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-before-draw] [--dump-resources-dir <dir>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-dump-build-acceleration-structures-input-buffers]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-dump-depth-attachment] [--dump-resources-dump-raw-images]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-dump-unused-vertex-bindings]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-image-format <format>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--dump-resources-scale <scale>] [--flush-inside-measurement-range]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--gpu <index>] [--gpu-group <index>] [-h|--help]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--load-pipeline-cache <cache-file>] [--log-debugview]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--mfr|--measurement-frame-range <start_frame>-<end_frame>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--offscreen-swapchain-frame-boundary] [--opcd|--omit-pipeline-cache-data]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--paused] [--pbi-all] [--pbis <index1,index2>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--preload-measurement-range] [--quit-after-frame <frame>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--remove-unsupported] [--replace-shaders <dir>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--screenshot-all] [--screenshot-ignore-FrameBoundaryANDROID]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--screenshot-scale <scale>] [--screenshot-size <width>x<height>]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--swapchain <mode>] [--sync] [--use-captured-swapchain-indices]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--validate] [--version] [--vssb|--virtual-swapchain-skip-blit]");
-    GFXRECON_WRITE_CONSOLE("\t\t\t[--wsi <platform>] ");
-    GFXRECON_WRITE_CONSOLE("\t\t\t<file>");
-    GFXRECON_WRITE_CONSOLE("Required arguments:");
+
+    // Generate a vector to attach all available options for this
+    // current platform.  Since it can vary per platform, we do not
+    // generate the strings until we take the defines into account.
+    std::vector<std::string> high_level_usage;
+    high_level_usage.push_back("    " + app_name + "\t");
+    high_level_usage.push_back("[--log-file <log_file>] ");
+    high_level_usage.push_back("[--log-level <level>] ");
+    high_level_usage.push_back("[--log-timestamps] ");
+    high_level_usage.push_back("[--screenshot-dir <dir>] ");
+    high_level_usage.push_back("[--screenshot-format <format>] ");
+    high_level_usage.push_back("[--screenshots <range>] ");
+    high_level_usage.push_back("[--screenshot-interval <N>] ");
+    high_level_usage.push_back("[--add-new-pipeline-caches] ");
+    high_level_usage.push_back("[--capture] ");
+    high_level_usage.push_back("[--cpu-mask <binary-mask>] ");
+    high_level_usage.push_back("[--debug-messenger-level <level>] ");
+    high_level_usage.push_back("[--deduplicate-device] ");
+    high_level_usage.push_back("[--dump-resources <args>] ");
+    high_level_usage.push_back("[--dump-resources-before-draw] ");
+    high_level_usage.push_back("[--dump-resources-dir <dir>] ");
+    high_level_usage.push_back("[--dump-resources-dump-all-image-subresources] ");
+    high_level_usage.push_back("[--dump-resources-dump-build-acceleration-structures-input-buffers] ");
+    high_level_usage.push_back("[--dump-resources-dump-color-attachment-index <index>] ");
+    high_level_usage.push_back("[--dump-resources-dump-depth-attachment] ");
+    high_level_usage.push_back("[--dump-resources-dump-raw-images] ");
+    high_level_usage.push_back("[--dump-resources-dump-separate-alpha] ");
+    high_level_usage.push_back("[--dump-resources-dump-unused-vertex-bindings] ");
+    high_level_usage.push_back("[--dump-resources-dump-vertex-index-buffers] ");
+    high_level_usage.push_back("[--dump-resources-image-format <format>] ");
+    high_level_usage.push_back("[--dump-resources-json-output-per-command] ");
+    high_level_usage.push_back("[--dump-resources-scale <scale>] ");
+    high_level_usage.push_back("[--flush-inside-measurement-range] ");
+    high_level_usage.push_back("[--fmr|--flush-measurement-range] ");
+    high_level_usage.push_back("[--gpu <index>] ");
+    high_level_usage.push_back("[--gpu-group <index>] ");
+    high_level_usage.push_back("[-h|--help] ");
+    high_level_usage.push_back("[--input-capture <input_file>] ");
+    high_level_usage.push_back("[--load-pipeline-cache <cache-file>] ");
+    high_level_usage.push_back("[--log-debugview] ");
+    high_level_usage.push_back("[--measurement-file <file>] ");
+    high_level_usage.push_back("[--mfr|--measurement-frame-range <start_frame>-<end_frame>] ");
+    high_level_usage.push_back("[-m|--memory-translation <mode>] ");
+    high_level_usage.push_back("[--offscreen-swapchain-frame-boundary] ");
+    high_level_usage.push_back("[--opcd|--omit-pipeline-cache-data] ");
+    high_level_usage.push_back("[--pause-frame <frame>] ");
+    high_level_usage.push_back("[--paused] ");
+    high_level_usage.push_back("[--pbi-all] ");
+    high_level_usage.push_back("[--pbis <index1,index2>] ");
+    high_level_usage.push_back("[--pcj|--pipeline-creation-jobs <num_jobs>] ");
+    high_level_usage.push_back("[--preload-measurement-range] ");
+    high_level_usage.push_back("[--quit-after-frame <frame>] ");
+    high_level_usage.push_back("[--qamr|--quit-after-measurement-range] ");
+    high_level_usage.push_back("[--remove-unsupported] ");
+    high_level_usage.push_back("[--replace-shaders <dir>] ");
+    high_level_usage.push_back("[--save-pipeline-cache <cache-file>] ");
+    high_level_usage.push_back("[--screenshot-all] ");
+    high_level_usage.push_back("[--screenshot-ignore-FrameBoundaryANDROID] ");
+    high_level_usage.push_back("[--screenshot-prefix <file-prefix>] ");
+    high_level_usage.push_back("[--screenshot-scale <scale>] ");
+    high_level_usage.push_back("[--screenshot-size <width>x<height>] ");
+    high_level_usage.push_back("[--sfa|--skip-failed-allocations] ");
+    high_level_usage.push_back("[--swapchain <mode>] ");
+    high_level_usage.push_back("[--sync] ");
+    high_level_usage.push_back("[--use-captured-swapchain-indices] ");
+    high_level_usage.push_back("[--use-colorspace-fallback] ");
+    high_level_usage.push_back("[--validate] ");
+    high_level_usage.push_back("[--version] ");
+    high_level_usage.push_back("[--vssb|--virtual-swapchain-skip-blit] ");
+    high_level_usage.push_back("[--wait-before-present] ");
+    high_level_usage.push_back("[--wsi <platform>] ");
+    high_level_usage.push_back("[--debug-device-lost] ");
+    high_level_usage.push_back("[--dcp|--discard-cached-psos] ");
+    high_level_usage.push_back("[--dump-resources-modifiable-state-only] ");
+    high_level_usage.push_back("[--dx12-ags-inject-markers] ");
+    high_level_usage.push_back("[--dx12-override-object-names] ");
+    high_level_usage.push_back("[--dx12-two-pass-replay] ");
+    high_level_usage.push_back("[--dump-resources-binary-file-compression-type <compression-format>] ");
+    high_level_usage.push_back("[--present-mode <mode>] ");
+    high_level_usage.push_back("[--sgfr|--skip-get-fence-ranges <frame-ranges>] ");
+    high_level_usage.push_back("[--sgfs|--skip-get-fence-status <status>] ");
+    high_level_usage.push_back("[--surface-index <N>] ");
+#if defined(__ANDROID__)
+    high_level_usage.push_back("[--onhb|--omit-null-hardware-buffers] ");
+#endif // defined(__ANDROID__)
+#if defined(WIN32)
+    high_level_usage.push_back("[--allowed-messages <messages>] ");
+    high_level_usage.push_back("[--batching-memory-usage <percentage>] ");
+    high_level_usage.push_back("[--denied-messages <messages>] ");
+    high_level_usage.push_back("[--fw|--force-windowed <width,height>] ");
+    high_level_usage.push_back("[--fwo|--force-windowed-origin <x,y>] ");
+    high_level_usage.push_back("[--use-cached-psos] ");
+    high_level_usage.push_back("[--create-dummy-allocations] ");
+    high_level_usage.push_back("[--no-debug-popup] ");
+#endif // defined(WIN32)
+
+    high_level_usage.push_back("<file>");
+
+    // Output the high-level usage to no more than 80 chars per line
+    std::string output_string;
+    const char new_line_start[] = "\t\t\t";
+    for (auto& usage_item : high_level_usage)
+    {
+        if (output_string.length() + usage_item.length() > 80)
+        {
+            GFXRECON_WRITE_CONSOLE(output_string.c_str());
+            output_string = new_line_start;
+        }
+        output_string += usage_item;
+    }
+    if (output_string.length() > strlen(new_line_start))
+    {
+       GFXRECON_WRITE_CONSOLE(output_string.c_str());
+    }
+
+    GFXRECON_WRITE_CONSOLE("\nRequired arguments:");
     GFXRECON_WRITE_CONSOLE("   <file>\t\tPath to the capture file to replay.");
-    GFXRECON_WRITE_CONSOLE("Optional arguments:");
+    GFXRECON_WRITE_CONSOLE("\nOptional arguments:");
     GFXRECON_WRITE_CONSOLE("  --log-file <log_file>");
     GFXRECON_WRITE_CONSOLE("          \t\tWhen set, log messages will be written to a file at the");
     GFXRECON_WRITE_CONSOLE("          \t\tspecified location.");

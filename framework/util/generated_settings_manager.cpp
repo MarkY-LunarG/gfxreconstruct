@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2025 LunarG, Inc.
+ * Copyright (c) 2025-2026 LunarG, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -915,8 +915,6 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                     GFXRECON_LOG_WARNING("Invalid argument %s", command_line_args[cur_arg].c_str());
                     valid_arg = false;
                     break;
-#if defined(WIN32)
-#endif // defined(WIN32)
                 case ('h'):
                     settings_struct_.replay_settings.help = true;
                     valid_arg = true;
@@ -932,10 +930,6 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                         GFXRECON_LOG_ERROR("Command-line argument 'm' missing expected argument");
                     }
                     break;
-#if defined(__ANDROID__)
-#endif // defined(__ANDROID__)
-#if defined(WIN32)
-#endif // defined(WIN32)
             }
         }
     }
@@ -945,180 +939,6 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
         std::string arg_opt = command_line_args[cur_arg].substr(2);
         if (tool_type == kGfxrToolType_Replay_Tool)
         {
-            if (arg_opt == "debug-device-lost")
-            {
-                settings_struct_.replay_settings.debug_device_lost = true;
-                valid_arg = true;
-                goto early_out;
-            }
-            if (arg_opt == "dcp" || arg_opt == "discard-cached-psos")
-            {
-                settings_struct_.replay_settings.discard_cached_psos = true;
-                valid_arg = true;
-                goto early_out;
-            }
-            if (arg_opt == "dump-resources-modifiable-state-only")
-            {
-                settings_struct_.replay_settings.dump_resources_modifiable_state_only = true;
-                valid_arg = true;
-                goto early_out;
-            }
-            if (arg_opt == "dx12-ags-inject-markers")
-            {
-                settings_struct_.replay_settings.dx12_ags_inject_markers = true;
-                valid_arg = true;
-                goto early_out;
-            }
-            if (arg_opt == "dx12-override-object-names")
-            {
-                settings_struct_.replay_settings.dx12_override_object_names = true;
-                valid_arg = true;
-                goto early_out;
-            }
-            if (arg_opt == "dx12-two-pass-replay")
-            {
-                settings_struct_.replay_settings.dx12_two_pass_replay = true;
-                valid_arg = true;
-                goto early_out;
-            }
-#if defined(WIN32)
-            if (arg_opt == "allowed-messages")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.allowed_messages = command_line_args[++cur_arg];
-                    valid_arg = true;
-                }
-                else
-                {
-                    GFXRECON_LOG_ERROR("Command-line argument \"allowed-messages\" missing expected argument");
-                }
-                goto early_out;
-            }
-            if (arg_opt == "batching-memory-usage")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.batching_memory_usage = atoi(command_line_args[++cur_arg].c_str());
-                    valid_arg = true;
-                }
-                else
-                {
-                    GFXRECON_LOG_ERROR("Command-line argument \"batching-memory-usage\" missing expected argument");
-                }
-                goto early_out;
-            }
-            if (arg_opt == "denied-messages")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.denied_messages = command_line_args[++cur_arg];
-                    valid_arg = true;
-                }
-                else
-                {
-                    GFXRECON_LOG_ERROR("Command-line argument \"denied-messages\" missing expected argument");
-                }
-                goto early_out;
-            }
-            if (arg_opt == "fw" || arg_opt == "force-windowed")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.force_windowed = command_line_args[++cur_arg];
-                    valid_arg = true;
-                }
-                else
-                {
-                    GFXRECON_LOG_ERROR("Command-line argument \"fw|force-windowed\" missing expected argument");
-                }
-                goto early_out;
-            }
-            if (arg_opt == "fwo" || arg_opt == "force-windowed-origin")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.force_windowed_origin = command_line_args[++cur_arg];
-                    valid_arg = true;
-                }
-                else
-                {
-                    GFXRECON_LOG_ERROR("Command-line argument \"fwo|force-windowed-origin\" missing expected argument");
-                }
-                goto early_out;
-            }
-            if (arg_opt == "use-cached-psos")
-            {
-                settings_struct_.replay_settings.use_cached_psos = true;
-                valid_arg = true;
-                goto early_out;
-            }
-#endif // defined(WIN32)
-            if (arg_opt == "dump-resources-binary-file-compression-type")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.dump_resources_binary_file_compression_type = command_line_args[++cur_arg];
-                    valid_arg = true;
-                }
-                else
-                {
-                    GFXRECON_LOG_ERROR("Command-line argument \"dump-resources-binary-file-compression-type\" missing expected argument");
-                }
-                goto early_out;
-            }
-            if (arg_opt == "present-mode")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.present_mode = command_line_args[++cur_arg];
-                    valid_arg = true;
-                }
-                else
-                {
-                    GFXRECON_LOG_ERROR("Command-line argument \"present-mode\" missing expected argument");
-                }
-                goto early_out;
-            }
-            if (arg_opt == "sgfr" || arg_opt == "skip-get-fence-ranges")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.skip_get_fence_ranges = command_line_args[++cur_arg];
-                    valid_arg = true;
-                }
-                else
-                {
-                    GFXRECON_LOG_ERROR("Command-line argument \"sgfr|skip-get-fence-ranges\" missing expected argument");
-                }
-                goto early_out;
-            }
-            if (arg_opt == "sgfs" || arg_opt == "skip-get-fence-status")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.skip_get_fence_status = atoi(command_line_args[++cur_arg].c_str());
-                    valid_arg = true;
-                }
-                else
-                {
-                    GFXRECON_LOG_ERROR("Command-line argument \"sgfs|skip-get-fence-status\" missing expected argument");
-                }
-                goto early_out;
-            }
-            if (arg_opt == "surface-index")
-            {
-                if (HasArgumentParameter(command_line_args, cur_arg))
-                {
-                    settings_struct_.replay_settings.surface_index = atoi(command_line_args[++cur_arg].c_str());
-                    valid_arg = true;
-                }
-                else
-                {
-                    GFXRECON_LOG_ERROR("Command-line argument \"surface-index\" missing expected argument");
-                }
-                goto early_out;
-            }
             if (arg_opt == "log-file")
             {
                 if (HasArgumentParameter(command_line_args, cur_arg))
@@ -1723,6 +1543,180 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 else
                 {
                     GFXRECON_LOG_ERROR("Command-line argument \"wsi\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "debug-device-lost")
+            {
+                settings_struct_.replay_settings.debug_device_lost = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "dcp" || arg_opt == "discard-cached-psos")
+            {
+                settings_struct_.replay_settings.discard_cached_psos = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "dump-resources-modifiable-state-only")
+            {
+                settings_struct_.replay_settings.dump_resources_modifiable_state_only = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "dx12-ags-inject-markers")
+            {
+                settings_struct_.replay_settings.dx12_ags_inject_markers = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "dx12-override-object-names")
+            {
+                settings_struct_.replay_settings.dx12_override_object_names = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "dx12-two-pass-replay")
+            {
+                settings_struct_.replay_settings.dx12_two_pass_replay = true;
+                valid_arg = true;
+                goto early_out;
+            }
+#if defined(WIN32)
+            if (arg_opt == "allowed-messages")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.allowed_messages = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"allowed-messages\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "batching-memory-usage")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.batching_memory_usage = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"batching-memory-usage\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "denied-messages")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.denied_messages = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"denied-messages\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "fw" || arg_opt == "force-windowed")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.force_windowed = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"fw|force-windowed\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "fwo" || arg_opt == "force-windowed-origin")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.force_windowed_origin = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"fwo|force-windowed-origin\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "use-cached-psos")
+            {
+                settings_struct_.replay_settings.use_cached_psos = true;
+                valid_arg = true;
+                goto early_out;
+            }
+#endif // defined(WIN32)
+            if (arg_opt == "dump-resources-binary-file-compression-type")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.dump_resources_binary_file_compression_type = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"dump-resources-binary-file-compression-type\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "present-mode")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.present_mode = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"present-mode\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "sgfr" || arg_opt == "skip-get-fence-ranges")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.skip_get_fence_ranges = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"sgfr|skip-get-fence-ranges\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "sgfs" || arg_opt == "skip-get-fence-status")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.skip_get_fence_status = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"sgfs|skip-get-fence-status\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "surface-index")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.replay_settings.surface_index = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"surface-index\" missing expected argument");
                 }
                 goto early_out;
             }

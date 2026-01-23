@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2025 LunarG, Inc.
+# Copyright (c) 2025-2026 LunarG, Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -42,7 +42,6 @@ schema_filename: str = SETTINGS_OPTIONS_DIR / "settings_schema.json"
 # Generated/Modified files
 layer_json_filename: str = GFXR_ROOT_DIR / "layer/json/VkLayer_gfxreconstruct.json.in"
 layer_settings_filename: str = GFXR_ROOT_DIR / "layer/vk_layer_settings.txt"
-generated_replay_settings_filename: str = GFXR_ROOT_DIR / "tools/replay/generated_replay_settings.h"
 generated_settings_struct_filename: str = GFXR_ROOT_DIR / "framework/util/generated_settings_struct.h"
 generated_settings_manager_filename: str = GFXR_ROOT_DIR / "framework/util/generated_settings_manager.cpp"
 android_gfxrecon_python_script_filename: str = GFXR_ROOT_DIR / "android/scripts/gfxrecon.py"
@@ -78,7 +77,7 @@ replay_android_script_end_str = "    # END REPLAY CODEGEN INSERT"
 
 generated_source_copyright = f"""
 /*
- * Copyright (c) 2025 LunarG, Inc.
+ * Copyright (c) 2025-2026 LunarG, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -1001,7 +1000,7 @@ class ParsedSetting():
                     indent +
                     f"if (HasArgumentParameter(command_line_args, cur_arg))")
                 settings_command_line_options.append(indent + "{")
-                if self.type.primitive_type == "INT":
+                if "INT" in self.type.primitive_type:
                     settings_command_line_options.append(
                         indent +
                         f"    {tool_prefix}atoi(command_line_args[++cur_arg].c_str());"
@@ -1077,7 +1076,7 @@ class ParsedSetting():
                     indent +
                     f"if (HasArgumentParameter(command_line_args, cur_arg))")
                 settings_command_line_options.append(indent + "{")
-                if self.type.primitive_type == "INT":
+                if "INT" in self.type.primitive_type:
                     settings_command_line_options.append(
                         indent +
                         f"    {tool_prefix}atoi(command_line_args[++cur_arg].c_str());"
@@ -1661,143 +1660,203 @@ def PrintUsageFileOptionDescriptions(settings_options,
 #                        discovered when from the parsed JSON settings
 #                        this is a convenience so we know ahead of time
 #                        how many platforms to create and search for)
+#   settings_tools     : List of all tools
 # Returns:
 #   None
-def GenerateReplaySettingsHeader(parsed_settings, settings_apis,
-                                 settings_platforms):
-    print(f"Generating {generated_replay_settings_filename}")
+def GenerateToolSettingsHeaders(parsed_settings, settings_apis,
+                                settings_platforms, settings_tools):
+    for tool_name in settings_tools:
+        tool_description = []
+        additional_required_arguments = []
+        additional_required_argument_descs = []
 
-    # Determine how many different lists we need to track individual
-    # settings organizing based on platform and api
-    settings_options = OrderedDict()
-    for platform in settings_platforms:
-        settings_options[platform] = OrderedDict()
-        for api in settings_apis:
-            settings_options[platform][api] = OrderedDict()
-
-            settings_options[platform][api]["required"] = []
-            settings_options[platform][api]["optional"] = []
-
-    # Split the settings into groups based on the supported platforms, apis, and if they're required or optional
-    for key, parsed_setting in parsed_settings.items():
-        if parsed_setting.command_line is None:
+        if tool_name == "CAPTURE":
+            continue
+        elif tool_name == "REPLAY":
+            tool_description.append("A tool to replay GFXReconstruct capture files.")
+            additional_required_arguments.append("<file>")
+            additional_required_argument_descs.append("   <file>\\t\\tPath to the capture file to replay.")
+        else:
             continue
 
-        for tool in parsed_setting.tools:
-            # No real command-line for capture
-            if tool != "REPLAY":
+        tool_lower = tool_name.lower()
+        file_name = GFXR_ROOT_DIR / f"tools/{tool_lower}/generated_{tool_lower}_settings.h"
+
+        print(f"Generating {file_name}")
+
+        # Determine how many different lists we need to track individual
+        # settings organizing based on platform and api
+        settings_options = OrderedDict()
+        for platform in settings_platforms:
+            settings_options[platform] = OrderedDict()
+            for api in settings_apis:
+                settings_options[platform][api] = OrderedDict()
+
+                settings_options[platform][api]["required"] = []
+                settings_options[platform][api]["optional"] = []
+
+        # Split the settings into groups based on the supported platforms, apis, and if they're required or optional
+        for key, parsed_setting in parsed_settings.items():
+            if parsed_setting.command_line is None:
                 continue
 
-            # For command-line listings, we first break up per platform
-            for platform in parsed_setting.platforms:
-                # For command-line listings, we break up per API
-                for api in parsed_setting.apis:
-                    if parsed_setting.command_line.is_required:
-                        settings_options[platform][api]["required"].append(
-                            parsed_setting)
-                    else:
-                        settings_options[platform][api]["optional"].append(
-                            parsed_setting)
+            for tool in parsed_setting.tools:
+                if tool != tool_name:
+                    continue
 
-    with open(generated_replay_settings_filename,
-              'w') as replay_settings_header:
-        replay_settings_header.write(generated_source_copyright)
-        replay_settings_header.write("\n#include \"../tool_settings.h\"\n\n")
+                # For command-line listings, we first break up per platform
+                for platform in parsed_setting.platforms:
+                    # For command-line listings, we break up P\");\per API
+                    for api in parsed_setting.apis:
+                        if parsed_setting.command_line.is_required:
+                            settings_options[platform][api]["required"].append(
+                                parsed_setting)
+                        else:
+                            settings_options[platform][api]["optional"].append(
+                                parsed_setting)
 
-        replay_settings_header.write("#ifndef GFXRECON_REPLAY_SETTINGS_H\n")
-        replay_settings_header.write("#define GFXRECON_REPLAY_SETTINGS_H\n\n")
+        with open(file_name,
+                'w') as tool_settings_header:
+            tool_settings_header.write(generated_source_copyright)
+            tool_settings_header.write("\n#include \"../tool_settings.h\"\n\n")
 
-        replay_settings_header.write(
-            "static void PrintUsage(const char* exe_name)\n")
-        replay_settings_header.write("{\n")
-        replay_settings_header.write(
-            "    std::string app_name     = exe_name;\n")
-        replay_settings_header.write(
-            "    size_t      dir_location = app_name.find_last_of(\"/\\\\\");\n"
-        )
-        replay_settings_header.write("\n")
-        replay_settings_header.write("    if (dir_location >= 0)\n")
-        replay_settings_header.write("    {\n")
-        replay_settings_header.write(
-            "        app_name.replace(0, dir_location + 1, \"\");\n")
-        replay_settings_header.write("    }\n")
-        replay_settings_header.write("\n")
-        replay_settings_header.write(
-            "    GFXRECON_WRITE_CONSOLE(\"\\n%s - A tool to replay GFXReconstruct capture files.\\n\", app_name.c_str());\n"
-        )
-        replay_settings_header.write(
-            "    GFXRECON_WRITE_CONSOLE(\"Usage:\");\n")
+            tool_settings_header.write(f"#ifndef GFXRECON_{tool_name}_SETTINGS_H\n")
+            tool_settings_header.write(f"#define GFXRECON_{tool_name}_SETTINGS_H\n\n")
 
-        # Print settings valid for all platforms first
-        file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
-            settings_options["ALL"]["ALL"]["required"], app_name_usage_string,
-            app_name_ending_string)
-        replay_settings_header.write(''.join(file_strings))
-        file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
-            settings_options["ALL"]["ALL"]["optional"], current_usage,
-            current_ending)
-        replay_settings_header.write(''.join(file_strings))
+            tool_settings_header.write(
+                "static void PrintUsage(const char* exe_name)\n")
+            tool_settings_header.write("{\n")
+            tool_settings_header.write(
+                "    std::string app_name     = exe_name;\n")
+            tool_settings_header.write(
+                "    size_t      dir_location = app_name.find_last_of(\"/\\\\\");\n"
+            )
+            tool_settings_header.write("\n")
+            tool_settings_header.write("    if (dir_location >= 0)\n")
+            tool_settings_header.write("    {\n")
+            tool_settings_header.write(
+                "        app_name.replace(0, dir_location + 1, \"\");\n")
+            tool_settings_header.write("    }\n")
+            tool_settings_header.write("\n")
+            for index, desc in enumerate(tool_description):
+                if index == 0:
+                    tool_settings_header.write(
+                        f"    GFXRECON_WRITE_CONSOLE(\"\\n%s - {desc}\\n\", app_name.c_str());\n"
+                    )
+                else:
+                    tool_settings_header.write(
+                        f"    GFXRECON_WRITE_CONSOLE(\"{desc}\\n\");\n"
+                    )
+            tool_settings_header.write(
+                "    GFXRECON_WRITE_CONSOLE(\"Usage:\");\n")
 
-        for api in settings_apis:
-            file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
-                settings_options["ALL"][api]["required"], current_usage,
-                current_ending)
-            replay_settings_header.write(''.join(file_strings))
-            file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
-                settings_options["ALL"][api]["optional"], current_usage,
-                current_ending)
-            replay_settings_header.write(''.join(file_strings))
+            tool_settings_header.write("\n")
+            tool_settings_header.write("    // Generate a vector to attach all available options for this\n")
+            tool_settings_header.write("    // current platform.  Since it can vary per platform, we do not\n")
+            tool_settings_header.write("    // generate the strings until we take the defines into account.\n")
+            tool_settings_header.write("    std::vector<std::string> high_level_usage;\n")
 
-        # Print the remainder
-        if len(current_usage) > len(empty_usage_string):
-            replay_settings_header.write(current_usage + empty_ending_string)
+            tool_settings_header.write("    high_level_usage.push_back(\"    \" + app_name + \"\\t\");\n")
 
-        # Print settings valid for a particular platform, but all APIs first
-        for platform in parsed_setting.platforms:
-            if platform == "ALL":
-                continue
+            for set in settings_options["ALL"]["ALL"]["required"]:
+                command_line_opt = set.GenerateCommandLineOptions(True, False)
+                if len(command_line_opt) == 0:
+                    continue
+                tool_settings_header.write(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
 
-            begin_ifdef, end_ifdef = GeneratePlatformIfdef([platform])
-            if len(begin_ifdef) > 0:
-                replay_settings_header.append(begin_ifdef)
+            for set in settings_options["ALL"]["ALL"]["optional"]:
+                command_line_opt = set.GenerateCommandLineOptions(True, False)
+                if len(command_line_opt) == 0:
+                    continue
+                tool_settings_header.write(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
+
 
             for api in settings_apis:
-                file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
-                    settings_options[platform][api]["required"], current_usage,
-                    current_ending)
-                replay_settings_header.write(''.join(file_strings))
-                file_strings, current_usage, current_ending = CreateUsageFileOptionsListing(
-                    settings_options[platform][api]["optional"], current_usage,
-                    current_ending)
-                replay_settings_header.write(''.join(file_strings))
+                if api == "ALL":
+                    continue
+                for set in settings_options["ALL"][api]["required"]:
+                    command_line_opt = set.GenerateCommandLineOptions(True, False)
+                    if len(command_line_opt) == 0:
+                        continue
+                    tool_settings_header.write(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
+                for set in settings_options["ALL"][api]["optional"]:
+                    command_line_opt = set.GenerateCommandLineOptions(True, False)
+                    if len(command_line_opt) == 0:
+                        continue
+                    tool_settings_header.write(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
 
-            # Print the remainder
-            if len(current_usage) > len(empty_usage_string):
-                replay_settings_header.write(current_usage +
-                                             empty_ending_string)
 
-            if len(end_ifdef) > 0:
-                replay_settings_header.append(end_ifdef)
+            # Print settings valid for a particular platform, but all APIs first
+            for platform in settings_platforms:
+                if platform == "ALL":
+                    continue
 
-        replay_settings_header.write(
-            "    GFXRECON_WRITE_CONSOLE(\"\\t\\t\\t<file>\");\n")
-        replay_settings_header.write(
-            "    GFXRECON_WRITE_CONSOLE(\"Required arguments:\");\n")
-        replay_settings_header.write(
-            "    GFXRECON_WRITE_CONSOLE(\"   <file>\\t\\tPath to the capture file to replay.\");\n"
-        )
+                platform_strings = []
 
-        PrintUsageFileOptionDescriptions(settings_options, "required",
-                                         replay_settings_header)
+                begin_ifdef, end_ifdef = GeneratePlatformIfdef([platform])
 
-        replay_settings_header.write(
-            "    GFXRECON_WRITE_CONSOLE(\"Optional arguments:\");\n")
+                for api in settings_apis:
+                    for set in settings_options[platform][api]["required"]:
+                        command_line_opt = set.GenerateCommandLineOptions(True, False)
+                        if len(command_line_opt) == 0:
+                            continue
+                        platform_strings.append(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
+                    for set in settings_options[platform][api]["optional"]:
+                        command_line_opt = set.GenerateCommandLineOptions(True, False)
+                        if len(command_line_opt) == 0:
+                            continue
+                        platform_strings.append(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
 
-        PrintUsageFileOptionDescriptions(settings_options, "optional",
-                                         replay_settings_header)
+                if len(platform_strings) > 0:
+                    if len(begin_ifdef) > 0:
+                        tool_settings_header.write(begin_ifdef + '\n')
+                    tool_settings_header.write(''.join(platform_strings))
+                    if len(end_ifdef) > 0:
+                        tool_settings_header.write(end_ifdef + '\n')
+            tool_settings_header.write("\n")
 
-        replay_settings_header.write("}\n")
-        replay_settings_header.write("#endif // GFXRECON_REPLAY_SETTINGS_H\n")
+            for add_arg in additional_required_arguments:
+                tool_settings_header.write(
+                    f"    high_level_usage.push_back(\"{add_arg}\");\n")
+            tool_settings_header.write("\n")
+
+            tool_settings_header.write("    // Output the high-level usage to no more than 80 chars per line\n")
+            tool_settings_header.write("    std::string output_string;\n")
+            tool_settings_header.write("    const char new_line_start[] = \"\\t\\t\\t\";\n")
+            tool_settings_header.write("    for (auto& usage_item : high_level_usage)\n")
+            tool_settings_header.write("    {\n")
+            tool_settings_header.write("        if (output_string.length() + usage_item.length() > 80)\n")
+            tool_settings_header.write("        {\n")
+            tool_settings_header.write("            GFXRECON_WRITE_CONSOLE(output_string.c_str());\n")
+            tool_settings_header.write("            output_string = new_line_start;\n")
+            tool_settings_header.write("        }\n")
+            tool_settings_header.write("        output_string += usage_item;\n")
+            tool_settings_header.write("    }\n")
+            tool_settings_header.write("    if (output_string.length() > strlen(new_line_start))\n")
+            tool_settings_header.write("    {\n")
+            tool_settings_header.write("       GFXRECON_WRITE_CONSOLE(output_string.c_str());\n")
+            tool_settings_header.write("    }\n")
+            tool_settings_header.write("\n")
+
+            tool_settings_header.write(
+                "    GFXRECON_WRITE_CONSOLE(\"\\nRequired arguments:\");\n")
+
+            for add_desc in additional_required_argument_descs:
+                tool_settings_header.write(
+                    f"    GFXRECON_WRITE_CONSOLE(\"{add_desc}\");\n"
+                )
+
+            PrintUsageFileOptionDescriptions(settings_options, "required",
+                                            tool_settings_header)
+
+            tool_settings_header.write(
+                "    GFXRECON_WRITE_CONSOLE(\"\\nOptional arguments:\");\n")
+
+            PrintUsageFileOptionDescriptions(settings_options, "optional",
+                                            tool_settings_header)
+
+            tool_settings_header.write("}\n")
+            tool_settings_header.write(f"#endif // GFXRECON_{tool_name}_SETTINGS_H\n")
 
     return
 
@@ -2170,32 +2229,41 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
                 "                    valid_arg = false;\n")
             setting_manager_source.write("                    break;\n")
 
+            for key, if_list in short_command_line_handling_per_tool[tool][
+                    "ALL"]["ALL"].items():
+                for line in if_list:
+                    setting_manager_source.write(line + "\n")
+
             for api in settings_apis:
-                if "ALL" == platform:
-                    continue
-
-                for key, if_list in short_command_line_handling_per_tool[tool][
-                        api]["ALL"].items():
-                    for line in if_list:
-                        setting_manager_source.write(line + "\n")
-
-                for platform in settings_platforms:
-                    if platform == "ALL" or len(
-                            short_command_line_handling_per_tool[tool][api]
-                        [platform]) == 0:
-                        continue
-
-                    begin_ifdef, end_ifdef = GeneratePlatformIfdef([platform])
-                    if len(begin_ifdef) > 0:
-                        setting_manager_source.write(begin_ifdef + "\n")
-
-                    for key, if_list in short_command_line_handling_per_tool[
-                            tool][api][platform].items():
+                if api != "ALL":
+                    for key, if_list in short_command_line_handling_per_tool[tool][
+                            api]["ALL"].items():
                         for line in if_list:
                             setting_manager_source.write(line + "\n")
 
-                    if len(end_ifdef) > 0:
-                        setting_manager_source.write(end_ifdef + "\n")
+                for platform in settings_platforms:
+                    begin_ifdef, end_ifdef = GeneratePlatformIfdef([platform])
+                    has_single_char_key = False
+                    for key, if_list in short_command_line_handling_per_tool[
+                            tool][api][platform].items():
+                        if len(short_command_line_handling_per_tool[tool][api][platform][key]) > 0:
+                            has_single_char_key = True
+                            break
+
+                    if (not has_single_char_key or platform == "ALL" or len(
+                            short_command_line_handling_per_tool[tool][api]
+                        [platform]) == 0 or len(begin_ifdef) == 0 or len(end_ifdef) == 0):
+                        continue
+
+                    setting_manager_source.write(begin_ifdef + "\n")
+
+                    for key, if_list in short_command_line_handling_per_tool[
+                            tool][api][platform].items():
+
+                        for line in if_list:
+                            setting_manager_source.write(line + "\n")
+
+                    setting_manager_source.write(end_ifdef + "\n")
 
             setting_manager_source.write("            }\n")
             setting_manager_source.write("        }\n")
@@ -2210,7 +2278,7 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
             "        std::string arg_opt = command_line_args[cur_arg].substr(2);\n"
         )
 
-        for tool in parsed_setting.tools:
+        for tool in settings_tools:
             if tool == "CAPTURE":
                 continue
 
@@ -2218,31 +2286,37 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
             setting_manager_source.write(if_string + "\n")
             setting_manager_source.write("        {\n")
 
+            for key, if_list in long_command_line_handling_per_tool[tool][
+                    "ALL"]["ALL"].items():
+                for line in if_list:
+                    setting_manager_source.write(line + "\n")
+
             for api in settings_apis:
-                for key, if_list in long_command_line_handling_per_tool[tool][
-                        api]["ALL"].items():
-                    for line in if_list:
-                        setting_manager_source.write(line + "\n")
-
-                for platform in settings_platforms:
-                    if platform == "ALL" or len(
-                            long_command_line_handling_per_tool[tool][api]
-                        [platform]) == 0:
-                        continue
-
-                    begin_ifdef, end_ifdef = GeneratePlatformIfdef([platform])
-                    if len(begin_ifdef) > 0:
-                        setting_manager_source.write(begin_ifdef + "\n")
-
-                    for key, if_list in long_command_line_handling_per_tool[
-                            tool][api][platform].items():
+                if api != "ALL":
+                    for key, if_list in long_command_line_handling_per_tool[tool][
+                            api]["ALL"].items():
                         for line in if_list:
                             setting_manager_source.write(line + "\n")
 
-                    if len(end_ifdef) > 0:
-                        setting_manager_source.write(end_ifdef + "\n")
+                for platform in settings_platforms:
+                    begin_ifdef, end_ifdef = GeneratePlatformIfdef([platform])
+                    if platform == "ALL" or len(
+                            long_command_line_handling_per_tool[tool][api]
+                        [platform]) == 0 or len(begin_ifdef) == 0 or len(end_ifdef) == 0:
+                        continue
 
-        setting_manager_source.write("        }\n")
+                    setting_manager_source.write(begin_ifdef + "\n")
+
+                    for key, if_list in long_command_line_handling_per_tool[
+                            tool][api][platform].items():
+
+                        for line in if_list:
+                            setting_manager_source.write(line + "\n")
+
+                    setting_manager_source.write(end_ifdef + "\n")
+
+            setting_manager_source.write("        }\n")
+
         setting_manager_source.write("    }\n")
         setting_manager_source.write("early_out:\n")
         setting_manager_source.write("    return valid_arg;\n")
@@ -2386,7 +2460,6 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
     with open(source_file, 'w') as markdown_doc:
         markdown_doc.write('\n'.join(markdown_lines))
 
-
 # Update the replay settings defined in the gfxrecon.py Android script.
 # Parameters:
 #   parsed_settings :    The dictionary of all settings parsed from the
@@ -2496,8 +2569,8 @@ if __name__ == "__main__":
     UpdateVulkanLayerManifestInputFile(parsed_settings)
     GenerateVulkanLayerSettingsFile(parsed_settings)
 
-    GenerateReplaySettingsHeader(parsed_settings, settings_apis,
-                                 settings_platforms)
+    GenerateToolSettingsHeaders(parsed_settings, settings_apis,
+                                settings_platforms, settings_tools)
 
     # Update documentation
     UpdateAndroidUsageSettingsTable(parsed_settings)
