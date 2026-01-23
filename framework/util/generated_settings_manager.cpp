@@ -993,6 +993,36 @@ void SettingsManager::ReadEnvironmentVariables()
         settings_struct_.optimize_settings.no_debug_popup = SettingValueToBool(env_var_value);
     }
 #endif // defined(WIN32)
+
+    // -- Tocpp-specific
+    if (ReadEnvironmentVariable("tocpp_android_template", env_var_value))
+    {
+        settings_struct_.tocpp_settings.android_template = env_var_value;
+    }
+    if (ReadEnvironmentVariable("tocpp_command_limit", env_var_value))
+    {
+        settings_struct_.tocpp_settings.command_limit = env_var_value;
+    }
+    if (ReadEnvironmentVariable("tocpp_max_window_dimensions", env_var_value))
+    {
+        settings_struct_.tocpp_settings.max_window_dimensions = env_var_value;
+    }
+    if (ReadEnvironmentVariable("tocpp_frame_limit", env_var_value))
+    {
+        settings_struct_.tocpp_settings.frame_limit = atoi(env_var_value.c_str());
+    }
+    if (ReadEnvironmentVariable("tocpp_tocpp_output", env_var_value))
+    {
+        settings_struct_.tocpp_settings.tocpp_output = env_var_value;
+    }
+    if (ReadEnvironmentVariable("tocpp_captured_swapchain", env_var_value))
+    {
+        settings_struct_.tocpp_settings.captured_swapchain = SettingValueToBool(env_var_value);
+    }
+    if (ReadEnvironmentVariable("tocpp_platform_target", env_var_value))
+    {
+        settings_struct_.tocpp_settings.platform_target = env_var_value;
+    }
 }
 
 
@@ -1034,6 +1064,8 @@ void SettingsManager::UpdateDynamicEnvironmentVariables()
     // -- Info-specific
 
     // -- Optimize-specific
+
+    // -- Tocpp-specific
 }
 
 bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool_type,
@@ -1117,6 +1149,86 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 default:
                     GFXRECON_LOG_WARNING("Invalid argument %s", command_line_args[cur_arg].c_str());
                     valid_arg = false;
+                    break;
+            }
+        }
+        if (tool_type == kGfxrToolType_ToCpp_Tool)
+        {
+            switch (command_line_args[cur_arg].at(1))
+            {
+                default:
+                    GFXRECON_LOG_WARNING("Invalid argument %s", command_line_args[cur_arg].c_str());
+                    valid_arg = false;
+                    break;
+                case ('a'):
+                    if (HasArgumentParameter(command_line_args, cur_arg))
+                    {
+                        settings_struct_.tocpp_settings.android_template = command_line_args[++cur_arg];
+                        valid_arg = true;
+                    }
+                    else
+                    {
+                        GFXRECON_LOG_ERROR("Command-line argument 'a' missing expected argument");
+                    }
+                    break;
+                case ('c'):
+                    if (HasArgumentParameter(command_line_args, cur_arg))
+                    {
+                        settings_struct_.tocpp_settings.command_limit = command_line_args[++cur_arg];
+                        valid_arg = true;
+                    }
+                    else
+                    {
+                        GFXRECON_LOG_ERROR("Command-line argument 'c' missing expected argument");
+                    }
+                    break;
+                case ('d'):
+                    if (HasArgumentParameter(command_line_args, cur_arg))
+                    {
+                        settings_struct_.tocpp_settings.max_window_dimensions = command_line_args[++cur_arg];
+                        valid_arg = true;
+                    }
+                    else
+                    {
+                        GFXRECON_LOG_ERROR("Command-line argument 'd' missing expected argument");
+                    }
+                    break;
+                case ('f'):
+                    if (HasArgumentParameter(command_line_args, cur_arg))
+                    {
+                        settings_struct_.tocpp_settings.frame_limit = atoi(command_line_args[++cur_arg].c_str());
+                        valid_arg = true;
+                    }
+                    else
+                    {
+                        GFXRECON_LOG_ERROR("Command-line argument 'f' missing expected argument");
+                    }
+                    break;
+                case ('o'):
+                    if (HasArgumentParameter(command_line_args, cur_arg))
+                    {
+                        settings_struct_.tocpp_settings.tocpp_output = command_line_args[++cur_arg];
+                        valid_arg = true;
+                    }
+                    else
+                    {
+                        GFXRECON_LOG_ERROR("Command-line argument 'o' missing expected argument");
+                    }
+                    break;
+                case ('s'):
+                    settings_struct_.tocpp_settings.captured_swapchain = true;
+                    valid_arg = true;
+                    break;
+                case ('t'):
+                    if (HasArgumentParameter(command_line_args, cur_arg))
+                    {
+                        settings_struct_.tocpp_settings.platform_target = command_line_args[++cur_arg];
+                        valid_arg = true;
+                    }
+                    else
+                    {
+                        GFXRECON_LOG_ERROR("Command-line argument 't' missing expected argument");
+                    }
                     break;
             }
         }
@@ -2196,6 +2308,93 @@ bool SettingsManager::ProcessOptionArgument(GfxrToolType                    tool
                 goto early_out;
             }
 #endif // defined(WIN32)
+        }
+        if (tool_type == kGfxrToolType_ToCpp_Tool)
+        {
+            if (arg_opt == "android-template")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.tocpp_settings.android_template = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"android-template\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "command-limit")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.tocpp_settings.command_limit = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"command-limit\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "max-window-dimensions")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.tocpp_settings.max_window_dimensions = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"max-window-dimensions\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "frame-limit")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.tocpp_settings.frame_limit = atoi(command_line_args[++cur_arg].c_str());
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"frame-limit\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "output")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.tocpp_settings.tocpp_output = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"output\" missing expected argument");
+                }
+                goto early_out;
+            }
+            if (arg_opt == "captured-swapchain")
+            {
+                settings_struct_.tocpp_settings.captured_swapchain = true;
+                valid_arg = true;
+                goto early_out;
+            }
+            if (arg_opt == "target")
+            {
+                if (HasArgumentParameter(command_line_args, cur_arg))
+                {
+                    settings_struct_.tocpp_settings.platform_target = command_line_args[++cur_arg];
+                    valid_arg = true;
+                }
+                else
+                {
+                    GFXRECON_LOG_ERROR("Command-line argument \"target\" missing expected argument");
+                }
+                goto early_out;
+            }
         }
     }
 early_out:

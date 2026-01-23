@@ -51,6 +51,7 @@ android_usage_doc_filename: str = GFXR_ROOT_DIR / "USAGE_android.md"
 desktop_d3d12_usage_doc_filename: str = GFXR_ROOT_DIR / "USAGE_desktop_D3D12.md"
 desktop_vulkan_usage_doc_filename: str = GFXR_ROOT_DIR / "USAGE_desktop_Vulkan.md"
 convert_readme_doc_filename: str = GFXR_ROOT_DIR / "tools/convert/README.md"
+tocpp_readme_doc_filename: str = GFXR_ROOT_DIR / "tools/tocpp/README.md"
 
 # Commonly used strings
 settings_env_var_prefix = "GFXRECON_"
@@ -73,6 +74,8 @@ replay_markdown_gen_begin_str = "<!-- REPLAY_SETTINGS_OPTIONS TABLE CODEGEN BEGI
 replay_markdown_gen_end_str = "<!-- REPLAY_SETTINGS_OPTIONS TABLE CODEGEN END -->"
 convert_markdown_gen_begin_str = "<!-- CONVERT_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->"
 convert_markdown_gen_end_str = "<!-- CONVERT_SETTINGS_OPTIONS TABLE CODEGEN END -->"
+tocpp_markdown_gen_begin_str = "<!-- TOCPP_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->"
+tocpp_markdown_gen_end_str = "<!-- TOCPP_SETTINGS_OPTIONS TABLE CODEGEN END -->"
 
 # Strings used to identify Android script repplay options codegen areas
 replay_android_script_begin_str = "    # START REPLAY CODEGEN INSERT"
@@ -378,6 +381,8 @@ class ParsedCommandLineType():
             else:
                 # Replay underscores with dashes
                 self.long = "--" + key_name.replace('_', '-')
+            if "required" in setting_command_line_object and setting_command_line_object["required"]:
+                self.is_required = True
             if "short" in setting_command_line_object:
                 if len(setting_command_line_object["short"]) > 1:
                     self.short = "--" + setting_command_line_object["short"]
@@ -1700,43 +1705,75 @@ def GenerateToolSettingsHeaders(parsed_settings, settings_apis,
         if tool_name == "CAPTURE":
             continue
         elif tool_name == "REPLAY":
-            tool_description.append("A tool to replay GFXReconstruct capture files.")
+            tool_description.append(
+                "A tool to replay GFXReconstruct capture files.")
             additional_required_arguments.append("<file>")
-            additional_required_argument_descs.append("   <file>\\t\\tPath to the capture file to replay.")
+            additional_required_argument_descs.append(
+                "   <file>\\t\\tPath to the capture file to replay.")
         elif tool_name == "INFO":
-            tool_description.append("Print statistics for a GFXReconstruct capture file.")
+            tool_description.append(
+                "Print statistics for a GFXReconstruct capture file.")
             additional_required_arguments.append("<file>")
-            additional_required_argument_descs.append("   <file>\\t\\tThe GFXReconstruct capture file to be processed.")
+            additional_required_argument_descs.append(
+                "   <file>\\t\\tThe GFXReconstruct capture file to be processed."
+            )
         elif tool_name == "COMPRESS":
-            tool_description.append("A tool to compress/decompress GFXReconstruct capture files.")
+            tool_description.append(
+                "A tool to compress/decompress GFXReconstruct capture files.")
             additional_required_arguments.append("<input_file> ")
             additional_required_arguments.append("<output_file> ")
             additional_required_arguments.append("<compression_format>")
-            additional_required_argument_descs.append("  <input_file>\t\tPath to the input file to process.")
-            additional_required_argument_descs.append("  <output_file>\t\tPath to the output file to generate.")
-            additional_required_argument_descs.append("  <compression_format>\tCompression format to apply to the output file.")
+            additional_required_argument_descs.append(
+                "  <input_file>\t\tPath to the input file to process.")
+            additional_required_argument_descs.append(
+                "  <output_file>\t\tPath to the output file to generate.")
+            additional_required_argument_descs.append(
+                "  <compression_format>\tCompression format to apply to the output file."
+            )
         elif tool_name == "CONVERT":
-            tool_description.append("A tool to convert the contents of GFXReconstruct capture files to JSON.")
+            tool_description.append(
+                "A tool to convert the contents of GFXReconstruct capture files to JSON."
+            )
             additional_required_arguments.append("<file>")
-            additional_required_argument_descs.append("   <file>\\t\\tPath to the GFXReconstruct capture file to be converted")
-            additional_required_argument_descs.append("        \t\tto text");
+            additional_required_argument_descs.append(
+                "   <file>\\t\\tPath to the GFXReconstruct capture file to be converted"
+            )
+            additional_required_argument_descs.append("        \t\tto text")
         elif tool_name == "EXTRACT":
-            tool_description.append("Extract shaders from a GFXReconstruct capture file.")
+            tool_description.append(
+                "Extract shaders from a GFXReconstruct capture file.")
             additional_required_arguments.append("<file>")
-            additional_required_argument_descs.append("   <file>\\t\\tThe GFXReconstruct capture file to be processed.")
-            tool_description.append("A tool to replay GFXReconstruct capture files.")
+            additional_required_argument_descs.append(
+                "   <file>\\t\\tThe GFXReconstruct capture file to be processed."
+            )
+            tool_description.append(
+                "A tool to replay GFXReconstruct capture files.")
         elif tool_name == "OPTIMIZE":
-            tool_description.append("Produce new captures with enhanced performance characteristics.")
-            tool_description.append("\t\t\tFor Vulkan, the optimizer will remove unused buffer and image initialization data (for trimmed captures)");
-            tool_description.append("\t\t\tFor D3D12, the optimizer will improve DXR replay performance and remove unused PSOs (for all captures)");
+            tool_description.append(
+                "Produce new captures with enhanced performance characteristics."
+            )
+            tool_description.append(
+                "\t\t\tFor Vulkan, the optimizer will remove unused buffer and image initialization data (for trimmed captures)"
+            )
+            tool_description.append(
+                "\t\t\tFor D3D12, the optimizer will improve DXR replay performance and remove unused PSOs (for all captures)"
+            )
             additional_required_arguments.append("<input-file> ")
             additional_required_arguments.append("<output-file>")
-            additional_required_argument_descs.append("  <input-file>\t\tThe path to input GFXReconstruct capture file to be processed.")
-            additional_required_argument_descs.append("  <output-file>\t\tThe path to output GFXReconstruct capture file to be created.")
+            additional_required_argument_descs.append(
+                "  <input-file>\t\tThe path to input GFXReconstruct capture file to be processed."
+            )
+            additional_required_argument_descs.append(
+                "  <output-file>\t\tThe path to output GFXReconstruct capture file to be created."
+            )
         elif tool_name == "TOCPP":
-            tool_description.append("A tool to convert GFXReconstruct capture files to Vulkan source.")
+            tool_description.append(
+                "A tool to convert GFXReconstruct capture files to Vulkan source."
+            )
             additional_required_arguments.append("<capture_file>")
-            additional_required_argument_descs.append("   <capture_file>\\t\\tPath to a valid GFXReconstruct capture file to be converted")
+            additional_required_argument_descs.append(
+                "   <capture_file>\\t\\tPath to a valid GFXReconstruct capture file to be converted"
+            )
 
         tool_lower = tool_name.lower()
         file_name = GFXR_ROOT_DIR / f"tools/{tool_lower}/generated_{tool_lower}_settings.h"
@@ -1774,13 +1811,14 @@ def GenerateToolSettingsHeaders(parsed_settings, settings_apis,
                             settings_options[platform][api]["optional"].append(
                                 parsed_setting)
 
-        with open(file_name,
-                'w') as tool_settings_header:
+        with open(file_name, 'w') as tool_settings_header:
             tool_settings_header.write(generated_source_copyright)
             tool_settings_header.write("\n#include \"../tool_settings.h\"\n\n")
 
-            tool_settings_header.write(f"#ifndef GFXRECON_{tool_name}_SETTINGS_H\n")
-            tool_settings_header.write(f"#define GFXRECON_{tool_name}_SETTINGS_H\n\n")
+            tool_settings_header.write(
+                f"#ifndef GFXRECON_{tool_name}_SETTINGS_H\n")
+            tool_settings_header.write(
+                f"#define GFXRECON_{tool_name}_SETTINGS_H\n\n")
 
             tool_settings_header.write(
                 "static void PrintUsage(const char* exe_name)\n")
@@ -1804,46 +1842,62 @@ def GenerateToolSettingsHeaders(parsed_settings, settings_apis,
                     )
                 else:
                     tool_settings_header.write(
-                        f"    GFXRECON_WRITE_CONSOLE(\"{desc}\\n\");\n"
-                    )
+                        f"    GFXRECON_WRITE_CONSOLE(\"{desc}\\n\");\n")
             tool_settings_header.write(
                 "    GFXRECON_WRITE_CONSOLE(\"Usage:\");\n")
 
             tool_settings_header.write("\n")
-            tool_settings_header.write("    // Generate a vector to attach all available options for this\n")
-            tool_settings_header.write("    // current platform.  Since it can vary per platform, we do not\n")
-            tool_settings_header.write("    // generate the strings until we take the defines into account.\n")
-            tool_settings_header.write("    std::vector<std::string> high_level_usage;\n")
+            tool_settings_header.write(
+                "    // Generate a vector to attach all available options for this\n"
+            )
+            tool_settings_header.write(
+                "    // current platform.  Since it can vary per platform, we do not\n"
+            )
+            tool_settings_header.write(
+                "    // generate the strings until we take the defines into account.\n"
+            )
+            tool_settings_header.write(
+                "    std::vector<std::string> high_level_usage;\n")
 
-            tool_settings_header.write("    high_level_usage.push_back(\"    \" + app_name + \"\\t\");\n")
+            tool_settings_header.write(
+                "    high_level_usage.push_back(\"    \" + app_name + \"\\t\");\n"
+            )
 
             for set in settings_options["ALL"]["ALL"]["required"]:
                 command_line_opt = set.GenerateCommandLineOptions(True, False)
                 if len(command_line_opt) == 0:
                     continue
-                tool_settings_header.write(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
+                tool_settings_header.write(
+                    f"    high_level_usage.push_back(\"{command_line_opt} \");\n"
+                )
 
             for set in settings_options["ALL"]["ALL"]["optional"]:
                 command_line_opt = set.GenerateCommandLineOptions(True, False)
                 if len(command_line_opt) == 0:
                     continue
-                tool_settings_header.write(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
-
+                tool_settings_header.write(
+                    f"    high_level_usage.push_back(\"{command_line_opt} \");\n"
+                )
 
             for api in settings_apis:
                 if api == "ALL":
                     continue
                 for set in settings_options["ALL"][api]["required"]:
-                    command_line_opt = set.GenerateCommandLineOptions(True, False)
+                    command_line_opt = set.GenerateCommandLineOptions(
+                        True, False)
                     if len(command_line_opt) == 0:
                         continue
-                    tool_settings_header.write(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
+                    tool_settings_header.write(
+                        f"    high_level_usage.push_back(\"{command_line_opt} \");\n"
+                    )
                 for set in settings_options["ALL"][api]["optional"]:
-                    command_line_opt = set.GenerateCommandLineOptions(True, False)
+                    command_line_opt = set.GenerateCommandLineOptions(
+                        True, False)
                     if len(command_line_opt) == 0:
                         continue
-                    tool_settings_header.write(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
-
+                    tool_settings_header.write(
+                        f"    high_level_usage.push_back(\"{command_line_opt} \");\n"
+                    )
 
             # Print settings valid for a particular platform, but all APIs first
             for platform in settings_platforms:
@@ -1856,15 +1910,21 @@ def GenerateToolSettingsHeaders(parsed_settings, settings_apis,
 
                 for api in settings_apis:
                     for set in settings_options[platform][api]["required"]:
-                        command_line_opt = set.GenerateCommandLineOptions(True, False)
+                        command_line_opt = set.GenerateCommandLineOptions(
+                            True, False)
                         if len(command_line_opt) == 0:
                             continue
-                        platform_strings.append(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
+                        platform_strings.append(
+                            f"    high_level_usage.push_back(\"{command_line_opt} \");\n"
+                        )
                     for set in settings_options[platform][api]["optional"]:
-                        command_line_opt = set.GenerateCommandLineOptions(True, False)
+                        command_line_opt = set.GenerateCommandLineOptions(
+                            True, False)
                         if len(command_line_opt) == 0:
                             continue
-                        platform_strings.append(f"    high_level_usage.push_back(\"{command_line_opt} \");\n")
+                        platform_strings.append(
+                            f"    high_level_usage.push_back(\"{command_line_opt} \");\n"
+                        )
 
                 if len(platform_strings) > 0:
                     if len(begin_ifdef) > 0:
@@ -1879,21 +1939,32 @@ def GenerateToolSettingsHeaders(parsed_settings, settings_apis,
                     f"    high_level_usage.push_back(\"{add_arg}\");\n")
             tool_settings_header.write("\n")
 
-            tool_settings_header.write("    // Output the high-level usage to no more than 80 chars per line\n")
+            tool_settings_header.write(
+                "    // Output the high-level usage to no more than 80 chars per line\n"
+            )
             tool_settings_header.write("    std::string output_string;\n")
-            tool_settings_header.write("    const char new_line_start[] = \"\\t\\t\\t\";\n")
-            tool_settings_header.write("    for (auto& usage_item : high_level_usage)\n")
+            tool_settings_header.write(
+                "    const char new_line_start[] = \"\\t\\t\\t\";\n")
+            tool_settings_header.write(
+                "    for (auto& usage_item : high_level_usage)\n")
             tool_settings_header.write("    {\n")
-            tool_settings_header.write("        if (output_string.length() + usage_item.length() > 80)\n")
+            tool_settings_header.write(
+                "        if (output_string.length() + usage_item.length() > 80)\n"
+            )
             tool_settings_header.write("        {\n")
-            tool_settings_header.write("            GFXRECON_WRITE_CONSOLE(output_string.c_str());\n")
-            tool_settings_header.write("            output_string = new_line_start;\n")
+            tool_settings_header.write(
+                "            GFXRECON_WRITE_CONSOLE(output_string.c_str());\n")
+            tool_settings_header.write(
+                "            output_string = new_line_start;\n")
             tool_settings_header.write("        }\n")
-            tool_settings_header.write("        output_string += usage_item;\n")
+            tool_settings_header.write(
+                "        output_string += usage_item;\n")
             tool_settings_header.write("    }\n")
-            tool_settings_header.write("    if (output_string.length() > strlen(new_line_start))\n")
+            tool_settings_header.write(
+                "    if (output_string.length() > strlen(new_line_start))\n")
             tool_settings_header.write("    {\n")
-            tool_settings_header.write("       GFXRECON_WRITE_CONSOLE(output_string.c_str());\n")
+            tool_settings_header.write(
+                "       GFXRECON_WRITE_CONSOLE(output_string.c_str());\n")
             tool_settings_header.write("    }\n")
             tool_settings_header.write("\n")
 
@@ -1902,20 +1973,20 @@ def GenerateToolSettingsHeaders(parsed_settings, settings_apis,
 
             for add_desc in additional_required_argument_descs:
                 tool_settings_header.write(
-                    f"    GFXRECON_WRITE_CONSOLE(\"{add_desc}\");\n"
-                )
+                    f"    GFXRECON_WRITE_CONSOLE(\"{add_desc}\");\n")
 
             PrintUsageFileOptionDescriptions(settings_options, "required",
-                                            tool_settings_header)
+                                             tool_settings_header)
 
             tool_settings_header.write(
                 "    GFXRECON_WRITE_CONSOLE(\"\\nOptional arguments:\");\n")
 
             PrintUsageFileOptionDescriptions(settings_options, "optional",
-                                            tool_settings_header)
+                                             tool_settings_header)
 
             tool_settings_header.write("}\n")
-            tool_settings_header.write(f"#endif // GFXRECON_{tool_name}_SETTINGS_H\n")
+            tool_settings_header.write(
+                f"#endif // GFXRECON_{tool_name}_SETTINGS_H\n")
 
     return
 
@@ -2295,8 +2366,8 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
 
             for api in settings_apis:
                 if api != "ALL":
-                    for key, if_list in short_command_line_handling_per_tool[tool][
-                            api]["ALL"].items():
+                    for key, if_list in short_command_line_handling_per_tool[
+                            tool][api]["ALL"].items():
                         for line in if_list:
                             setting_manager_source.write(line + "\n")
 
@@ -2305,13 +2376,15 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
                     has_single_char_key = False
                     for key, if_list in short_command_line_handling_per_tool[
                             tool][api][platform].items():
-                        if len(short_command_line_handling_per_tool[tool][api][platform][key]) > 0:
+                        if len(short_command_line_handling_per_tool[tool][api]
+                               [platform][key]) > 0:
                             has_single_char_key = True
                             break
 
-                    if (not has_single_char_key or platform == "ALL" or len(
-                            short_command_line_handling_per_tool[tool][api]
-                        [platform]) == 0 or len(begin_ifdef) == 0 or len(end_ifdef) == 0):
+                    if (not has_single_char_key or platform == "ALL"
+                            or len(short_command_line_handling_per_tool[tool]
+                                   [api][platform]) == 0
+                            or len(begin_ifdef) == 0 or len(end_ifdef) == 0):
                         continue
 
                     setting_manager_source.write(begin_ifdef + "\n")
@@ -2352,8 +2425,8 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
 
             for api in settings_apis:
                 if api != "ALL":
-                    for key, if_list in long_command_line_handling_per_tool[tool][
-                            api]["ALL"].items():
+                    for key, if_list in long_command_line_handling_per_tool[
+                            tool][api]["ALL"].items():
                         for line in if_list:
                             setting_manager_source.write(line + "\n")
 
@@ -2361,7 +2434,8 @@ def GenerateSettingsManagerSource(parsed_settings, settings_tools,
                     begin_ifdef, end_ifdef = GeneratePlatformIfdef([platform])
                     if platform == "ALL" or len(
                             long_command_line_handling_per_tool[tool][api]
-                        [platform]) == 0 or len(begin_ifdef) == 0 or len(end_ifdef) == 0:
+                        [platform]) == 0 or len(begin_ifdef) == 0 or len(
+                            end_ifdef) == 0:
                         continue
 
                     setting_manager_source.write(begin_ifdef + "\n")
@@ -2519,6 +2593,7 @@ def UpdateDesktopUsageSettingsTable(parsed_settings, api: str):
     with open(source_file, 'w') as markdown_doc:
         markdown_doc.write('\n'.join(markdown_lines))
 
+
 # Update the replay settings defined in the gfxrecon.py Android script.
 # Parameters:
 #   parsed_settings :    The dictionary of all settings parsed from the
@@ -2595,7 +2670,8 @@ def UpdateAndroidReplayScriptArguments(parsed_settings):
 #                        JSON file.
 # Returns:
 #   None
-def UpdateToolUsageDocSettingsTable(parsed_settings, tool_name, filename, markdown_begin_label, markdown_end_label):
+def UpdateToolUsageDocSettingsTable(parsed_settings, tool_name, filename,
+                                    markdown_begin_label, markdown_end_label):
     print(f"Updating {filename}")
 
     readme_markdown_table_lines = []
@@ -2683,7 +2759,14 @@ if __name__ == "__main__":
     UpdateDesktopUsageSettingsTable(parsed_settings, "D3D12")
     UpdateDesktopUsageSettingsTable(parsed_settings, "VULKAN")
     UpdateAndroidReplayScriptArguments(parsed_settings)
-    UpdateToolUsageDocSettingsTable(parsed_settings, "CONVERT", convert_readme_doc_filename, convert_markdown_gen_begin_str, convert_markdown_gen_end_str)
+    UpdateToolUsageDocSettingsTable(parsed_settings, "CONVERT",
+                                    convert_readme_doc_filename,
+                                    convert_markdown_gen_begin_str,
+                                    convert_markdown_gen_end_str)
+    UpdateToolUsageDocSettingsTable(parsed_settings, "TOCPP",
+                                    tocpp_readme_doc_filename,
+                                    tocpp_markdown_gen_begin_str,
+                                    tocpp_markdown_gen_end_str)
 
     # Generate supporting code
     GenerateSettingsStruct(parsed_settings, settings_tools, settings_apis,

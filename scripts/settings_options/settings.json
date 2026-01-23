@@ -2887,6 +2887,138 @@
                     "primitive": "BOOL",
                     "default": false
                 }
+            },
+            {
+                "key": "android_template",
+                "label": "Android Template Dir",
+                "description": "Directory path containing the Android application template files. [Only required if generating for Android]",
+                "tools": [
+                    "TOCPP"
+                ],
+                "command-line": {
+                    "required": true,
+                    "argument-label": "<dir>",
+                     "short": "a"
+               },
+                "type": {
+                    "primitive": "SAVE_FOLDER",
+                    "default": ""
+                }
+            },
+            {
+                "key": "command_limit",
+                "label": "Num Commands Per File",
+                "description": "Maximum number of API commands recorded per C++ file. The intent is to adjust compilation load per file. (Defaults to 1000 commands per file)",
+                "tools": [
+                    "TOCPP"
+                ],
+                "command-line": {
+                    "argument-label": "<num_commands>",
+                     "short": "c"
+               },
+                "type": {
+                    "primitive": "SAVE_FOLDER",
+                    "default": ""
+                }
+            },
+            {
+                "key": "max_window_dimensions",
+                "label": "Max Window Dimensions",
+                "description": "Maximum dimensions of the created window. (For example '-d <width>,<height>')",
+                "tools": [
+                    "TOCPP"
+                ],
+                "command-line": {
+                    "argument-label": "<width,height>",
+                    "short": "d"
+                },
+                "type": {
+                    "primitive": "STRING",
+                    "default": ""
+                }
+            },
+            {
+                "key": "frame_limit",
+                "label": "Maximum Number Frames",
+                "description": "Maximum number of frames to convert to C++ code from the capture file.",
+                "tools": [
+                    "TOCPP"
+                ],
+                "command-line": {
+                    "argument-label": "<num_frames>",
+                    "short": "f"
+               },
+                "type": {
+                    "primitive": "UINT",
+                    "default": 4294967295
+                }
+            },
+            {
+                "key": "tocpp_output",
+                "label": "Output Folder",
+                "description": "Directory path where the output will be generated into.",
+                "tools": [
+                    "TOCPP"
+                ],
+                "command-line": {
+                    "argument-label": "<dir>",
+                    "required": true,
+                    "long": "output",
+                    "short": "o"
+                },
+                "type": {
+                    "primitive": "SAVE_FOLDER",
+                    "default": ""
+                }
+            },
+            {
+                "key": "captured_swapchain",
+                "label": "Use the Captured Swapchain",
+                "description": "Use the swapchain as it was captured during toCpp replay instead of using the `Virtual Swapchain` path.",
+                "tools": [
+                    "TOCPP"
+                ],
+                "command-line": {
+                    "short": "s"
+                },
+                "type": {
+                    "primitive": "BOOL",
+                    "default": false
+                }
+            },
+            {
+                "key": "platform_target",
+                "label": "Target Platform",
+                "description": "Force replay to use the specified wsi platform.",
+                "tools": [
+                    "TOCPP"
+                ],
+                "command-line": {
+                    "argument-label": "<platform>",
+                    "long": "target",
+                    "short": "t"
+                },
+                "type": {
+                    "primitive": "ENUM",
+                    "flags": [
+                        {
+                            "key": "android",
+                            "label": "ANDROID",
+                            "description": "Generate for Android usage"
+                        },
+                        {
+                            "key": "xcb",
+                            "label": "XCB",
+                            "description": "Generate for XCB (only valid for Linux)"
+                        },
+                        {
+                            "key": "wayland",
+                            "label": "WAYLAND",
+                            "description": "Generate for Wayland (only valid for Linux)"
+                        }
+                    ],
+                    "default": "xcb"
+                }
             }
-       ]
+        ]
 }

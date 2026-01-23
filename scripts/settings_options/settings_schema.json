@@ -192,6 +192,10 @@
                         "$ref": "#/definitions/ArgumentDescription"
                     }
                 },
+                "required": {
+                    "type": "boolean",
+                    "description": "This command-line is required (at least for the valid platforms/APIs)"
+                },
                 "long": {
                     "type": "string"
                 },

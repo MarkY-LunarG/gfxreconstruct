@@ -53,17 +53,17 @@ gfxrecon-tocpp <command-line-args> <capture-file>
 
 ### Valid Command-Line Arguments
 
-| Command-line Argument              |   Type                  | Description                                             |
-| :--------------------------------- | :---------------------: | :------------------------------------------------------ |
-| -a <br> --android-template <dir>   | Required (Android Only) | Directory path containing the Android application template files. (Only valid for Android platform target) |
-| -c <br> command-limit              | Optional                | Maximum number of API commands recorded per C++ file. The intent is to adjust compilation load per file. (Defaults to 1000 commands per file) |
-| -d <br> --max-window-dimensions    | Optional                | Maximum dimensions of the created window. (For example '-d \<width\>,\<height\>') |
-| -f <br> --frame-limit              | Optional                | Maximum number of frames to convert to C++ code from the capture file. |
-| -h <br> --help                     | Optional                | Print Usage information and exit.                       |
-| -o <br> --output <dir>             | Required                | Directory path where the output will be generated into. |
-| -s --captured-swapchain            | Optional                | Use the swapchain as it was captured during toCpp replay instead of using the "Virtual Swapchain" path. |
-| -t <br> --target <platform>        | Optional                | Type of target platform to generate the Vulkan source.<br>Available Platforms: android, xcb, wayland |
-| -v <br> --version                  | Optional                | Print version information and exit.                     |
+<!-- TOCPP_SETTINGS_OPTIONS TABLE CODEGEN BEGIN -->
+| Command-Line Argument | Required | Description | Default | Valid for APIs |
+| --------------------- | -------- | ----------- | ------- | -------------- |
+| -a\|--android-template &lt;dir&gt; | Required | Directory path containing the Android application template files. [Only required if generating for Android] | <empty> | ALL |
+| -c\|--command-limit &lt;num_commands&gt; | Optional | Maximum number of API commands recorded per C++ file. The intent is to adjust compilation load per file. (Defaults to 1000 commands per file) | <empty> | ALL |
+| -d\|--max-window-dimensions &lt;width,height&gt; | Optional | Maximum dimensions of the created window. (For example '-d <width>,<height>') | <empty> | ALL |
+| -f\|--frame-limit &lt;num_frames&gt; | Optional | Maximum number of frames to convert to C++ code from the capture file. | 4294967295 | ALL |
+| -o\|--output &lt;dir&gt; | Required | Directory path where the output will be generated into. | <empty> | ALL |
+| -s\|--captured-swapchain | Optional | Use the swapchain as it was captured during toCpp replay instead of using the `Virtual Swapchain` path. | false | ALL |
+| -t\|--target &lt;platform&gt; | Optional | Force replay to use the specified wsi platform. <platform> may be the following: <ul>    <li>`android`  :  Generate  forAndroid usage </li>    <li>`xcb`  :  Generate for  XCB(only valid for Linux) </li>    <li>`wayland`  :  Generate  forWayland (only valid for  Linux) </li> </ul> | xcb | ALL |
+<!-- TOCPP_SETTINGS_OPTIONS TABLE CODEGEN END -->
 
 ## Generate Source From a Capture
 

@@ -344,6 +344,26 @@ struct GfxrOptimizeSettingsStruct
     // clang-format on
 };
 
+struct GfxrTocppSettingsStruct
+{
+    // clang-format off
+    std::string android_template{""};
+    std::string command_limit{""};
+    std::string max_window_dimensions{""};
+    uint32_t    frame_limit{4294967295};
+    std::string tocpp_output{""};
+    bool        captured_swapchain{false};
+    std::string platform_target{"xcb"};
+
+    // D3D12-Specific
+
+    // Vulkan-Specific
+
+    // OpenXR-Specific
+
+    // clang-format on
+};
+
 struct GfxrSettingsStruct
 {
     // clang-format off
@@ -354,6 +374,7 @@ struct GfxrSettingsStruct
     GfxrExtractSettingsStruct extract_settings;
     GfxrInfoSettingsStruct info_settings;
     GfxrOptimizeSettingsStruct optimize_settings;
+    GfxrTocppSettingsStruct tocpp_settings;
     // clang-format on
 };
 
