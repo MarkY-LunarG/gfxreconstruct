@@ -919,7 +919,7 @@ void SettingsManager::ReadEnvironmentVariables()
     {
         settings_struct_.extract_settings.log_level = env_var_value;
     }
-    if (ReadEnvironmentVariable("extract_extract_dir", env_var_value))
+    if (ReadEnvironmentVariable("extract_dir", env_var_value))
     {
         settings_struct_.extract_settings.extract_dir = env_var_value;
     }
@@ -947,11 +947,11 @@ void SettingsManager::ReadEnvironmentVariables()
     {
         settings_struct_.info_settings.file_format_only = SettingValueToBool(env_var_value);
     }
-    if (ReadEnvironmentVariable("info_info_verbose", env_var_value))
+    if (ReadEnvironmentVariable("info_verbose", env_var_value))
     {
         settings_struct_.info_settings.info_verbose = SettingValueToBool(env_var_value);
     }
-    if (ReadEnvironmentVariable("info_info_output", env_var_value))
+    if (ReadEnvironmentVariable("info_output", env_var_value))
     {
         settings_struct_.info_settings.info_output = env_var_value;
     }
@@ -1011,7 +1011,7 @@ void SettingsManager::ReadEnvironmentVariables()
     {
         settings_struct_.tocpp_settings.frame_limit = atoi(env_var_value.c_str());
     }
-    if (ReadEnvironmentVariable("tocpp_tocpp_output", env_var_value))
+    if (ReadEnvironmentVariable("tocpp_output", env_var_value))
     {
         settings_struct_.tocpp_settings.tocpp_output = env_var_value;
     }

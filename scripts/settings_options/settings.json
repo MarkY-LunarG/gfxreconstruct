@@ -2649,8 +2649,7 @@
                     "EXTRACT"
                 ],
                 "command-line": {
-                    "argument-label": "<dir>",
-                     "long": "dir"
+                    "argument-label": "<dir>"
                },
                 "type": {
                     "primitive": "SAVE_FOLDER",
@@ -2817,9 +2816,6 @@
                 "tools": [
                     "INFO"
                 ],
-                "command-line": {
-                    "long": "verbose"
-                },
                 "type": {
                     "primitive": "BOOL",
                     "default": false
@@ -2834,7 +2830,6 @@
                     "INFO"
                 ],
                 "command-line": {
-                    "long": "output",
                     "argument-label": "<file>"
                 },
                 "type": {

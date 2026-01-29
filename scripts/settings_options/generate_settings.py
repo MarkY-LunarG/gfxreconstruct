@@ -374,35 +374,46 @@ class ParsedCommandLineType():
         self.short = ""
         self.argument_label = ""
         self.argument_desc: list[CommandLineArgumentDesc] = []
-        if setting_command_line_object is not None:
+
+        # Anything that either has a command-line defined or is defined for a tool other than
+        # the capture layer needs to support being set from the commnad-line
+        has_tools = tool_list is not None and len(tool_list) > 1
+        only_one_non_capture_tool = (tool_list is not None
+                                     and len(tool_list) == 1
+                                     and tool_list[0] != "CAPTURE")
+        if (has_tools or only_one_non_capture_tool
+                or setting_command_line_object is not None):
             self.has_command_line = True
-            if "long" in setting_command_line_object:
-                self.long = "--" + setting_command_line_object["long"]
-            else:
-                # Replay underscores with dashes
-                self.long = "--" + key_name.replace('_', '-')
-            if "required" in setting_command_line_object and setting_command_line_object["required"]:
-                self.is_required = True
-            if "short" in setting_command_line_object:
-                if len(setting_command_line_object["short"]) > 1:
-                    self.short = "--" + setting_command_line_object["short"]
-                else:
-                    self.short = "-" + setting_command_line_object["short"]
-            if "argument-label" in setting_command_line_object:
-                self.argument_label = setting_command_line_object[
-                    "argument-label"]
-            if 'argument-description-array' in setting_command_line_object:
-                for arg_desc in setting_command_line_object[
-                        "argument-description-array"]:
-                    self.argument_desc.append(
-                        CommandLineArgumentDesc(arg_desc))
-        if tool_list is not None:
-            for tool in tool_list:
-                if tool != "CAPTURE":
-                    # Must be a command line so generate it
-                    self.has_command_line = True
-                    # Replay underscores with dashes
-                    self.long = "--" + key_name.replace('_', '-')
+
+            temp_long = key_name.replace('_', '-')
+            if setting_command_line_object is not None and "long" in setting_command_line_object:
+                temp_long = setting_command_line_object["long"]
+            # Some settings are specific to one tool and have a key_name that starts with the prefix of that tool.
+            # In those situations, the command-line option name for the setting is actually the key name after
+            # removing the "<tool>_" prefix (i.e. "info_verbose" specific to the "INFO" tool is really just "verbose"
+            # for the command-line option)
+            elif only_one_non_capture_tool and temp_long.startswith(
+                    tool_list[0].lower()):
+                temp_long = key_name[len(tool_list[0]) + 1:]
+            self.long = "--" + temp_long
+
+            if setting_command_line_object is not None:
+                if "required" in setting_command_line_object and setting_command_line_object[
+                        "required"]:
+                    self.is_required = True
+                if "short" in setting_command_line_object:
+                    if len(setting_command_line_object["short"]) > 1:
+                        self.short = "--" + setting_command_line_object["short"]
+                    else:
+                        self.short = "-" + setting_command_line_object["short"]
+                if "argument-label" in setting_command_line_object:
+                    self.argument_label = setting_command_line_object[
+                        "argument-label"]
+                if 'argument-description-array' in setting_command_line_object:
+                    for arg_desc in setting_command_line_object[
+                            "argument-description-array"]:
+                        self.argument_desc.append(
+                            CommandLineArgumentDesc(arg_desc))
 
 
 class ParsedSetting():
@@ -487,7 +498,7 @@ class ParsedSetting():
             self.parent = None
         if "command-line" in setting_input_json:
             self.command_line = ParsedCommandLineType(
-                self.key, setting_input_json["command-line"], None)
+                self.key, setting_input_json["command-line"], self.tools)
         else:
             self.command_line = ParsedCommandLineType(self.key, None,
                                                       self.tools)
@@ -1258,9 +1269,16 @@ class ParsedSetting():
         else:
             tool_envvar_string = tool.lower() + "_"
 
+        # In general, we want "<tool>_<key>".  However, some of the keys are
+        # unique to a given tool, but need to be differentiated from other
+        # similar settings, so we add the "<tool>_" prefix already to the key.
+        # So only add the prefix if it is not already there.
+        env_var_id = self.key
+        if not self.key.startswith(tool_envvar_string):
+            env_var_id = tool_envvar_string + self.key
+
         envvar_read_lines.append(
-            f"if (ReadEnvironmentVariable(\"{tool_envvar_string}{self.key}\", env_var_value))"
-        )
+            f"if (ReadEnvironmentVariable(\"{env_var_id}\", env_var_value))")
         envvar_read_lines.append("{")
 
         if self.type.primitive_type == "BOOL":
