@@ -57,10 +57,11 @@ class SettingsManager
   private:
     SettingsManager(format::ApiFamilyId api_family);
 
-    void EnableD3D12SettingsDefaults();
-    bool ReadVulkanCaptureLayerSettingsFile();
-    bool ReadEnvironmentVariable(const std::string& setting_string, std::string& value);
-    bool SettingValueToBool(const std::string& setting_value);
+    void                                EnableD3D12SettingsDefaults();
+    bool                                ReadVulkanCaptureLayerSettingsFile();
+    bool                                ReadEnvironmentVariable(const std::string& setting_string, std::string& value);
+    bool                                SettingValueToBool(const std::string& setting_value);
+    gfxrecon::util::RuntimeTriggerState ParseCaptureDynamicTrigger(const std::string& value_string);
 
     // Generated methods (see generated_settings_manager.cpp for definitions)
     void AdjustSettingFromFile(const std::string& key, const std::string& value);

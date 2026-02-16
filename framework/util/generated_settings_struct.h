@@ -29,6 +29,7 @@
 
 #include <cstdint>
 #include <string>
+#include "util/options.h"
 
 struct GfxrCaptureSettingsStruct
 {
@@ -43,7 +44,7 @@ struct GfxrCaptureSettingsStruct
     std::string capture_frames{""};
     std::string capture_process_name{""};
     std::string capture_queue_submits{""};
-    bool        capture_dynamic_trigger{false};
+    gfxrecon::util::RuntimeTriggerState        capture_dynamic_trigger{gfxrecon::util::RuntimeTriggerState::kNotUsed};
     bool        capture_dynamic_trigger_dump_assets{false};
     std::string capture_trigger_frames{""};
     bool        capture_use_asset_file{false};
@@ -98,8 +99,6 @@ struct GfxrCaptureSettingsStruct
     bool        ignore_frame_boundary_android{false};
 #endif // defined(__ANDROID__)
 #if defined(__ANDROID__)
-    bool        capture_android_dump_assets{false};
-    bool        capture_android_trigger{false};
     bool        page_guard_track_ahb_memory{false};
 #endif // defined(__ANDROID__)
 #if defined(__linux__)

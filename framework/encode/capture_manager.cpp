@@ -124,7 +124,7 @@ CommonCaptureManager::CommonCaptureManager() :
     page_guard_memory_mode_(kMemoryModeShadowInternal), page_guard_external_memory_(false), trim_enabled_(false),
     trim_boundary_(CaptureSettings::TrimBoundary::kUnknown), trim_current_range_(0), current_frame_(kFirstFrame),
     queue_submit_count_(0), capture_mode_(kModeWrite), previous_hotkey_state_(false),
-    previous_runtime_trigger_state_(CaptureSettings::RuntimeTriggerState::kNotUsed), debug_layer_(false),
+    previous_runtime_trigger_state_(util::RuntimeTriggerState::kNotUsed), debug_layer_(false),
     debug_device_lost_(false), screenshot_prefix_(""), screenshots_enabled_(false), disable_dxr_(false),
     accel_struct_padding_(0), iunknown_wrapping_(false), force_command_serialization_(false), queue_zero_only_(false),
     allow_pipeline_compile_required_(false), quit_after_frame_ranges_(false), use_asset_file_(false), block_index_(0),
@@ -310,7 +310,7 @@ bool CommonCaptureManager::ProcessMatchesCaptureName(const std::string& desired_
 
 #elif defined(WIN32)
 
-        char  ascii_name[MAX_PATH];
+        char ascii_name[MAX_PATH];
 #ifdef UNICODE
         WCHAR wide_string[MAX_PATH];
         GetModuleFileName(NULL, wide_string, MAX_PATH);
@@ -508,7 +508,7 @@ bool CommonCaptureManager::Initialize(format::ApiFamilyId                   api_
     {
         if (trace_settings.trim_ranges.empty() && trace_settings.trim_key.empty() &&
             trace_settings.trim_boundary != CaptureSettings::TrimBoundary::kDrawCalls &&
-            trace_settings.runtime_capture_trigger == CaptureSettings::RuntimeTriggerState::kNotUsed)
+            trace_settings.runtime_capture_trigger == util::RuntimeTriggerState::kNotUsed)
         {
             // Use default kModeWrite capture mode.
             success = CreateCaptureFile(api_family, base_filename_);
@@ -552,7 +552,7 @@ bool CommonCaptureManager::Initialize(format::ApiFamilyId                   api_
             }
             // Check if trim is enabled by hot-key trigger at the first frame.
             else if (!trace_settings.trim_key.empty() ||
-                     trace_settings.runtime_capture_trigger != CaptureSettings::RuntimeTriggerState::kNotUsed)
+                     trace_settings.runtime_capture_trigger != util::RuntimeTriggerState::kNotUsed)
             {
                 // Capture key/trigger only support frames as trim boundaries.
                 GFXRECON_ASSERT(trim_boundary_ == CaptureSettings::TrimBoundary::kFrames);
@@ -563,7 +563,7 @@ bool CommonCaptureManager::Initialize(format::ApiFamilyId                   api_
 
                 // Enable state tracking when hotkey pressed
                 if (IsTrimHotkeyPressed() ||
-                    trace_settings.runtime_capture_trigger == CaptureSettings::RuntimeTriggerState::kEnabled ||
+                    trace_settings.runtime_capture_trigger == util::RuntimeTriggerState::kEnabled ||
                     ExternalTriggerEnabled())
                 {
                     capture_mode_         = kModeWriteAndTrack;
@@ -830,11 +830,11 @@ bool CommonCaptureManager::IsTrimHotkeyPressed()
 bool CommonCaptureManager::RuntimeTriggerEnabled()
 {
     CaptureSettings::LoadDynamicSettings(capture_settings_);
-    CaptureSettings::RuntimeTriggerState state = capture_settings_->GetTraceSettings().runtime_capture_trigger;
+    util::RuntimeTriggerState state = capture_settings_->GetTraceSettings().runtime_capture_trigger;
 
-    bool result = (state == CaptureSettings::RuntimeTriggerState::kEnabled &&
-                   (previous_runtime_trigger_state_ == CaptureSettings::RuntimeTriggerState::kDisabled ||
-                    previous_runtime_trigger_state_ == CaptureSettings::RuntimeTriggerState::kNotUsed));
+    bool result = (state == util::RuntimeTriggerState::kEnabled &&
+                   (previous_runtime_trigger_state_ == util::RuntimeTriggerState::kDisabled ||
+                    previous_runtime_trigger_state_ == util::RuntimeTriggerState::kNotUsed));
 
     previous_runtime_trigger_state_ = state;
 
@@ -844,11 +844,10 @@ bool CommonCaptureManager::RuntimeTriggerEnabled()
 bool CommonCaptureManager::RuntimeTriggerDisabled()
 {
     CaptureSettings::LoadDynamicSettings(capture_settings_);
-    CaptureSettings::RuntimeTriggerState state = capture_settings_->GetTraceSettings().runtime_capture_trigger;
+    util::RuntimeTriggerState state = capture_settings_->GetTraceSettings().runtime_capture_trigger;
 
-    bool result = ((state == CaptureSettings::RuntimeTriggerState::kDisabled ||
-                    state == CaptureSettings::RuntimeTriggerState::kNotUsed) &&
-                   previous_runtime_trigger_state_ == CaptureSettings::RuntimeTriggerState::kEnabled);
+    bool result = ((state == util::RuntimeTriggerState::kDisabled || state == util::RuntimeTriggerState::kNotUsed) &&
+                   previous_runtime_trigger_state_ == util::RuntimeTriggerState::kEnabled);
 
     previous_runtime_trigger_state_ = state;
 
