@@ -176,6 +176,26 @@ bool SettingsManager::ReadEnvironmentVariable(const std::string& setting_string,
     return false;
 }
 
+#if defined(__ANDROID__)
+gfxrecon::util::RuntimeTriggerState SettingsManager::ParseCaptureDynamicTrigger(const std::string& value_string)
+{
+    if (value_string.empty())
+    {
+        return RuntimeTriggerState::kNotUsed;
+    }
+    else
+    {
+        return gfxrecon::util::ParseBoolString(value_string, false) ? RuntimeTriggerState::kEnabled
+                                                                    : RuntimeTriggerState::kDisabled;
+    }
+}
+#else
+gfxrecon::util::RuntimeTriggerState SettingsManager::ParseCaptureDynamicTrigger(const std::string& value_string)
+{
+    return gfxrecon::util::RuntimeTriggerState::kNotUsed;
+}
+#endif
+
 #include "generated_settings_manager.cpp"
 
 GFXRECON_END_NAMESPACE(settings)

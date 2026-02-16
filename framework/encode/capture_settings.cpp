@@ -25,6 +25,7 @@
 #include "encode/capture_settings.h"
 
 #include "util/file_path.h"
+#include "util/logging.h"
 #include "util/strings.h"
 #include "util/options.h"
 #include "util/platform.h"
@@ -75,50 +76,38 @@ void CaptureSettings::LoadDynamicSettings(CaptureSettings* settings, bool initia
         settings_mgr.UpdateDynamicEnvironmentVariables();
 
         const GfxrSettingsStruct* settings_struct = settings_mgr.GetSettingsStruct();
-        bool                      trigger_defined = false;
 
-        // Always try the non-platform specific trigger first to see if it exists.
-        // NOTE: We have to use dynamic settings for this because it can change during execution.
-        trigger_defined = settings_struct->capture_settings.capture_dynamic_trigger;
-        if (!trigger_defined)
+        // Set dynamic trimming
+        if (settings_struct->capture_settings.capture_dynamic_trigger != util::RuntimeTriggerState::kNotUsed)
         {
-#if defined(__ANDROID__)
-            trigger_defined = settings_struct->capture_settings.capture_android_trigger;
-#endif
-        }
+            GFXRECON_WRITE_CONSOLE("%s()", __func__)
+            GFXRECON_WRITE_CONSOLE("  settings_struct->capture_settings.capture_dynamic_trigger: %u", settings_struct->capture_settings.capture_dynamic_trigger)
 
-        if (settings->trace_settings_.runtime_capture_trigger != RuntimeTriggerState::kNotUsed || trigger_defined)
-        {
-            CaptureSettings::RuntimeTriggerState new_result =
-                trigger_defined ? RuntimeTriggerState::kEnabled : RuntimeTriggerState::kDisabled;
-            if (new_result != settings->trace_settings_.runtime_capture_trigger)
+            if (settings_struct->capture_settings.capture_dynamic_trigger !=
+                settings->trace_settings_.runtime_capture_trigger)
             {
                 GFXRECON_LOG_INFO("Runtime settings: Dynamic trigger was set to %s",
-                                  new_result == RuntimeTriggerState::kEnabled ? "enabled" : "disabled");
+                                  settings_struct->capture_settings.capture_dynamic_trigger ==
+                                          util::RuntimeTriggerState::kEnabled
+                                      ? "enabled"
+                                      : "disabled");
 
-                settings->trace_settings_.runtime_capture_trigger = new_result;
+                settings->trace_settings_.runtime_capture_trigger =
+                    settings_struct->capture_settings.capture_dynamic_trigger;
             }
 
-            if (settings->trace_settings_.runtime_capture_trigger != RuntimeTriggerState::kNotUsed)
+            if (settings->trace_settings_.runtime_capture_trigger != util::RuntimeTriggerState::kNotUsed)
             {
                 settings->trace_settings_.trim_boundary = TrimBoundary::kFrames;
             }
         }
         else
         {
-            settings->trace_settings_.runtime_capture_trigger = RuntimeTriggerState::kNotUsed;
+            settings->trace_settings_.runtime_capture_trigger = util::RuntimeTriggerState::kNotUsed;
         }
 
-        // Always try the non-platform specific trigger first to see if it exists.
-        // NOTE: We have to use dynamic settings for this because it can change during execution.
-        trigger_defined = settings_struct->capture_settings.capture_dynamic_trigger_dump_assets;
-        if (!trigger_defined)
-        {
-#if defined(__ANDROID__)
-            trigger_defined = settings_struct->capture_settings.capture_android_dump_assets;
-#endif
-        }
-        settings->trace_settings_.runtime_write_assets = trigger_defined;
+        // Set dynamic asset dumping
+        settings->trace_settings_.runtime_write_assets = settings_struct->capture_settings.capture_dynamic_trigger_dump_assets;
     }
 }
 
@@ -263,7 +252,7 @@ void CaptureSettings::LoadGeneralSettings(CaptureSettings* settings, bool proces
 #if defined(WIN32)
     settings->trace_settings_.page_guard_external_memory = settings_struct->capture_settings.page_guard_external_memory;
 #else
-    settings->trace_settings_.page_guard_external_memory  = false;
+    settings->trace_settings_.page_guard_external_memory = false;
 #endif
     settings->trace_settings_.page_guard_persistent_memory =
         settings_struct->capture_settings.page_guard_persistent_memory;
@@ -351,7 +340,7 @@ void CaptureSettings::LoadGeneralSettings(CaptureSettings* settings, bool proces
             util::strings::SplitString(settings_struct->capture_settings.capture_environment, ',');
     }
 #else
-    settings->log_settings_.capture_environment           = false;
+    settings->log_settings_.capture_environment = false;
 #endif // defined(__linux__) || defined(__APPLE__) || defined(WIN32)
 
     settings->trace_settings_.capture_process_name = settings_struct->capture_settings.capture_process_name;
@@ -398,7 +387,7 @@ void CaptureSettings::ProcessLogOptions(CaptureSettings* settings)
 #if defined(WIN32)
     settings->log_settings_.output_to_os_debug_string = settings_struct->capture_settings.log_output_to_os_debug_string;
 #else
-    settings->log_settings_.output_to_os_debug_string     = false;
+    settings->log_settings_.output_to_os_debug_string = false;
 #endif // WIN32
 
     settings->log_settings_.output_timestamps = settings_struct->capture_settings.log_timestamps;

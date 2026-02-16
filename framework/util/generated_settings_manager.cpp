@@ -26,8 +26,7 @@
 
 // This functions takes in a settings key value and a string from the Vulkan settings file
 // and attempts to update the setting value associated with the key.
-void SettingsManager::AdjustSettingFromFile(const std::string& key,
-                                            const std::string& value)
+void SettingsManager::AdjustSettingFromFile(const std::string& key, const std::string& value)
 {
     if (!key.compare("allow_pipeline_compile_required"))
     {
@@ -63,7 +62,7 @@ void SettingsManager::AdjustSettingFromFile(const std::string& key,
     }
     else if (!key.compare("capture_dynamic_trigger"))
     {
-        settings_struct_.capture_settings.capture_dynamic_trigger = SettingValueToBool(value);
+        settings_struct_.capture_settings.capture_dynamic_trigger = ParseCaptureDynamicTrigger(value);
     }
     else if (!key.compare("capture_dynamic_trigger_dump_assets"))
     {
@@ -186,14 +185,6 @@ void SettingsManager::AdjustSettingFromFile(const std::string& key,
         settings_struct_.capture_settings.screenshot_interval = atoi(value.c_str());
     }
 #if defined(__ANDROID__)
-    else if (!key.compare("capture_android_dump_assets"))
-    {
-        settings_struct_.capture_settings.capture_android_dump_assets = SettingValueToBool(value);
-    }
-    else if (!key.compare("capture_android_trigger"))
-    {
-        settings_struct_.capture_settings.capture_android_trigger = SettingValueToBool(value);
-    }
     else if (!key.compare("ignore_frame_boundary_android"))
     {
         settings_struct_.capture_settings.ignore_frame_boundary_android = SettingValueToBool(value);
@@ -246,7 +237,6 @@ void SettingsManager::AdjustSettingFromFile(const std::string& key,
         GFXRECON_LOG_ERROR("Failed to find setting associated with key %s", key.c_str());
     }
 }
-
 
 // This functions checks for any possible environment variables that GFXR cares about,
 // based on the type of tool running, and adjusts the corresponding setting value
@@ -302,7 +292,7 @@ void SettingsManager::ReadEnvironmentVariables()
     }
     if (ReadEnvironmentVariable("capture_dynamic_trigger", env_var_value))
     {
-        settings_struct_.capture_settings.capture_dynamic_trigger = SettingValueToBool(env_var_value);
+        settings_struct_.capture_settings.capture_dynamic_trigger = ParseCaptureDynamicTrigger(env_var_value);
     }
     if (ReadEnvironmentVariable("capture_dynamic_trigger_dump_assets", env_var_value))
     {
@@ -461,14 +451,6 @@ void SettingsManager::ReadEnvironmentVariables()
         settings_struct_.capture_settings.skip_threads_with_invalid_data = SettingValueToBool(env_var_value);
     }
 #if defined(__ANDROID__)
-    if (ReadEnvironmentVariable("capture_android_dump_assets", env_var_value))
-    {
-        settings_struct_.capture_settings.capture_android_dump_assets = SettingValueToBool(env_var_value);
-    }
-    if (ReadEnvironmentVariable("capture_android_trigger", env_var_value))
-    {
-        settings_struct_.capture_settings.capture_android_trigger = SettingValueToBool(env_var_value);
-    }
     if (ReadEnvironmentVariable("ignore_frame_boundary_android", env_var_value))
     {
         settings_struct_.capture_settings.ignore_frame_boundary_android = SettingValueToBool(env_var_value);
@@ -518,7 +500,6 @@ void SettingsManager::ReadEnvironmentVariables()
 #endif // defined(WIN32)
 }
 
-
 // This functions checks only environment variables that may change dynamically,
 // based on the type of tool running, and adjusts the corresponding setting value
 // based on what is read, if valid.
@@ -529,21 +510,10 @@ void SettingsManager::UpdateDynamicEnvironmentVariables()
     // -- Capture-specific
     if (ReadEnvironmentVariable("capture_dynamic_trigger", env_var_value))
     {
-        settings_struct_.capture_settings.capture_dynamic_trigger = SettingValueToBool(env_var_value);
+        settings_struct_.capture_settings.capture_dynamic_trigger = ParseCaptureDynamicTrigger(env_var_value);
     }
     if (ReadEnvironmentVariable("capture_dynamic_trigger_dump_assets", env_var_value))
     {
         settings_struct_.capture_settings.capture_dynamic_trigger_dump_assets = SettingValueToBool(env_var_value);
     }
-#if defined(__ANDROID__)
-    if (ReadEnvironmentVariable("capture_android_dump_assets", env_var_value))
-    {
-        settings_struct_.capture_settings.capture_android_dump_assets = SettingValueToBool(env_var_value);
-    }
-    if (ReadEnvironmentVariable("capture_android_trigger", env_var_value))
-    {
-        settings_struct_.capture_settings.capture_android_trigger = SettingValueToBool(env_var_value);
-    }
-#endif // defined(__ANDROID__)
 }
-

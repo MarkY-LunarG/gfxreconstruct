@@ -64,6 +64,16 @@ enum class PresentModeOption : uint32_t
     kFifoRelaxed = 4,
 };
 
+enum RuntimeTriggerState
+{
+    // Property for trimmed capture not set at all.
+    kNotUsed = 0,
+    // Property for trimmed capture set to false.
+    kEnabled = 1,
+    // Property for trimmed capture set to true.
+    kDisabled = 2
+};
+
 const char kScreenshotFormatBmp[] = "bmp";
 const char kScreenshotFormatPng[] = "png";
 

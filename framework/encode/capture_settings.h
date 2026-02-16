@@ -59,16 +59,6 @@ class CaptureSettings
         kUserfaultfd = 3
     };
 
-    enum RuntimeTriggerState
-    {
-        // Property for trimmed capture not set at all.
-        kNotUsed = 0,
-        // Property for trimmed capture set to false.
-        kEnabled = 1,
-        // Property for trimmed capture set to true.
-        kDisabled = 2
-    };
-
     enum class TrimBoundary
     {
         kUnknown,
@@ -111,7 +101,7 @@ class CaptureSettings
         TrimDrawCalls                trim_draw_calls;
         std::string                  trim_key;
         uint32_t                     trim_key_frames{ 0 };
-        RuntimeTriggerState          runtime_capture_trigger{ kNotUsed };
+        util::RuntimeTriggerState    runtime_capture_trigger{ util::RuntimeTriggerState::kNotUsed };
         std::string                  capture_process_name{ "" };
         bool                         runtime_write_assets{ false };
         int                          page_guard_signal_handler_watcher_max_restores{ 1 };
