@@ -44,20 +44,19 @@ VulkanExportJsonConsumerBase::~VulkanExportJsonConsumerBase()
     Destroy();
 }
 
-void VulkanExportJsonConsumerBase::Initialize(JsonWriter* writer, const std::string_view vulkanVersion)
+void VulkanExportJsonConsumerBase::Initialize(JsonWriter* writer)
 {
     GFXRECON_ASSERT(writer);
     writer_ = writer;
 
-    writer->GetHeaderJson()["vulkan-version"] = std::string(vulkanVersion);
+    writer->GetHeaderJson()["vulkan-version"] = std::to_string(VK_API_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE)) + "." +
+                                                std::to_string(VK_API_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE)) + "." +
+                                                std::to_string(VK_API_VERSION_PATCH(VK_HEADER_VERSION_COMPLETE));
 }
 
 void VulkanExportJsonConsumerBase::Destroy()
 {
-    if (writer_)
-    {
-        writer_->Destroy();
-    }
+    writer_ = nullptr;
 }
 
 std::string VulkanExportJsonConsumerBase::GenerateFilename(const std::string& filename)
@@ -126,7 +125,7 @@ void VulkanExportJsonConsumerBase::Process_vkCreateShaderModule(
 {
     WriteApiCallToFile(call_info, "vkCreateShaderModule", [&](nlohmann::ordered_json& function) {
         function[NameReturn()] = returnValue;
-        auto& args = function[NameArgs()];
+        auto& args             = function[NameArgs()];
         HandleToJson(args["device"], device);
         FieldToJson(args["pCreateInfo"], pCreateInfo);
         FieldToJson(args["pAllocator"], pAllocator);
@@ -151,7 +150,7 @@ void VulkanExportJsonConsumerBase::Process_vkGetPipelineCacheData(const ApiCallI
 {
     WriteApiCallToFile(call_info, "vkGetPipelineCacheData", [&](nlohmann::ordered_json& function) {
         function[NameReturn()] = returnValue;
-        auto& args = function[NameArgs()];
+        auto& args             = function[NameArgs()];
         HandleToJson(args["device"], device);
         HandleToJson(args["pipelineCache"], pipelineCache);
         FieldToJson(args["pDataSize"], pDataSize);
@@ -177,7 +176,7 @@ void VulkanExportJsonConsumerBase::Process_vkCreatePipelineCache(
 {
     WriteApiCallToFile(call_info, "vkCreatePipelineCache", [&](nlohmann::ordered_json& function) {
         function[NameReturn()] = returnValue;
-        auto& args = function[NameArgs()];
+        auto& args             = function[NameArgs()];
         HandleToJson(args["device"], device);
         FieldToJson(args["pCreateInfo"], pCreateInfo);
         FieldToJson(args["pAllocator"], pAllocator);
@@ -200,7 +199,7 @@ void VulkanExportJsonConsumerBase::Process_vkCmdPushConstants(const ApiCallInfo&
 {
     WriteApiCallToFile(call_info, "vkCmdPushConstants", [&](nlohmann::ordered_json& function) {
         function[NameCommandIndex()] = GetCommandBufferRecordIndex(commandBuffer);
-        auto& args = function[NameArgs()];
+        auto& args                   = function[NameArgs()];
         HandleToJson(args["commandBuffer"], commandBuffer);
         HandleToJson(args["layout"], layout);
         args["stageFlags"] = VkShaderStageFlags_t{ stageFlags };
@@ -247,7 +246,7 @@ void VulkanExportJsonConsumerBase::Process_vkCmdPushDescriptorSetWithTemplateKHR
     uint32_t                         set,
     DescriptorUpdateTemplateDecoder* pData)
 {
-    auto& function = WriteApiCallStart(call_info, "vkCmdPushDescriptorSetWithTemplateKHR");
+    auto& function               = WriteApiCallStart(call_info, "vkCmdPushDescriptorSetWithTemplateKHR");
     function[NameCommandIndex()] = GetCommandBufferRecordIndex(commandBuffer);
 
     auto& args = function[NameArgs()];
@@ -265,7 +264,7 @@ void VulkanExportJsonConsumerBase::Process_vkCmdPushDescriptorSetWithTemplate2KH
     format::HandleId                                                   commandBuffer,
     StructPointerDecoder<Decoded_VkPushDescriptorSetWithTemplateInfo>* pPushDescriptorSetWithTemplateInfo)
 {
-    auto& function = WriteApiCallStart(call_info, "vkCmdPushDescriptorSetWithTemplate2KHR");
+    auto& function               = WriteApiCallStart(call_info, "vkCmdPushDescriptorSetWithTemplate2KHR");
     function[NameCommandIndex()] = GetCommandBufferRecordIndex(commandBuffer);
 
     auto&                                                                    args = function[NameArgs()];
