@@ -20,54 +20,47 @@
 ** DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef GFXRECON_REPLAY_VULKAN_FEATURE_H
-#define GFXRECON_REPLAY_VULKAN_FEATURE_H
+#ifndef GFXRECON_REPLAY_OPENXR_FEATURE_H
+#define GFXRECON_REPLAY_OPENXR_FEATURE_H
 
-#include "decode/vulkan_replay_options.h"
-#include "decode/vulkan_tracked_object_info_table.h"
-#include "decode/vulkan_pre_process_consumer.h"
-#include "generated/generated_vulkan_decoder.h"
-#include "generated/generated_vulkan_replay_consumer.h"
+#if ENABLE_OPENXR_SUPPORT
+
+#include "decode/openxr_tracked_object_info_table.h"
+#include "generated/generated_openxr_decoder.h"
+#include "generated/generated_openxr_replay_consumer.h"
 
 #include "replay_feature.h"
 
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayVulkanFeature : public ReplayGraphicsFeature
+class ReplayOpenXrFeature : public ReplayCompositionFeature
 {
   public:
-    virtual ~ReplayVulkanFeature() = default;
+    virtual ~ReplayOpenXrFeature() = default;
 
     // Simple "getter" style methods
-    std::string Label() override { return "Vulkan"; }
+    std::string Label() override { return "OpenXR"; }
 
     void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
     void RegisterDecodeComponents(decode::FileProcessor*                    file_processor,
                                   std::shared_ptr<application::Application> application,
                                   graphics::FpsInfo*                        fps_info) override;
 
-    void DetectAndSetupRecapture() override;
+    void SetGraphicsFeatures(const std::vector<std::unique_ptr<ReplayGraphicsFeature>>& graphics_features) override;
 
-    virtual void SetupPreProcessingPass(decode::FileProcessor* file_processor) override;
-    virtual void CompletePreProcessingPass(std::string& dr_block_indices) override;
-    void*        GetReplayConsumer() override { return reinterpret_cast<void*>(replay_consumer_.get()); }
-
-  protected:
-    void ShutdownRecapture() override;
+    void PostReplay() override;
 
   private:
-    decode::VulkanTrackedObjectInfoTable          tracked_object_info_table_;
-    decode::VulkanReplayOptions                   replay_options_;
-    std::unique_ptr<decode::VulkanReplayConsumer> replay_consumer_;
-    decode::VulkanDecoder                         decoder_;
-
-    std::unique_ptr<decode::FileProcessor>            pre_processor_file_processor_;
-    std::unique_ptr<decode::VulkanPreProcessConsumer> pre_processor_consumer_;
-    std::unique_ptr<decode::VulkanDecoder>            pre_processor_decoder_;
+    decode::OpenXrTrackedObjectInfoTable          tracked_object_info_table_;
+    decode::OpenXrReplayOptions                   replay_options_;
+    std::unique_ptr<decode::OpenXrReplayConsumer> replay_consumer_;
+    decode::OpenXrDecoder                         decoder_;
 };
 
 GFXRECON_END_NAMESPACE(replay)
 GFXRECON_END_NAMESPACE(gfxrecon)
 
-#endif // GFXRECON_REPLAY_VULKAN_FEATURE_H
+#endif // ENABLE_OPENXR_SUPPORT
+
+#endif // GFXRECON_REPLAY_OPENXR_FEATURE_H

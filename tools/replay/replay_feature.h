@@ -62,9 +62,10 @@ class ReplayGraphicsFeature : public ReplayFeatureBase
 
     virtual void DetectAndSetupRecapture() { ; }
 
-    bool         NeedsPreProcessingPass() { return needs_pre_processor_; }
-    virtual void SetupPreProcessingPass(decode::FileProcessor* file_processor) = 0;
-    virtual void CompletePreProcessingPass(std::string& dr_block_indices)      = 0;
+    bool          NeedsPreProcessingPass() { return needs_pre_processor_; }
+    virtual void  SetupPreProcessingPass(decode::FileProcessor* file_processor) = 0;
+    virtual void  CompletePreProcessingPass(std::string& dr_block_indices)      = 0;
+    virtual void* GetReplayConsumer() { return nullptr; }
 
     void PostReplay() override
     {
@@ -89,8 +90,6 @@ class ReplayCompositionFeature : public ReplayFeatureBase
     // utilize the underlying enabled graphics feature.  This must be called before
     // RegisterDecodeComponents
     virtual void SetGraphicsFeatures(const std::vector<std::unique_ptr<ReplayGraphicsFeature>>& graphics_features) = 0;
-
-    void PostReplay() override;
 };
 
 GFXRECON_END_NAMESPACE(replay)
