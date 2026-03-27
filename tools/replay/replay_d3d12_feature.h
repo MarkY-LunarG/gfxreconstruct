@@ -49,10 +49,11 @@ class ReplayD3d12Feature : public ReplayGraphicsFeature
     // Simple "getter" style methods
     std::string Label() override { return "D3D12"; }
 
-    void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
-    void RegisterDecodeComponents(decode::FileProcessor*                    file_processor,
-                                  std::shared_ptr<application::Application> application,
-                                  graphics::FpsInfo*                        fps_info) override;
+    void  QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
+    void  RegisterDecodeComponents(decode::FileProcessor*                    file_processor,
+                                   std::shared_ptr<application::Application> application,
+                                   graphics::FpsInfo*                        fps_info) override;
+    void* GetReplayConsumer() override { return reinterpret_cast<void*>(replay_consumer_.get()); }
 
     virtual void SetupPreProcessingPass(decode::FileProcessor* file_processor) override;
     virtual void CompletePreProcessingPass(std::string& dr_block_indices) override;
