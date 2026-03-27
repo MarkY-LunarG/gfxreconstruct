@@ -1,0 +1,137 @@
+/*
+** Copyright (c) 2020-2026 LunarG, Inc.
+** Copyright (c) 2022-2024 Advanced Micro Devices, Inc. All rights reserved.
+**
+** Permission is hereby granted, free of charge, to any person obtaining a
+** copy of this software and associated documentation files (the "Software"),
+** to deal in the Software without restriction, including without limitation
+** the rights to use, copy, modify, merge, publish, distribute, sublicense,
+** and/or sell copies of the Software, and to permit persons to whom the
+** Software is furnished to do so, subject to the following conditions:
+**
+** The above copyright notice and this permission notice shall be included in
+** all copies or substantial portions of the Software.
+**
+** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+** AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+** LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+** FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+** DEALINGS IN THE SOFTWARE.
+*/
+
+#include "replay_vulkan_feature.h"
+
+#include "encode/vulkan_capture_manager.h"
+#include "parse_dump_resources_cli.h"
+#include "recapture_vulkan_entry.h"
+
+#include "util/feature_module_registry.h"
+
+GFXRECON_BEGIN_NAMESPACE(gfxrecon)
+GFXRECON_BEGIN_NAMESPACE(replay)
+
+// Register this class as a feature in a module registry
+GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayGraphicsFeature, ReplayVulkanFeature)
+
+void ReplayVulkanFeature::QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename)
+{
+    capture_filename_    = capture_filename;
+    replay_options_      = GetVulkanReplayOptions(arg_parser, capture_filename, &tracked_object_info_table_);
+    is_enabled_          = replay_options_.enable_vulkan;
+    needs_pre_processor_ = is_enabled_ && replay_options_.enable_dump_resources;
+}
+
+void ReplayVulkanFeature::RegisterDecodeComponents(decode::FileProcessor*                    file_processor,
+                                                   std::shared_ptr<application::Application> application,
+                                                   graphics::FpsInfo*                        fps_info)
+{
+    if (is_enabled_)
+    {
+        file_processor_ = file_processor;
+        application_    = application;
+
+        replay_consumer_ = std::make_unique<decode::VulkanReplayConsumer>(application_, replay_options_);
+        replay_consumer_->SetFatalErrorHandler([](const char* message) { throw std::runtime_error(message); });
+        replay_consumer_->SetFpsInfo(fps_info);
+
+        decoder_.AddConsumer(replay_consumer_.get());
+        file_processor_->AddDecoder(&decoder_);
+
+        file_processor_->SetPrintBlockInfoFlag(
+            replay_options_.enable_print_block_info, replay_options_.block_index_from, replay_options_.block_index_to);
+    }
+}
+
+void ReplayVulkanFeature::DetectAndSetupRecapture()
+{
+    if (is_enabled_ && replay_options_.capture)
+    {
+        vulkan_recapture::RecaptureVulkanEntry::InitSingleton();
+
+        // Set replay to use the GetInstanceProcAddr function from RecaptureVulkanEntry so that replay first
+        // calls into the capture layer instead of directly into the loader and Vulkan runtime.
+        // Set the capture manager's instance and device creation callbacks.
+        replay_consumer_->SetupForRecapture(vulkan_recapture::GetInstanceProcAddr,
+                                            vulkan_recapture::dispatch_CreateInstance,
+                                            vulkan_recapture::dispatch_CreateDevice);
+    }
+}
+
+void ReplayVulkanFeature::SetupPreProcessingPass(decode::FileProcessor* file_processor)
+{
+    if (needs_pre_processor_)
+    {
+        pre_processor_consumer_ = std::make_unique<decode::VulkanPreProcessConsumer>();
+        pre_processor_decoder_  = std::make_unique<decode::VulkanDecoder>();
+
+        if (replay_options_.using_dump_resources_target)
+        {
+            pre_processor_consumer_->EnableDumpResources(replay_options_.dump_resources_target);
+        }
+
+        pre_processor_decoder_->AddConsumer(pre_processor_consumer_.get());
+        file_processor->AddDecoder(pre_processor_decoder_.get());
+    }
+}
+
+void ReplayVulkanFeature::CompletePreProcessingPass(std::string& dr_block_indices)
+{
+    if (needs_pre_processor_)
+    {
+        replay_options_.enable_vulkan = pre_processor_consumer_->WasVulkanAPIDetected();
+        if (replay_options_.enable_vulkan)
+        {
+            if (replay_options_.using_dump_resources_target)
+            {
+                dr_block_indices = pre_processor_consumer_->GetDumpResourcesBlockIndices();
+            }
+
+            if (replay_options_.enable_dump_resources)
+            {
+                // Process --dump-resources block indices arg.
+                if (!parse_dump_resources::parse_dump_resources_arg(replay_options_))
+                {
+                    GFXRECON_LOG_FATAL("There was an error while parsing dump resources indices. Terminating.");
+                    exit(0);
+                }
+                replay_consumer_->InitializeReplayDumpResources();
+            }
+        }
+
+        pre_processor_decoder_.reset();
+        pre_processor_consumer_.reset();
+    }
+}
+
+void ReplayVulkanFeature::ShutdownRecapture()
+{
+    if (is_enabled_ && replay_options_.capture)
+    {
+        vulkan_recapture::RecaptureVulkanEntry::DestroySingleton();
+    }
+}
+
+GFXRECON_END_NAMESPACE(replay)
+GFXRECON_END_NAMESPACE(gfxrecon)
