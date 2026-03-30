@@ -43,15 +43,22 @@ class ReplayVulkanFeature : public ReplayGraphicsFeature
     std::string Label() override { return "Vulkan"; }
 
     void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
-    void RegisterDecodeComponents(decode::FileProcessor*                    file_processor,
-                                  std::shared_ptr<application::Application> application,
-                                  graphics::FpsInfo*                        fps_info) override;
+    bool ReplayOptionsAdjustFpsInfo() override { return true; }
+    void QueryFpsInfoOptions(bool& quit_after_range,
+                             bool& flush_range,
+                             bool& flush_inside_range,
+                             bool& preload_range,
+                             bool& quit_after_frame) override;
+    void CreateConsumer(decode::FileProcessor*                    file_processor,
+                        std::shared_ptr<application::Application> application,
+                        gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) override;
+    void RegisterDecodeComponents(graphics::FpsInfo* fps_info) override;
 
     void DetectAndSetupRecapture() override;
 
     virtual void SetupPreProcessingPass(decode::FileProcessor* file_processor) override;
-    virtual void CompletePreProcessingPass(std::string& dr_block_indices) override;
-    void*        GetReplayConsumer() override { return reinterpret_cast<void*>(replay_consumer_.get()); }
+    virtual void CompletePreProcessingPass() override;
+    void*        GetConsumer() override { return reinterpret_cast<void*>(replay_consumer_.get()); }
 
   protected:
     void ShutdownRecapture() override;

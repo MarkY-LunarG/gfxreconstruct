@@ -23,6 +23,7 @@
 
 #include "replay_vulkan_feature.h"
 
+#include "decode/vulkan_replay_frame_loop_consumer.h"
 #include "encode/vulkan_capture_manager.h"
 #include "parse_dump_resources_cli.h"
 #include "recapture_vulkan_entry.h"
@@ -43,17 +44,43 @@ void ReplayVulkanFeature::QueryOptions(util::ArgumentParser& arg_parser, const s
     needs_pre_processor_ = is_enabled_ && replay_options_.enable_dump_resources;
 }
 
-void ReplayVulkanFeature::RegisterDecodeComponents(decode::FileProcessor*                    file_processor,
-                                                   std::shared_ptr<application::Application> application,
-                                                   graphics::FpsInfo*                        fps_info)
+void ReplayVulkanFeature::QueryFpsInfoOptions(
+    bool& quit_after_range, bool& flush_range, bool& flush_inside_range, bool& preload_range, bool& quit_after_frame)
+{
+    quit_after_range   = replay_options_.quit_after_measurement_frame_range;
+    flush_range        = replay_options_.flush_measurement_frame_range;
+    flush_inside_range = replay_options_.flush_inside_measurement_range;
+    preload_range      = replay_options_.preload_measurement_range;
+    quit_after_frame   = replay_options_.quit_after_frame;
+}
+
+void ReplayVulkanFeature::CreateConsumer(decode::FileProcessor*                    file_processor,
+                                         std::shared_ptr<application::Application> application,
+                                         gfxrecon::graphics::FrameLoopInfo*        frame_loop_info)
 {
     if (is_enabled_)
     {
         file_processor_ = file_processor;
         application_    = application;
 
-        replay_consumer_ = std::make_unique<decode::VulkanReplayConsumer>(application_, replay_options_);
+        if (frame_loop_info)
+        {
+            replay_consumer_ = std::make_unique<gfxrecon::decode::VulkanReplayFrameLoopConsumer>(
+                application_, replay_options_, *frame_loop_info);
+        }
+        else
+        {
+            replay_consumer_ = std::make_unique<gfxrecon::decode::VulkanReplayConsumer>(application_, replay_options_);
+        }
+
         replay_consumer_->SetFatalErrorHandler([](const char* message) { throw std::runtime_error(message); });
+    }
+}
+
+void ReplayVulkanFeature::RegisterDecodeComponents(graphics::FpsInfo* fps_info)
+{
+    if (is_enabled_)
+    {
         replay_consumer_->SetFpsInfo(fps_info);
 
         decoder_.AddConsumer(replay_consumer_.get());
@@ -96,7 +123,7 @@ void ReplayVulkanFeature::SetupPreProcessingPass(decode::FileProcessor* file_pro
     }
 }
 
-void ReplayVulkanFeature::CompletePreProcessingPass(std::string& dr_block_indices)
+void ReplayVulkanFeature::CompletePreProcessingPass()
 {
     if (needs_pre_processor_)
     {
@@ -105,7 +132,7 @@ void ReplayVulkanFeature::CompletePreProcessingPass(std::string& dr_block_indice
         {
             if (replay_options_.using_dump_resources_target)
             {
-                dr_block_indices = pre_processor_consumer_->GetDumpResourcesBlockIndices();
+                replay_options_.dump_resources_block_indices = pre_processor_consumer_->GetDumpResourcesBlockIndices();
             }
 
             if (replay_options_.enable_dump_resources)

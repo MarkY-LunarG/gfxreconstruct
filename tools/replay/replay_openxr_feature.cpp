@@ -40,10 +40,12 @@ void ReplayOpenXrFeature::QueryOptions(util::ArgumentParser& arg_parser, const s
     is_enabled_       = true;
 }
 
-void ReplayOpenXrFeature::RegisterDecodeComponents(decode::FileProcessor*                    file_processor,
-                                                   std::shared_ptr<application::Application> application,
-                                                   graphics::FpsInfo*                        fps_info)
+void ReplayOpenXrFeature::CreateConsumer(decode::FileProcessor*                    file_processor,
+                                         std::shared_ptr<application::Application> application,
+                                         gfxrecon::graphics::FrameLoopInfo*        frame_loop_info)
 {
+    GFXRECON_UNREFERENCED_PARAMETER(frame_loop_info);
+
     if (is_enabled_)
     {
         file_processor_ = file_processor;
@@ -51,7 +53,13 @@ void ReplayOpenXrFeature::RegisterDecodeComponents(decode::FileProcessor*       
 
         replay_consumer_ = std::make_unique<decode::OpenXrReplayConsumer>(application_, replay_options_);
         replay_consumer_->SetFatalErrorHandler([](const char* message) { throw std::runtime_error(message); });
+    }
+}
 
+void ReplayOpenXrFeature::RegisterDecodeComponents(graphics::FpsInfo* fps_info)
+{
+    if (is_enabled_)
+    {
         replay_consumer_->SetFpsInfo(fps_info);
 
         decoder_.AddConsumer(replay_consumer_.get());
@@ -66,8 +74,12 @@ void ReplayOpenXrFeature::SetGraphicsFeatures(
     {
         if (feature->Label() == "Vulkan")
         {
-            replay_consumer_->SetVulkanReplayConsumer(
-                reinterpret_cast<decode::VulkanReplayConsumer*>(feature->GetReplayConsumer()));
+            decode::VulkanReplayConsumer* vulkan_consumer =
+                reinterpret_cast<decode::VulkanReplayConsumer*>(feature->GetConsumer());
+            if (vulkan_consumer != nullptr)
+            {
+                replay_consumer_->SetVulkanReplayConsumer(vulkan_consumer);
+            }
         }
     }
 }

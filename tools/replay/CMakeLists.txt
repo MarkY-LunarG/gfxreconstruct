@@ -39,7 +39,6 @@ target_sources(gfxrecon-replay
                     ${CMAKE_CURRENT_LIST_DIR}/replay_openxr_feature.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/replay_vulkan_feature.h
                     ${CMAKE_CURRENT_LIST_DIR}/replay_vulkan_feature.cpp
-                    ${CMAKE_CURRENT_LIST_DIR}/replay_pre_processing.h
                     ${CMAKE_CURRENT_LIST_DIR}/desktop_main.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/parse_dump_resources_cli.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/../platform_debug_helper.cpp
