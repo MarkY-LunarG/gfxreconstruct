@@ -27,46 +27,22 @@
 #include "application/application.h"
 #include "decode/file_processor.h"
 #include "decode/preload_file_processor.h"
-#include "decode/vulkan_replay_frame_loop_consumer.h"
-#include "decode/vulkan_replay_options.h"
-#include "decode/vulkan_tracked_object_info_table.h"
-#include "decode/vulkan_pre_process_consumer.h"
-#include "graphics/frame_loop_info.h"
-#include "generated/generated_vulkan_decoder.h"
-#include "generated/generated_vulkan_replay_consumer.h"
-
-#if ENABLE_OPENXR_SUPPORT
-#include "decode/openxr_tracked_object_info_table.h"
-#include "generated/generated_openxr_decoder.h"
-#include "generated/generated_openxr_replay_consumer.h"
-#endif
 
 #include "graphics/fps_info.h"
 #include "util/argument_parser.h"
+#include "util/feature_module_registry.h"
 #include "util/logging.h"
 
-#if defined(D3D12_SUPPORT)
-#include "generated/generated_dx12_decoder.h"
-#include "generated/generated_dx12_replay_consumer.h"
-#include "decode/dx12_pre_process_consumer.h"
-#ifdef GFXRECON_AGS_SUPPORT
-#include "decode/custom_ags_consumer_base.h"
-#include "decode/custom_ags_decoder.h"
-#include "decode/custom_ags_replay_consumer.h"
-#endif // GFXRECON_AGS_SUPPORT
-#include "decode/dx12_tracking_consumer.h"
-#include "graphics/dx12_util.h"
-#endif
 #include "parse_dump_resources_cli.h"
-#include "replay_pre_processing.h"
 
-// Includes for recapture
-#include "encode/vulkan_capture_manager.h"
-#include "recapture_vulkan_entry.h"
+#include "replay_feature.h"
 
 #include <exception>
 #include <memory>
 #include <stdexcept>
+
+static std::vector<std::unique_ptr<gfxrecon::replay::ReplayGraphicsFeature>>    g_graphics_features;
+static std::vector<std::unique_ptr<gfxrecon::replay::ReplayCompositionFeature>> g_composition_features;
 
 #if defined(D3D12_SUPPORT)
 
@@ -101,6 +77,25 @@ void WaitForExit()
 void WaitForExit() {}
 #endif
 
+void RunPreProcessConsumer(const std::string& input_filename)
+{
+    gfxrecon::decode::FileProcessor file_processor;
+    if (file_processor.Initialize(input_filename))
+    {
+        for (auto& feature : g_graphics_features)
+        {
+            feature->SetupPreProcessingPass(&file_processor);
+        }
+
+        file_processor.ProcessAllFrames();
+
+        for (auto& feature : g_graphics_features)
+        {
+            feature->CompletePreProcessingPass();
+        }
+    }
+}
+
 const char kLayerEnvVar[] = "VK_INSTANCE_LAYERS";
 
 int main(int argc, const char** argv)
@@ -109,6 +104,22 @@ int main(int argc, const char** argv)
 
     // Default initialize logging to report issues while loading settings.
     gfxrecon::util::Log::Init(gfxrecon::decode::kDefaultLogLevel);
+
+    // Query the module registry for registered modules, and
+    // call each generator here and put the unique_ptr into our
+    // internal unique_ptr vector.
+    for (const auto& registered_creator :
+         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayGraphicsFeature>::GetSingleton()
+             .GetRegisteredFeatureCreators())
+    {
+        g_graphics_features.push_back(std::move(registered_creator()));
+    }
+    for (const auto& registered_creator :
+         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayCompositionFeature>::GetSingleton()
+             .GetRegisteredFeatureCreators())
+    {
+        g_composition_features.push_back(std::move(registered_creator()));
+    }
 
     gfxrecon::util::ArgumentParser arg_parser(argc, argv, kOptions, kArguments);
 
@@ -160,42 +171,54 @@ int main(int argc, const char** argv)
         }
         else
         {
-            // Select WSI context based on CLI
-            std::string wsi_extension = GetWsiExtensionName(GetWsiPlatform(arg_parser));
-            auto        application   = std::make_shared<gfxrecon::application::Application>(
-                kApplicationName, file_processor.get(), wsi_extension, nullptr);
-
-            gfxrecon::decode::VulkanTrackedObjectInfoTable tracked_object_info_table;
-            gfxrecon::decode::VulkanReplayOptions          vulkan_replay_options =
-                GetVulkanReplayOptions(arg_parser, filename, &tracked_object_info_table);
-
-            bool     quit_after_frame = false;
-            uint32_t quit_frame       = std::numeric_limits<uint32_t>::max();
-
-            uint32_t measurement_start_frame = 0;
-            uint32_t measurement_end_frame   = 0;
-            bool     has_mfr                 = false;
-
+            bool        has_mfr                            = false;
+            bool        requires_pre_processing            = false;
+            bool        quit_after_frame                   = false;
+            uint32_t    quit_frame                         = std::numeric_limits<uint32_t>::max();
+            uint32_t    measurement_start_frame            = 0;
+            uint32_t    measurement_end_frame              = 0;
             bool        quit_after_measurement_frame_range = false;
             bool        flush_measurement_frame_range      = false;
             bool        flush_inside_measurement_range     = false;
             bool        preload_measurement_frame_range    = false;
             std::string measurement_file_name;
 
-            if (vulkan_replay_options.enable_vulkan)
-            {
-                has_mfr = GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
-                GetMeasurementFilename(arg_parser, measurement_file_name);
-                quit_after_measurement_frame_range = vulkan_replay_options.quit_after_measurement_frame_range;
-                flush_measurement_frame_range      = vulkan_replay_options.flush_measurement_frame_range;
-                flush_inside_measurement_range     = vulkan_replay_options.flush_inside_measurement_range;
-                preload_measurement_frame_range    = vulkan_replay_options.preload_measurement_range;
+            // Select WSI context based on CLI
+            std::string wsi_extension = GetWsiExtensionName(GetWsiPlatform(arg_parser));
+            auto        application   = std::make_shared<gfxrecon::application::Application>(
+                kApplicationName, file_processor.get(), wsi_extension, nullptr);
 
-                if (vulkan_replay_options.quit_after_frame)
+            for (auto& feature : g_graphics_features)
+            {
+                feature->QueryOptions(arg_parser, filename);
+            }
+            for (auto& feature : g_composition_features)
+            {
+                feature->QueryOptions(arg_parser, filename);
+            }
+
+            for (auto& feature : g_graphics_features)
+            {
+                if (feature->ReplayOptionsAdjustFpsInfo())
                 {
-                    quit_after_frame = true;
-                    GetQuitAfterFrame(arg_parser, quit_frame);
+                    // Only do the initial measurement file/frame queries once
+                    if (!has_mfr)
+                    {
+                        has_mfr = GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
+                        GetMeasurementFilename(arg_parser, measurement_file_name);
+                    }
+
+                    feature->SetMeasurementStartFrame(measurement_start_frame);
+                    feature->QueryFpsInfoOptions(quit_after_measurement_frame_range,
+                                                 flush_measurement_frame_range,
+                                                 flush_inside_measurement_range,
+                                                 preload_measurement_frame_range,
+                                                 quit_after_frame);
                 }
+            }
+            if (quit_after_frame)
+            {
+                GetQuitAfterFrame(arg_parser, quit_frame);
             }
 
             gfxrecon::graphics::FpsInfo fps_info(static_cast<uint64_t>(measurement_start_frame),
@@ -209,128 +232,41 @@ int main(int argc, const char** argv)
                                                  quit_after_frame,
                                                  quit_frame);
 
-            std::unique_ptr<gfxrecon::decode::VulkanReplayConsumer> vulkan_replay_consumer;
-
-            gfxrecon::graphics::FrameLoopInfo fl_info;
+            gfxrecon::graphics::FrameLoopInfo  fl_info;
+            gfxrecon::graphics::FrameLoopInfo* fl_info_ptr = nullptr;
             if (enable_frame_loop)
             {
-                fl_info = gfxrecon::graphics::FrameLoopInfo(loop_frame, loop_count);
-                application->SetFrameLoopInfo(&fl_info);
-
-                vulkan_replay_consumer = std::make_unique<gfxrecon::decode::VulkanReplayFrameLoopConsumer>(
-                    application, vulkan_replay_options, fl_info);
+                fl_info     = gfxrecon::graphics::FrameLoopInfo(loop_frame, loop_count);
+                fl_info_ptr = &fl_info;
+                application->SetFrameLoopInfo(fl_info_ptr);
             }
-            else
+
+            for (auto& feature : g_graphics_features)
             {
-                vulkan_replay_consumer =
-                    std::make_unique<gfxrecon::decode::VulkanReplayConsumer>(application, vulkan_replay_options);
+                feature->CreateConsumer(file_processor.get(), application, fl_info_ptr);
+
+                requires_pre_processing |= feature->NeedsPreProcessingPass();
+
+                feature->DetectAndSetupRecapture();
             }
-
-            gfxrecon::decode::VulkanDecoder vulkan_decoder;
-
-            if (vulkan_replay_options.capture)
+            for (auto& feature : g_composition_features)
             {
-                gfxrecon::vulkan_recapture::RecaptureVulkanEntry::InitSingleton();
-
-                // Set replay to use the GetInstanceProcAddr function from RecaptureVulkanEntry so that replay first
-                // calls into the capture layer instead of directly into the loader and Vulkan runtime.
-                // Set the capture manager's instance and device creation callbacks.
-                vulkan_replay_consumer->SetupForRecapture(gfxrecon::vulkan_recapture::GetInstanceProcAddr,
-                                                          gfxrecon::vulkan_recapture::dispatch_CreateInstance,
-                                                          gfxrecon::vulkan_recapture::dispatch_CreateDevice);
+                feature->CreateConsumer(file_processor.get(), application, fl_info_ptr);
             }
 
-            ApiReplayOptions  api_replay_options;
-            ApiReplayConsumer api_replay_consumer;
-            api_replay_options.vk_replay_options   = &vulkan_replay_options;
-            api_replay_consumer.vk_replay_consumer = vulkan_replay_consumer.get();
-
-#if defined(D3D12_SUPPORT)
-            gfxrecon::decode::DxReplayOptions    dx_replay_options = GetDxReplayOptions(arg_parser, filename);
-            gfxrecon::decode::Dx12ReplayConsumer dx12_replay_consumer(application, dx_replay_options);
-            gfxrecon::decode::Dx12Decoder        dx12_decoder;
-
-            api_replay_options.dx12_replay_options   = &dx_replay_options;
-            api_replay_consumer.dx12_replay_consumer = &dx12_replay_consumer;
-#endif // D3D12_SUPPORT
-
-#ifdef GFXRECON_AGS_SUPPORT
-            gfxrecon::decode::AgsReplayConsumer ags_replay_consumer;
-            gfxrecon::decode::AgsDecoder        ags_decoder;
-#endif // GFXRECON_AGS_SUPPORT
-
-            if (IsRunPreProcessConsumer(api_replay_options))
+            if (requires_pre_processing)
             {
-                RunPreProcessConsumer(filename, api_replay_options, api_replay_consumer);
+                RunPreProcessConsumer(filename);
             }
 
-            if (vulkan_replay_options.enable_vulkan)
+            for (auto& feature : g_graphics_features)
             {
-                vulkan_replay_consumer->SetFatalErrorHandler(
-                    [](const char* message) { throw std::runtime_error(message); });
-                vulkan_replay_consumer->SetFpsInfo(&fps_info);
-
-                vulkan_decoder.AddConsumer(vulkan_replay_consumer.get());
-                file_processor->AddDecoder(&vulkan_decoder);
-
-                file_processor->SetPrintBlockInfoFlag(vulkan_replay_options.enable_print_block_info,
-                                                      vulkan_replay_options.block_index_from,
-                                                      vulkan_replay_options.block_index_to);
+                feature->RegisterDecodeComponents(&fps_info);
             }
-
-#if defined(D3D12_SUPPORT)
-            if (dx_replay_options.enable_d3d12)
+            for (auto& feature : g_composition_features)
             {
-                application->InitializeDx12WsiContext();
-                if (gfxrecon::graphics::dx12::VerifyAgilitySDKRuntime() == false)
-                {
-                    GFXRECON_LOG_ERROR(
-                        "Did not find Agility SDK runtimes. Verify \\D3D12\\D3D12Core.dll exists in the same "
-                        "directory as gfxrecon-replay.exe.");
-                }
-
-                dx12_replay_consumer.SetFatalErrorHandler(
-                    [](const char* message) { throw std::runtime_error(message); });
-                dx12_replay_consumer.SetFpsInfo(&fps_info);
-
-                // check for user option if first pass tracking is enabled
-                if (dx_replay_options.enable_d3d12_two_pass_replay)
-                {
-                    gfxrecon::decode::FileProcessor              file_processor_tracking;
-                    gfxrecon::decode::Dx12TrackedObjectInfoTable tracked_object_info_table;
-                    auto                                         tracking_consumer =
-                        new gfxrecon::decode::DX12TrackingConsumer(dx_replay_options, &tracked_object_info_table);
-                    if (file_processor_tracking.Initialize(filename))
-                    {
-                        dx12_decoder.AddConsumer(tracking_consumer);
-                        file_processor_tracking.AddDecoder(&dx12_decoder);
-                        file_processor_tracking.ProcessAllFrames();
-                        file_processor_tracking.RemoveDecoder(&dx12_decoder);
-                        dx12_decoder.RemoveConsumer(tracking_consumer);
-                    }
-                }
-
-                dx12_decoder.AddConsumer(&dx12_replay_consumer);
-                file_processor->AddDecoder(&dx12_decoder);
-
-#ifdef GFXRECON_AGS_SUPPORT
-                ags_replay_consumer.AddDx12Consumer(&dx12_replay_consumer);
-                ags_decoder.AddConsumer(reinterpret_cast<gfxrecon::decode::AgsConsumerBase*>(&ags_replay_consumer));
-
-                file_processor->AddDecoder(&ags_decoder);
-#endif // GFXRECON_AGS_SUPPORT
+                feature->RegisterDecodeComponents(&fps_info);
             }
-#endif // D3D12_SUPPORT
-
-#if ENABLE_OPENXR_SUPPORT
-            gfxrecon::decode::OpenXrReplayOptions  openxr_replay_options = {};
-            gfxrecon::decode::OpenXrDecoder        openxr_decoder;
-            gfxrecon::decode::OpenXrReplayConsumer openxr_replay_consumer(application, openxr_replay_options);
-            openxr_replay_consumer.SetVulkanReplayConsumer(vulkan_replay_consumer.get());
-            openxr_replay_consumer.SetFpsInfo(&fps_info);
-            openxr_decoder.AddConsumer(&openxr_replay_consumer);
-            file_processor->AddDecoder(&openxr_decoder);
-#endif
 
             // Warn if the capture layer is active.
             CheckActiveLayers(gfxrecon::util::platform::GetEnv(kLayerEnvVar));
@@ -358,19 +294,6 @@ int main(int argc, const char** argv)
                 }
                 else
                 {
-#if defined(D3D12_SUPPORT)
-                    dx12_replay_consumer.PostReplay();
-                    if (!dx_replay_options.screenshot_ranges.empty() && !file_processor->UsesFrameMarkers() &&
-                        (dx12_replay_consumer.GetDXGITestPresentCount() > 0))
-                    {
-                        GFXRECON_LOG_WARNING_ONCE(
-                            "This capture contains %" PRIu32
-                            " calls to IDXGISwapChain::Present with flag DXGI_PRESENT_TEST and no frame end markers. "
-                            "Screenshot frame indexing may have changed since capture.",
-                            dx12_replay_consumer.GetDXGITestPresentCount());
-                    }
-#endif
-
                     fps_info.LogMeasurements();
                 }
             }
@@ -384,9 +307,13 @@ int main(int argc, const char** argv)
                 GFXRECON_WRITE_CONSOLE("File did not contain any frames");
             }
 
-            if (vulkan_replay_options.capture)
+            for (auto& feature : g_graphics_features)
             {
-                gfxrecon::vulkan_recapture::RecaptureVulkanEntry::DestroySingleton();
+                feature->PostReplay();
+            }
+            for (auto& feature : g_composition_features)
+            {
+                feature->PostReplay();
             }
         }
     }

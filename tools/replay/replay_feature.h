@@ -28,6 +28,7 @@
 #include "application/application.h"
 #include "decode/file_processor.h"
 #include "graphics/fps_info.h"
+#include "graphics/frame_loop_info.h"
 #include "util/argument_parser.h"
 
 #include <string>
@@ -43,9 +44,10 @@ class ReplayFeatureBase
     virtual std::string Label() = 0;
 
     virtual void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) = 0;
-    virtual void RegisterDecodeComponents(decode::FileProcessor*                    file_processor,
-                                          std::shared_ptr<application::Application> application,
-                                          graphics::FpsInfo*                        fps_info)                               = 0;
+    virtual void CreateConsumer(decode::FileProcessor*                    file_processor,
+                                std::shared_ptr<application::Application> application,
+                                gfxrecon::graphics::FrameLoopInfo*        frame_loop_info)           = 0;
+    virtual void RegisterDecodeComponents(graphics::FpsInfo* fps_info)                               = 0;
     virtual void PostReplay()                                                                        = 0;
 
   protected:
@@ -60,12 +62,21 @@ class ReplayGraphicsFeature : public ReplayFeatureBase
   public:
     virtual ~ReplayGraphicsFeature() = default;
 
-    virtual void DetectAndSetupRecapture() { ; }
+    virtual void DetectAndSetupRecapture() {}
+
+    void         SetMeasurementStartFrame(uint32_t frame) { measurement_start_frame_ = frame; }
+    virtual bool ReplayOptionsAdjustFpsInfo() { return false; }
+    virtual void QueryFpsInfoOptions(bool& quit_after_range,
+                                     bool& flush_range,
+                                     bool& flush_inside_range,
+                                     bool& preload_range,
+                                     bool& quit_after_frame)
+    {}
 
     bool          NeedsPreProcessingPass() { return needs_pre_processor_; }
     virtual void  SetupPreProcessingPass(decode::FileProcessor* file_processor) = 0;
-    virtual void  CompletePreProcessingPass(std::string& dr_block_indices)      = 0;
-    virtual void* GetReplayConsumer() { return nullptr; }
+    virtual void  CompletePreProcessingPass()                                   = 0;
+    virtual void* GetConsumer() { return nullptr; }
 
     void PostReplay() override
     {
@@ -78,6 +89,7 @@ class ReplayGraphicsFeature : public ReplayFeatureBase
     virtual void ShutdownRecapture() { ; }
 
     bool                   needs_pre_processor_{ false };
+    uint32_t               measurement_start_frame_{ 0 };
     decode::FileProcessor* pre_processor_file_processor_{ nullptr };
 };
 

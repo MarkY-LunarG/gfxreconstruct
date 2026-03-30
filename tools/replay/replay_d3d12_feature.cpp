@@ -21,8 +21,6 @@
 ** DEALINGS IN THE SOFTWARE.
 */
 
-#if defined(D3D12_SUPPORT)
-
 #include "replay_d3d12_feature.h"
 
 #include "util/feature_module_registry.h"
@@ -36,21 +34,27 @@ GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayGraphicsFeature, ReplayD3d12Feature)
 
 void ReplayD3d12Feature::QueryOptions(gfxrecon::util::ArgumentParser& arg_parser, const std::string& capture_filename)
 {
-    capture_filename_    = capture_filename;
+    capture_filename_ = capture_filename;
+
+#if defined(D3D12_SUPPORT)
     replay_options_      = GetDxReplayOptions(arg_parser, capture_filename);
     is_enabled_          = replay_options_.enable_d3d12;
     needs_pre_processor_ = is_enabled_ && replay_options_.enable_dump_resources;
+#endif // D3D12_SUPPORT
 }
 
-void ReplayD3d12Feature::RegisterDecodeComponents(decode::FileProcessor*                    file_processor,
-                                                  std::shared_ptr<application::Application> application,
-                                                  graphics::FpsInfo*                        fps_info)
+void ReplayD3d12Feature::CreateConsumer(decode::FileProcessor*                    file_processor,
+                                        std::shared_ptr<application::Application> application,
+                                        gfxrecon::graphics::FrameLoopInfo*        frame_loop_info)
 {
+    GFXRECON_UNREFERENCED_PARAMETER(frame_loop_info);
+
     if (is_enabled_)
     {
         file_processor_ = file_processor;
         application_    = application;
 
+#if defined(D3D12_SUPPORT)
         application->InitializeDx12WsiContext();
         if (graphics::dx12::VerifyAgilitySDKRuntime() == false)
         {
@@ -60,6 +64,15 @@ void ReplayD3d12Feature::RegisterDecodeComponents(decode::FileProcessor*        
 
         replay_consumer_ = std::make_unique<decode::Dx12ReplayConsumer>(application_, replay_options_);
         replay_consumer_->SetFatalErrorHandler([](const char* message) { throw std::runtime_error(message); });
+#endif
+    }
+}
+
+void ReplayD3d12Feature::RegisterDecodeComponents(graphics::FpsInfo* fps_info)
+{
+    if (is_enabled_)
+    {
+#if defined(D3D12_SUPPORT)
         replay_consumer_->SetFpsInfo(fps_info);
 
         // Check for user option if first pass tracking is enabled
@@ -80,6 +93,7 @@ void ReplayD3d12Feature::RegisterDecodeComponents(decode::FileProcessor*        
 
         decoder_.AddConsumer(replay_consumer_.get());
         file_processor_->AddDecoder(decoder_);
+#endif // D3D12_SUPPORT
 
 #ifdef GFXRECON_AGS_SUPPORT
         ags_replay_consumer_.AddDx12Consumer(replay_consumer_.get());
@@ -92,6 +106,7 @@ void ReplayD3d12Feature::RegisterDecodeComponents(decode::FileProcessor*        
 
 void ReplayD3d12Feature::SetupPreProcessingPass(decode::FileProcessor* file_processor)
 {
+#if defined(D3D12_SUPPORT)
     if (needs_pre_processor_)
     {
         pre_processor_consumer_ = std::make_unique<decode::Dx12PreProcessConsumer>();
@@ -105,10 +120,12 @@ void ReplayD3d12Feature::SetupPreProcessingPass(decode::FileProcessor* file_proc
         pre_processor_decoder_->AddConsumer(pre_processor_consumer_.get());
         file_processor->AddDecoder(pre_processor_decoder_.get());
     }
+#endif // D3D12_SUPPORT
 }
 
-void ReplayD3d12Feature::CompletePreProcessingPass(std::string& dr_block_indices)
+void ReplayD3d12Feature::CompletePreProcessingPass()
 {
+#if defined(D3D12_SUPPORT)
     if (needs_pre_processor_)
     {
         replay_options_.enable_d3d12 = pre_processor_consumer_->WasD3D12APIDetected();
@@ -122,11 +139,14 @@ void ReplayD3d12Feature::CompletePreProcessingPass(std::string& dr_block_indices
         pre_processor_decoder_.reset();
         pre_processor_consumer_.reset();
     }
+#endif // D3D12_SUPPORT
 }
 
 void ReplayD3d12Feature::InternalCleanup()
 {
-    if (is_enabled_)
+#if defined(D3D12_SUPPORT)
+    if (is_enabled_ && (file_processor_->GetCurrentFrameNumber() >= measurement_start_frame_) &&
+        (file_processor_->GetErrorState() == gfxrecon::decode::BlockIOError::kErrorNone))
     {
         replay_consumer_->PostReplay();
         if (!replay_options_.screenshot_ranges.empty() && !file_processor_->UsesFrameMarkers() &&
@@ -139,8 +159,8 @@ void ReplayD3d12Feature::InternalCleanup()
                 replay_consumer_->GetDXGITestPresentCount());
         }
     }
+#endif // D3D12_SUPPORT
 }
 
 GFXRECON_END_NAMESPACE(replay)
 GFXRECON_END_NAMESPACE(gfxrecon)
-#endif // D3D12_SUPPORT

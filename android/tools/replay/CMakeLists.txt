@@ -26,7 +26,6 @@ add_library(gfxrecon-replay
                 ${GFXRECON_SOURCE_DIR}/tools/replay/parse_dump_resources_cli.h
                 ${GFXRECON_SOURCE_DIR}/tools/replay/parse_dump_resources_cli.cpp
                 ${GFXRECON_SOURCE_DIR}/tools/replay/replay_settings.h
-                ${GFXRECON_SOURCE_DIR}/tools/replay/replay_pre_processing.h
                 ${GFXRECON_SOURCE_DIR}/tools/replay/recapture_vulkan_entry.cpp
                 ${GFXRECON_SOURCE_DIR}/tools/replay/recapture_vulkan_entry.h
                 ${GFXRECON_SOURCE_DIR}/framework/generated/generated_vulkan_recapture_func_table.h

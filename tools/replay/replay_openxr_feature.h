@@ -43,9 +43,10 @@ class ReplayOpenXrFeature : public ReplayCompositionFeature
     std::string Label() override { return "OpenXR"; }
 
     void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
-    void RegisterDecodeComponents(decode::FileProcessor*                    file_processor,
-                                  std::shared_ptr<application::Application> application,
-                                  graphics::FpsInfo*                        fps_info) override;
+    void CreateConsumer(decode::FileProcessor*                    file_processor,
+                        std::shared_ptr<application::Application> application,
+                        gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) override;
+    void RegisterDecodeComponents(graphics::FpsInfo* fps_info) override;
 
     void SetGraphicsFeatures(const std::vector<std::unique_ptr<ReplayGraphicsFeature>>& graphics_features) override;
 
