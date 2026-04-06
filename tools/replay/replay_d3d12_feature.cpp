@@ -159,6 +159,7 @@ void ReplayD3d12Feature::InternalCleanup()
                 replay_consumer_->GetDXGITestPresentCount());
         }
     }
+    replay_consumer_.reset();
 #endif // D3D12_SUPPORT
 }
 

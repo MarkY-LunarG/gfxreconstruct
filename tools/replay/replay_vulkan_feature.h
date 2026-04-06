@@ -61,6 +61,7 @@ class ReplayVulkanFeature : public ReplayGraphicsFeature
     void*        GetConsumer() override { return reinterpret_cast<void*>(replay_consumer_.get()); }
 
   protected:
+    void InternalCleanup() override;
     void ShutdownRecapture() override;
 
   private:

@@ -84,7 +84,10 @@ void ReplayOpenXrFeature::SetGraphicsFeatures(
     }
 }
 
-void ReplayOpenXrFeature::PostReplay() {}
+void ReplayOpenXrFeature::PostReplay()
+{
+    replay_consumer_.reset();
+}
 
 GFXRECON_END_NAMESPACE(replay)
 GFXRECON_END_NAMESPACE(gfxrecon)

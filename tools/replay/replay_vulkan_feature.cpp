@@ -160,5 +160,10 @@ void ReplayVulkanFeature::ShutdownRecapture()
     }
 }
 
+void ReplayVulkanFeature::InternalCleanup()
+{
+    replay_consumer_.reset();
+}
+
 GFXRECON_END_NAMESPACE(replay)
 GFXRECON_END_NAMESPACE(gfxrecon)
