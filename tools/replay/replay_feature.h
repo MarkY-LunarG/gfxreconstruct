@@ -23,6 +23,11 @@
 #ifndef GFXRECON_REPLAY_FEATURE_H
 #define GFXRECON_REPLAY_FEATURE_H
 
+#if defined(__ANDROID__)
+// Forward declaration to avoid pulling NDK headers into this header.
+struct android_app;
+#endif
+
 #include "util/strings.h"
 
 #include "application/application.h"
@@ -82,6 +87,10 @@ class ReplayFeature
 
     // Cleanup
     virtual void PostReplay() {}
+
+#if defined(__ANDROID__)
+    virtual void SetAndroidApp(struct android_app* /*app*/) {}
+#endif
 
   protected:
     std::string                               capture_filename_;

@@ -52,6 +52,10 @@ class ReplayOpenXrFeature
 
     void AddGraphicsFeatureForComposition(std::unique_ptr<ReplayFeature>& feature) override;
 
+#if defined(__ANDROID__)
+    void SetAndroidApp(struct android_app* app) override;
+#endif
+
   private:
     decode::OpenXrTrackedObjectInfoTable tracked_object_info_table_;
 };

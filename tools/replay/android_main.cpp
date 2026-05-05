@@ -1,6 +1,6 @@
 /*
 ** Copyright (c) 2018-2020 Valve Corporation
-** Copyright (c) 2018-2024 LunarG, Inc.
+** Copyright (c) 2018-2026 LunarG, Inc.
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a
 ** copy of this software and associated documentation files (the "Software"),
@@ -27,38 +27,23 @@
 #include "application/android_window.h"
 #include "decode/file_processor.h"
 #include "decode/preload_file_processor.h"
-#include "decode/vulkan_replay_frame_loop_consumer.h"
-#include "decode/vulkan_replay_options.h"
-#include "decode/vulkan_tracked_object_info_table.h"
-#include "decode/vulkan_pre_process_consumer.h"
 #include "format/format.h"
-#include "graphics/frame_loop_info.h"
-
-// Includes for recapture
-#include "encode/vulkan_capture_manager.h"
-#include "recapture_vulkan_entry.h"
-
-#if ENABLE_OPENXR_SUPPORT
-#include "decode/openxr_tracked_object_info_table.h"
-#include "generated/generated_openxr_decoder.h"
-#include "generated/generated_openxr_replay_consumer.h"
-#endif
-#include "generated/generated_vulkan_decoder.h"
-#include "generated/generated_vulkan_replay_consumer.h"
 #include "util/android/activity.h"
 #include "util/android/intent.h"
 #include "util/argument_parser.h"
+#include "util/feature_module_registry.h"
 #include "util/logging.h"
 #include "util/platform.h"
 #include "parse_dump_resources_cli.h"
-#include "replay_pre_processing.h"
-#include "util/android/intent.h"
+
+#include "replay_feature.h"
 
 #include <android/log.h>
 #include <android/window.h>
 
 #include <cstdlib>
 #include <exception>
+#include <limits>
 #include <memory>
 #include <string>
 #include <vector>
@@ -73,7 +58,8 @@ const int32_t kSwipeDistance = 200;
 void    ProcessAppCmd(struct android_app* app, int32_t cmd);
 int32_t ProcessInputEvent(struct android_app* app, AInputEvent* event);
 
-static std::unique_ptr<gfxrecon::decode::FileProcessor> file_processor;
+static std::unique_ptr<gfxrecon::decode::FileProcessor>              file_processor;
+static std::vector<std::unique_ptr<gfxrecon::replay::ReplayFeature>> g_features;
 
 extern "C"
 {
@@ -102,6 +88,25 @@ extern "C"
     }
 }
 
+void RunPreProcessConsumer(const std::string& input_filename)
+{
+    gfxrecon::decode::FileProcessor pre_file_processor;
+    if (pre_file_processor.Initialize(input_filename))
+    {
+        for (auto& feature : g_features)
+        {
+            feature->SetupPreProcessingPass(&pre_file_processor);
+        }
+
+        pre_file_processor.ProcessAllFrames();
+
+        for (auto& feature : g_features)
+        {
+            feature->CompletePreProcessingPass();
+        }
+    }
+}
+
 void android_main(struct android_app* app)
 {
     gfxrecon::util::Log::Init();
@@ -109,6 +114,14 @@ void android_main(struct android_app* app)
 
     // Keep screen on while window is active.
     ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
+
+    // Load features from the module registry.
+    for (const auto& registered_creator :
+         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayFeature>::GetSingleton()
+             .GetRegisteredFeatureCreators())
+    {
+        g_features.push_back(std::move(registered_creator()));
+    }
 
     std::string                    args = gfxrecon::util::GetIntentExtra(app, kArgsExtentKey);
     gfxrecon::util::ArgumentParser arg_parser(false, args.c_str(), kOptions, kArguments);
@@ -165,105 +178,116 @@ void android_main(struct android_app* app)
             }
             else
             {
+                bool        has_mfr                            = false;
+                bool        requires_pre_processing            = false;
+                bool        quit_after_frame                   = false;
+                uint32_t    quit_frame                         = std::numeric_limits<uint32_t>::max();
+                uint32_t    measurement_start_frame            = 0;
+                uint32_t    measurement_end_frame              = 0;
+                bool        quit_after_measurement_frame_range = false;
+                bool        flush_measurement_frame_range      = false;
+                bool        flush_inside_measurement_range     = false;
+                bool        preload_measurement_frame_range    = false;
+                std::string measurement_file_name;
+
                 auto application = std::make_shared<gfxrecon::application::Application>(
                     kApplicationName, file_processor.get(), VK_KHR_ANDROID_SURFACE_EXTENSION_NAME, app);
 
-                gfxrecon::decode::VulkanTrackedObjectInfoTable tracked_object_info_table;
-                gfxrecon::decode::VulkanReplayOptions          replay_options =
-                    GetVulkanReplayOptions(arg_parser, filename, &tracked_object_info_table);
-
-                std::unique_ptr<gfxrecon::decode::VulkanReplayConsumer> vulkan_replay_consumer;
-
-                gfxrecon::graphics::FrameLoopInfo fl_info;
-                if (enable_frame_loop)
+                for (auto& feature : g_features)
                 {
-                    fl_info = gfxrecon::graphics::FrameLoopInfo(loop_frame, loop_count);
-                    application->SetFrameLoopInfo(&fl_info);
-
-                    vulkan_replay_consumer = std::make_unique<gfxrecon::decode::VulkanReplayFrameLoopConsumer>(
-                        application, replay_options, fl_info);
-                }
-                else
-                {
-                    vulkan_replay_consumer =
-                        std::make_unique<gfxrecon::decode::VulkanReplayConsumer>(application, replay_options);
+                    feature->QueryOptions(arg_parser, filename);
                 }
 
-                gfxrecon::decode::VulkanDecoder vulkan_decoder;
-
-                if (replay_options.capture)
+                for (auto& feature : g_features)
                 {
-                    gfxrecon::vulkan_recapture::RecaptureVulkanEntry::InitSingleton();
+                    if (feature->CanAdjustFpsInfo())
+                    {
+                        // Only do the initial measurement file/frame queries once
+                        if (!has_mfr)
+                        {
+                            has_mfr =
+                                GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
+                            GetMeasurementFilename(arg_parser, measurement_file_name);
+                        }
 
-                    // Set replay to use the GetInstanceProcAddr function from RecaptureVulkanEntry so that replay first
-                    // calls into the capture layer instead of directly into the loader and Vulkan runtime.
-                    // Also sets the capture manager's instance and device creation callbacks.
-                    vulkan_replay_consumer->SetupForRecapture(gfxrecon::vulkan_recapture::GetInstanceProcAddr,
-                                                              gfxrecon::vulkan_recapture::dispatch_CreateInstance,
-                                                              gfxrecon::vulkan_recapture::dispatch_CreateDevice);
+                        feature->SetMeasurementStartFrame(measurement_start_frame);
+                        feature->QueryFpsInfoOptions(quit_after_measurement_frame_range,
+                                                     flush_measurement_frame_range,
+                                                     flush_inside_measurement_range,
+                                                     preload_measurement_frame_range,
+                                                     quit_after_frame);
+                    }
                 }
-
-                ApiReplayOptions  api_replay_options;
-                ApiReplayConsumer api_replay_consumer;
-                api_replay_options.vk_replay_options   = &replay_options;
-                api_replay_consumer.vk_replay_consumer = vulkan_replay_consumer.get();
-
-                if (IsRunPreProcessConsumer(api_replay_options))
+                if (quit_after_frame)
                 {
-                    RunPreProcessConsumer(filename, api_replay_options, api_replay_consumer);
-                }
-
-                uint32_t measurement_start_frame;
-                uint32_t measurement_end_frame;
-                bool     has_mfr = GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
-
-                std::string measurement_file_name;
-                GetMeasurementFilename(arg_parser, measurement_file_name);
-
-                bool     quit_after_frame = false;
-                uint32_t quit_frame;
-
-                if (replay_options.quit_after_frame)
-                {
-                    quit_after_frame = true;
                     GetQuitAfterFrame(arg_parser, quit_frame);
                 }
 
                 gfxrecon::graphics::FpsInfo fps_info(static_cast<uint64_t>(measurement_start_frame),
                                                      static_cast<uint64_t>(measurement_end_frame),
                                                      has_mfr,
-                                                     replay_options.quit_after_measurement_frame_range,
-                                                     replay_options.flush_measurement_frame_range,
-                                                     replay_options.flush_inside_measurement_range,
-                                                     replay_options.preload_measurement_range,
+                                                     quit_after_measurement_frame_range,
+                                                     flush_measurement_frame_range,
+                                                     flush_inside_measurement_range,
+                                                     preload_measurement_frame_range,
                                                      measurement_file_name,
                                                      quit_after_frame,
                                                      quit_frame);
 
-                vulkan_replay_consumer->SetFatalErrorHandler(
-                    [](const char* message) { throw std::runtime_error(message); });
-                vulkan_replay_consumer->SetFpsInfo(&fps_info);
+                gfxrecon::graphics::FrameLoopInfo  fl_info;
+                gfxrecon::graphics::FrameLoopInfo* fl_info_ptr = nullptr;
+                if (enable_frame_loop)
+                {
+                    fl_info     = gfxrecon::graphics::FrameLoopInfo(loop_frame, loop_count);
+                    fl_info_ptr = &fl_info;
+                    application->SetFrameLoopInfo(fl_info_ptr);
+                }
 
-                vulkan_decoder.AddConsumer(vulkan_replay_consumer.get());
+                gfxrecon::replay::ReplayFeature* compositing_feature = nullptr;
+                for (auto& feature : g_features)
+                {
+                    feature->CreateConsumer(file_processor.get(), application, fl_info_ptr);
 
-                file_processor->AddDecoder(&vulkan_decoder);
+                    requires_pre_processing |= feature->NeedsPreProcessingPass();
 
-                file_processor->SetPrintBlockInfoFlag(replay_options.enable_print_block_info,
-                                                      replay_options.block_index_from,
-                                                      replay_options.block_index_to);
+                    if (feature->IsCompositingFeature())
+                    {
+                        GFXRECON_ASSERT(compositing_feature == nullptr);
+                        compositing_feature = feature.get();
+                    }
+
+                    if (feature->SupportsRecapture())
+                    {
+                        feature->DetectAndSetupRecapture();
+                    }
+
+                    feature->SetAndroidApp(app);
+                }
+
+                // If there is a compositing feature, set the corresponding graphics
+                // API used for the composition.
+                if (compositing_feature)
+                {
+                    for (auto& feature : g_features)
+                    {
+                        if (feature->IsGraphicsFeatureSupportingComposition())
+                        {
+                            compositing_feature->AddGraphicsFeatureForComposition(feature);
+                        }
+                    }
+                }
+
+                if (requires_pre_processing)
+                {
+                    RunPreProcessConsumer(filename);
+                }
+
+                for (auto& feature : g_features)
+                {
+                    feature->RegisterDecodeComponents(&fps_info);
+                }
 
                 application->SetPauseFrame(GetPauseFrame(arg_parser));
-
-#if ENABLE_OPENXR_SUPPORT
-                gfxrecon::decode::OpenXrReplayOptions  openxr_replay_options = {};
-                gfxrecon::decode::OpenXrDecoder        openxr_decoder;
-                gfxrecon::decode::OpenXrReplayConsumer openxr_replay_consumer(application, openxr_replay_options);
-                openxr_replay_consumer.SetVulkanReplayConsumer(vulkan_replay_consumer.get());
-                openxr_replay_consumer.SetAndroidApp(app);
-                openxr_replay_consumer.SetFpsInfo(&fps_info);
-                openxr_decoder.AddConsumer(&openxr_replay_consumer);
-                file_processor->AddDecoder(&openxr_decoder);
-#endif
 
                 // Warn if the capture layer is active.
                 CheckActiveLayers(kLayerProperty);
@@ -307,9 +331,9 @@ void android_main(struct android_app* app)
                     GFXRECON_WRITE_CONSOLE("File did not contain any frames");
                 }
 
-                if (replay_options.capture)
+                for (auto& feature : g_features)
                 {
-                    gfxrecon::vulkan_recapture::RecaptureVulkanEntry::DestroySingleton();
+                    feature->PostReplay();
                 }
             }
         }

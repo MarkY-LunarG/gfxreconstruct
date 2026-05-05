@@ -79,6 +79,16 @@ void ReplayOpenXrFeature::AddGraphicsFeatureForComposition(std::unique_ptr<Repla
     }
 }
 
+#if defined(__ANDROID__)
+void ReplayOpenXrFeature::SetAndroidApp(struct android_app* app)
+{
+    if (replay_consumer_ != nullptr)
+    {
+        replay_consumer_->SetAndroidApp(app);
+    }
+}
+#endif
+
 GFXRECON_END_NAMESPACE(replay)
 GFXRECON_END_NAMESPACE(gfxrecon)
 
