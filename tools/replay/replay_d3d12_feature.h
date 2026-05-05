@@ -41,9 +41,10 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayD3d12Feature : public ReplayFeatureImpl<decode::Dx12ReplayConsumer,
-                                                     decode::Dx12Decoder,
-                                                     decode::DxReplayOptions>
+class ReplayD3d12Feature : public ReplayPreProcessFeatureImpl<decode::Dx12ReplayConsumer,
+                                                              decode::Dx12Decoder,
+                                                              decode::DxReplayOptions,
+                                                              decode::Dx12PreProcessConsumer>
 {
   public:
     ReplayD3d12Feature() { can_adjust_fps_info_ = true; }
@@ -57,15 +58,11 @@ class ReplayD3d12Feature : public ReplayFeatureImpl<decode::Dx12ReplayConsumer,
                         gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) override;
     void RegisterDecodeComponents(graphics::FpsInfo* fps_info) override;
 
-    virtual void SetupPreProcessingPass(decode::FileProcessor* file_processor) override;
     virtual void CompletePreProcessingPass() override;
 
     void PostReplay() override;
 
   private:
-    std::unique_ptr<decode::Dx12PreProcessConsumer> pre_processor_consumer_;
-    std::unique_ptr<decode::Dx12Decoder>            pre_processor_decoder_;
-
 #ifdef GFXRECON_AGS_SUPPORT
     decode::AgsReplayConsumer ags_replay_consumer_;
     decode::AgsDecoder        ags_decoder_;

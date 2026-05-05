@@ -93,23 +93,6 @@ void ReplayD3d12Feature::RegisterDecodeComponents(graphics::FpsInfo* fps_info)
     }
 }
 
-void ReplayD3d12Feature::SetupPreProcessingPass(decode::FileProcessor* file_processor)
-{
-    if (needs_pre_processor_)
-    {
-        pre_processor_consumer_ = std::make_unique<decode::Dx12PreProcessConsumer>();
-        pre_processor_decoder_  = std::make_unique<decode::Dx12Decoder>();
-
-        if (replay_options_.using_dump_resources_target)
-        {
-            pre_processor_consumer_->EnableDumpResources(replay_options_.dump_resources_target);
-        }
-
-        pre_processor_decoder_->AddConsumer(pre_processor_consumer_.get());
-        file_processor->AddDecoder(pre_processor_decoder_.get());
-    }
-}
-
 void ReplayD3d12Feature::CompletePreProcessingPass()
 {
     if (needs_pre_processor_)
@@ -122,8 +105,7 @@ void ReplayD3d12Feature::CompletePreProcessingPass()
             replay_consumer_->SetDumpTarget(*track_dump_target);
         }
 
-        pre_processor_decoder_.reset();
-        pre_processor_consumer_.reset();
+        TeardownPreProcess();
     }
 }
 

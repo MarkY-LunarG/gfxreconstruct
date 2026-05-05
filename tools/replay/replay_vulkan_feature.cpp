@@ -102,23 +102,6 @@ void ReplayVulkanFeature::DetectAndSetupRecapture()
     }
 }
 
-void ReplayVulkanFeature::SetupPreProcessingPass(decode::FileProcessor* file_processor)
-{
-    if (needs_pre_processor_)
-    {
-        pre_processor_consumer_ = std::make_unique<decode::VulkanPreProcessConsumer>();
-        pre_processor_decoder_  = std::make_unique<decode::VulkanDecoder>();
-
-        if (replay_options_.using_dump_resources_target)
-        {
-            pre_processor_consumer_->EnableDumpResources(replay_options_.dump_resources_target);
-        }
-
-        pre_processor_decoder_->AddConsumer(pre_processor_consumer_.get());
-        file_processor->AddDecoder(pre_processor_decoder_.get());
-    }
-}
-
 void ReplayVulkanFeature::CompletePreProcessingPass()
 {
     if (needs_pre_processor_)
@@ -143,8 +126,7 @@ void ReplayVulkanFeature::CompletePreProcessingPass()
             }
         }
 
-        pre_processor_decoder_.reset();
-        pre_processor_consumer_.reset();
+        TeardownPreProcess();
     }
 }
 

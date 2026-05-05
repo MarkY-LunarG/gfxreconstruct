@@ -34,9 +34,8 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayOpenXrFeature : public ReplayFeatureImpl<decode::OpenXrReplayConsumer,
-                                                      decode::OpenXrDecoder,
-                                                      decode::OpenXrReplayOptions>
+class ReplayOpenXrFeature
+    : public ReplayFeatureImpl<decode::OpenXrReplayConsumer, decode::OpenXrDecoder, decode::OpenXrReplayOptions>
 {
   public:
     ReplayOpenXrFeature() { is_compositor_ = true; }

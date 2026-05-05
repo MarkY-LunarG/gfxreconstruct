@@ -130,6 +130,55 @@ class ReplayFeatureImpl : public ReplayFeature
     }
 };
 
+// Template base for features that also need a pre-processing pass.
+// Provides typed pre-processor members and splits setup into three helpers so the
+// derived class can configure the consumer (e.g. EnableDumpResources) between
+// construction and registration:
+//   InitPreProcess()          -- constructs pre_processor_consumer_ / pre_processor_decoder_
+//   FinalizePreProcess(fp)    -- wires them into the file processor
+//   TeardownPreProcess()      -- resets them after the pass completes
+// Also provides a complete SetupPreProcessingPass() using those helpers plus the
+// shared dump-resources target opt-in, so most derived classes need no override.
+template <typename ConsumerT, typename DecoderT, typename OptionsT, typename PreConsumerT>
+class ReplayPreProcessFeatureImpl : public ReplayFeatureImpl<ConsumerT, DecoderT, OptionsT>
+{
+  public:
+    void SetupPreProcessingPass(decode::FileProcessor* file_processor) override
+    {
+        if (this->needs_pre_processor_)
+        {
+            InitPreProcess();
+            if (this->replay_options_.using_dump_resources_target)
+            {
+                pre_processor_consumer_->EnableDumpResources(this->replay_options_.dump_resources_target);
+            }
+            FinalizePreProcess(file_processor);
+        }
+    }
+
+  protected:
+    std::unique_ptr<PreConsumerT> pre_processor_consumer_;
+    std::unique_ptr<DecoderT>     pre_processor_decoder_;
+
+    void InitPreProcess()
+    {
+        pre_processor_consumer_ = std::make_unique<PreConsumerT>();
+        pre_processor_decoder_  = std::make_unique<DecoderT>();
+    }
+
+    void FinalizePreProcess(decode::FileProcessor* file_processor)
+    {
+        pre_processor_decoder_->AddConsumer(pre_processor_consumer_.get());
+        file_processor->AddDecoder(pre_processor_decoder_.get());
+    }
+
+    void TeardownPreProcess()
+    {
+        pre_processor_decoder_.reset();
+        pre_processor_consumer_.reset();
+    }
+};
+
 GFXRECON_END_NAMESPACE(replay)
 GFXRECON_END_NAMESPACE(gfxrecon)
 
