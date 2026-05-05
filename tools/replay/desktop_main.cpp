@@ -181,28 +181,9 @@ int main(int argc, const char** argv)
             auto        application   = std::make_shared<gfxrecon::application::Application>(
                 kApplicationName, file_processor.get(), wsi_extension, nullptr);
 
-            gfxrecon::replay::ReplayFeature* compositing_feature = nullptr;
             for (auto& feature : g_features)
             {
                 feature->QueryOptions(arg_parser, filename);
-                if (feature->IsCompositingFeature())
-                {
-                    GFXRECON_ASSERT(compositing_feature == nullptr);
-                    compositing_feature = feature.get();
-                }
-            }
-
-            // If there is a compositing feature, set the corresponding graphics
-            // API used for the composition.
-            if (compositing_feature)
-            {
-                for (auto& feature : g_features)
-                {
-                    if (feature->IsGraphicsFeatureSupportingComposition())
-                    {
-                        compositing_feature->AddGraphicsFeatureForComposition(feature);
-                    }
-                }
             }
 
             for (auto& feature : g_features)
@@ -249,15 +230,35 @@ int main(int argc, const char** argv)
                 application->SetFrameLoopInfo(fl_info_ptr);
             }
 
+            gfxrecon::replay::ReplayFeature* compositing_feature = nullptr;
             for (auto& feature : g_features)
             {
                 feature->CreateConsumer(file_processor.get(), application, fl_info_ptr);
 
                 requires_pre_processing |= feature->NeedsPreProcessingPass();
 
+                if (feature->IsCompositingFeature())
+                {
+                    GFXRECON_ASSERT(compositing_feature == nullptr);
+                    compositing_feature = feature.get();
+                }
+
                 if (feature->SupportsRecapture())
                 {
                     feature->DetectAndSetupRecapture();
+                }
+            }
+
+            // If there is a compositing feature, set the corresponding graphics
+            // API used for the composition.
+            if (compositing_feature)
+            {
+                for (auto& feature : g_features)
+                {
+                    if (feature->IsGraphicsFeatureSupportingComposition())
+                    {
+                        compositing_feature->AddGraphicsFeatureForComposition(feature);
+                    }
                 }
             }
 

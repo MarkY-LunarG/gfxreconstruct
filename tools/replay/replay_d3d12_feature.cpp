@@ -81,6 +81,7 @@ void ReplayD3d12Feature::RegisterDecodeComponents(graphics::FpsInfo* fps_info)
                 file_processor_tracking.RemoveDecoder(&decoder_);
                 decoder_.RemoveConsumer(tracking_consumer);
             }
+            delete tracking_consumer;
         }
 
         RegisterConsumerAndDecoder(fps_info);
