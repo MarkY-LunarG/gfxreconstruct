@@ -34,7 +34,7 @@ GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
 // Register this class as a feature in a module registry
-GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayGraphicsFeature, ReplayVulkanFeature)
+GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayFeature, ReplayVulkanFeature)
 
 void ReplayVulkanFeature::QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename)
 {
@@ -152,17 +152,14 @@ void ReplayVulkanFeature::CompletePreProcessingPass()
     }
 }
 
-void ReplayVulkanFeature::ShutdownRecapture()
+void ReplayVulkanFeature::PostReplay()
 {
+    replay_consumer_.reset();
+
     if (is_enabled_ && replay_options_.capture)
     {
         vulkan_recapture::RecaptureVulkanEntry::DestroySingleton();
     }
-}
-
-void ReplayVulkanFeature::InternalCleanup()
-{
-    replay_consumer_.reset();
 }
 
 GFXRECON_END_NAMESPACE(replay)

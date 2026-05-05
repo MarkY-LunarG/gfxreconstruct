@@ -30,7 +30,7 @@ GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
 // Register this class as a feature in a module registry
-GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayGraphicsFeature, ReplayD3d12Feature)
+GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayFeature, ReplayD3d12Feature)
 
 void ReplayD3d12Feature::QueryOptions(gfxrecon::util::ArgumentParser& arg_parser, const std::string& capture_filename)
 {
@@ -142,7 +142,7 @@ void ReplayD3d12Feature::CompletePreProcessingPass()
 #endif // D3D12_SUPPORT
 }
 
-void ReplayD3d12Feature::InternalCleanup()
+void ReplayD3d12Feature::PostReplay()
 {
 #if defined(D3D12_SUPPORT)
     if (is_enabled_ && (file_processor_->GetCurrentFrameNumber() >= measurement_start_frame_) &&

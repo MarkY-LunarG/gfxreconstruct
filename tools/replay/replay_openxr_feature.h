@@ -34,9 +34,10 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayOpenXrFeature : public ReplayCompositionFeature
+class ReplayOpenXrFeature : public ReplayFeature
 {
   public:
+    ReplayOpenXrFeature() { is_compositor_ = true; }
     virtual ~ReplayOpenXrFeature() = default;
 
     // Simple "getter" style methods
@@ -48,7 +49,7 @@ class ReplayOpenXrFeature : public ReplayCompositionFeature
                         gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) override;
     void RegisterDecodeComponents(graphics::FpsInfo* fps_info) override;
 
-    void SetGraphicsFeatures(const std::vector<std::unique_ptr<ReplayGraphicsFeature>>& graphics_features) override;
+    void AddGraphicsFeatureForComposition(std::unique_ptr<ReplayFeature>& feature) override;
 
     void PostReplay() override;
 

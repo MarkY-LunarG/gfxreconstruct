@@ -41,9 +41,10 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayD3d12Feature : public ReplayGraphicsFeature
+class ReplayD3d12Feature : public ReplayFeature
 {
   public:
+    ReplayD3d12Feature() { can_adjust_fps_info_ = true; }
     virtual ~ReplayD3d12Feature() = default;
 
     // Simple "getter" style methods
@@ -66,8 +67,7 @@ class ReplayD3d12Feature : public ReplayGraphicsFeature
     virtual void SetupPreProcessingPass(decode::FileProcessor* file_processor) override;
     virtual void CompletePreProcessingPass() override;
 
-  protected:
-    void InternalCleanup() override;
+    void PostReplay() override;
 
   private:
 #if defined(D3D12_SUPPORT)

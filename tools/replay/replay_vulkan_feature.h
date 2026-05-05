@@ -34,16 +34,21 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayVulkanFeature : public ReplayGraphicsFeature
+class ReplayVulkanFeature : public ReplayFeature
 {
   public:
+    ReplayVulkanFeature()
+    {
+        supports_recapture_   = true;
+        supports_composition_ = true;
+        can_adjust_fps_info_  = true;
+    }
     virtual ~ReplayVulkanFeature() = default;
 
     // Simple "getter" style methods
     std::string Label() override { return "Vulkan"; }
 
     void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
-    bool ReplayOptionsAdjustFpsInfo() override { return true; }
     void QueryFpsInfoOptions(bool& quit_after_range,
                              bool& flush_range,
                              bool& flush_inside_range,
@@ -60,9 +65,7 @@ class ReplayVulkanFeature : public ReplayGraphicsFeature
     virtual void CompletePreProcessingPass() override;
     void*        GetConsumer() override { return reinterpret_cast<void*>(replay_consumer_.get()); }
 
-  protected:
-    void InternalCleanup() override;
-    void ShutdownRecapture() override;
+    void PostReplay() override;
 
   private:
     decode::VulkanTrackedObjectInfoTable          tracked_object_info_table_;

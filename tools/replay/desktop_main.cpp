@@ -41,8 +41,7 @@
 #include <memory>
 #include <stdexcept>
 
-static std::vector<std::unique_ptr<gfxrecon::replay::ReplayGraphicsFeature>>    g_graphics_features;
-static std::vector<std::unique_ptr<gfxrecon::replay::ReplayCompositionFeature>> g_composition_features;
+static std::vector<std::unique_ptr<gfxrecon::replay::ReplayFeature>> g_features;
 
 #if defined(D3D12_SUPPORT)
 
@@ -82,14 +81,14 @@ void RunPreProcessConsumer(const std::string& input_filename)
     gfxrecon::decode::FileProcessor file_processor;
     if (file_processor.Initialize(input_filename))
     {
-        for (auto& feature : g_graphics_features)
+        for (auto& feature : g_features)
         {
             feature->SetupPreProcessingPass(&file_processor);
         }
 
         file_processor.ProcessAllFrames();
 
-        for (auto& feature : g_graphics_features)
+        for (auto& feature : g_features)
         {
             feature->CompletePreProcessingPass();
         }
@@ -109,16 +108,10 @@ int main(int argc, const char** argv)
     // call each generator here and put the unique_ptr into our
     // internal unique_ptr vector.
     for (const auto& registered_creator :
-         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayGraphicsFeature>::GetSingleton()
+         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayFeature>::GetSingleton()
              .GetRegisteredFeatureCreators())
     {
-        g_graphics_features.push_back(std::move(registered_creator()));
-    }
-    for (const auto& registered_creator :
-         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayCompositionFeature>::GetSingleton()
-             .GetRegisteredFeatureCreators())
-    {
-        g_composition_features.push_back(std::move(registered_creator()));
+        g_features.push_back(std::move(registered_creator()));
     }
 
     gfxrecon::util::ArgumentParser arg_parser(argc, argv, kOptions, kArguments);
@@ -188,18 +181,33 @@ int main(int argc, const char** argv)
             auto        application   = std::make_shared<gfxrecon::application::Application>(
                 kApplicationName, file_processor.get(), wsi_extension, nullptr);
 
-            for (auto& feature : g_graphics_features)
+            gfxrecon::replay::ReplayFeature* compositing_feature = nullptr;
+            for (auto& feature : g_features)
             {
                 feature->QueryOptions(arg_parser, filename);
-            }
-            for (auto& feature : g_composition_features)
-            {
-                feature->QueryOptions(arg_parser, filename);
+                if (feature->IsCompositingFeature())
+                {
+                    GFXRECON_ASSERT(compositing_feature == nullptr);
+                    compositing_feature = feature.get();
+                }
             }
 
-            for (auto& feature : g_graphics_features)
+            // If there is a compositing feature, set the corresponding graphics
+            // API used for the composition.
+            if (compositing_feature)
             {
-                if (feature->ReplayOptionsAdjustFpsInfo())
+                for (auto& feature : g_features)
+                {
+                    if (feature->IsGraphicsFeatureSupportingComposition())
+                    {
+                        compositing_feature->AddGraphicsFeatureForComposition(feature);
+                    }
+                }
+            }
+
+            for (auto& feature : g_features)
+            {
+                if (feature->CanAdjustFpsInfo())
                 {
                     // Only do the initial measurement file/frame queries once
                     if (!has_mfr)
@@ -241,17 +249,16 @@ int main(int argc, const char** argv)
                 application->SetFrameLoopInfo(fl_info_ptr);
             }
 
-            for (auto& feature : g_graphics_features)
+            for (auto& feature : g_features)
             {
                 feature->CreateConsumer(file_processor.get(), application, fl_info_ptr);
 
                 requires_pre_processing |= feature->NeedsPreProcessingPass();
 
-                feature->DetectAndSetupRecapture();
-            }
-            for (auto& feature : g_composition_features)
-            {
-                feature->CreateConsumer(file_processor.get(), application, fl_info_ptr);
+                if (feature->SupportsRecapture())
+                {
+                    feature->DetectAndSetupRecapture();
+                }
             }
 
             if (requires_pre_processing)
@@ -259,11 +266,7 @@ int main(int argc, const char** argv)
                 RunPreProcessConsumer(filename);
             }
 
-            for (auto& feature : g_graphics_features)
-            {
-                feature->RegisterDecodeComponents(&fps_info);
-            }
-            for (auto& feature : g_composition_features)
+            for (auto& feature : g_features)
             {
                 feature->RegisterDecodeComponents(&fps_info);
             }
@@ -307,11 +310,7 @@ int main(int argc, const char** argv)
                 GFXRECON_WRITE_CONSOLE("File did not contain any frames");
             }
 
-            for (auto& feature : g_graphics_features)
-            {
-                feature->PostReplay();
-            }
-            for (auto& feature : g_composition_features)
+            for (auto& feature : g_features)
             {
                 feature->PostReplay();
             }

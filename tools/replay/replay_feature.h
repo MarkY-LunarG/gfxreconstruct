@@ -36,36 +36,29 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayFeatureBase
+class ReplayFeature
 {
   public:
-    virtual ~ReplayFeatureBase() = default;
+    virtual ~ReplayFeature() { PostReplay(); }
 
     virtual std::string Label() = 0;
 
-    virtual void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) = 0;
-    virtual void CreateConsumer(decode::FileProcessor*                    file_processor,
-                                std::shared_ptr<application::Application> application,
-                                gfxrecon::graphics::FrameLoopInfo*        frame_loop_info)           = 0;
-    virtual void RegisterDecodeComponents(graphics::FpsInfo* fps_info)                               = 0;
-    virtual void PostReplay()                                                                        = 0;
+    // Options queries
+    virtual void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) {}
 
-  protected:
-    std::string                               capture_filename_;
-    std::shared_ptr<application::Application> application_;
-    decode::FileProcessor*                    file_processor_{ nullptr };
-    bool                                      is_enabled_{ false };
-};
+    // Composition methods (for an API like OpenXR which uses other graphics APIs to
+    // compose final images).
+    bool         IsCompositingFeature() { return is_compositor_; }
+    bool         IsGraphicsFeatureSupportingComposition() { return supports_composition_; }
+    virtual void AddGraphicsFeatureForComposition(std::unique_ptr<ReplayFeature>& feature) {}
 
-class ReplayGraphicsFeature : public ReplayFeatureBase
-{
-  public:
-    virtual ~ReplayGraphicsFeature() = default;
-
+    // Recapture methods (capturing while replaying)
+    bool         SupportsRecapture() { return supports_recapture_; }
     virtual void DetectAndSetupRecapture() {}
 
+    // Frame and FPS methods
+    bool         CanAdjustFpsInfo() { return can_adjust_fps_info_; }
     void         SetMeasurementStartFrame(uint32_t frame) { measurement_start_frame_ = frame; }
-    virtual bool ReplayOptionsAdjustFpsInfo() { return false; }
     virtual void QueryFpsInfoOptions(bool& quit_after_range,
                                      bool& flush_range,
                                      bool& flush_inside_range,
@@ -73,35 +66,33 @@ class ReplayGraphicsFeature : public ReplayFeatureBase
                                      bool& quit_after_frame)
     {}
 
-    bool          NeedsPreProcessingPass() { return needs_pre_processor_; }
-    virtual void  SetupPreProcessingPass(decode::FileProcessor* file_processor) = 0;
-    virtual void  CompletePreProcessingPass()                                   = 0;
-    virtual void* GetConsumer() { return nullptr; }
+    // Pre-processing functionality
+    bool         NeedsPreProcessingPass() { return needs_pre_processor_; }
+    virtual void SetupPreProcessingPass(decode::FileProcessor* file_processor) {}
+    virtual void CompletePreProcessingPass() {}
 
-    void PostReplay() override
-    {
-        InternalCleanup();
-        ShutdownRecapture();
-    }
+    // Decode/Consumer functions
+    virtual void  CreateConsumer(decode::FileProcessor*                    file_processor,
+                                 std::shared_ptr<application::Application> application,
+                                 gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) = 0;
+    virtual void* GetConsumer() { return nullptr; }
+    virtual void  RegisterDecodeComponents(graphics::FpsInfo* fps_info) = 0;
+
+    // Cleanup
+    virtual void PostReplay() {}
 
   protected:
-    virtual void InternalCleanup() { ; }
-    virtual void ShutdownRecapture() { ; }
-
-    bool                   needs_pre_processor_{ false };
-    uint32_t               measurement_start_frame_{ 0 };
-    decode::FileProcessor* pre_processor_file_processor_{ nullptr };
-};
-
-class ReplayCompositionFeature : public ReplayFeatureBase
-{
-  public:
-    virtual ~ReplayCompositionFeature() = default;
-
-    // Called after the graphics features are created so that the composition feature can
-    // utilize the underlying enabled graphics feature.  This must be called before
-    // RegisterDecodeComponents
-    virtual void SetGraphicsFeatures(const std::vector<std::unique_ptr<ReplayGraphicsFeature>>& graphics_features) = 0;
+    std::string                               capture_filename_;
+    std::shared_ptr<application::Application> application_;
+    decode::FileProcessor*                    file_processor_{ nullptr };
+    bool                                      needs_pre_processor_{ false };
+    decode::FileProcessor*                    pre_processor_file_processor_{ nullptr };
+    bool                                      is_enabled_{ false };
+    bool                                      can_adjust_fps_info_{ false };
+    uint32_t                                  measurement_start_frame_{ 0 };
+    bool                                      supports_recapture_{ false };
+    bool                                      is_compositor_{ false };
+    bool                                      supports_composition_{ false };
 };
 
 GFXRECON_END_NAMESPACE(replay)
