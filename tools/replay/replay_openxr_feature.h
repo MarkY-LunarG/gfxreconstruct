@@ -34,7 +34,9 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayOpenXrFeature : public ReplayFeature
+class ReplayOpenXrFeature : public ReplayFeatureImpl<decode::OpenXrReplayConsumer,
+                                                      decode::OpenXrDecoder,
+                                                      decode::OpenXrReplayOptions>
 {
   public:
     ReplayOpenXrFeature() { is_compositor_ = true; }
@@ -51,13 +53,8 @@ class ReplayOpenXrFeature : public ReplayFeature
 
     void AddGraphicsFeatureForComposition(std::unique_ptr<ReplayFeature>& feature) override;
 
-    void PostReplay() override;
-
   private:
-    decode::OpenXrTrackedObjectInfoTable          tracked_object_info_table_;
-    decode::OpenXrReplayOptions                   replay_options_;
-    std::unique_ptr<decode::OpenXrReplayConsumer> replay_consumer_;
-    decode::OpenXrDecoder                         decoder_;
+    decode::OpenXrTrackedObjectInfoTable tracked_object_info_table_;
 };
 
 GFXRECON_END_NAMESPACE(replay)

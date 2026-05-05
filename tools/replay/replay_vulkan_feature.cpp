@@ -60,8 +60,7 @@ void ReplayVulkanFeature::CreateConsumer(decode::FileProcessor*                 
 {
     if (is_enabled_)
     {
-        file_processor_ = file_processor;
-        application_    = application;
+        InitConsumer(file_processor, application);
 
         if (frame_loop_info)
         {
@@ -73,7 +72,7 @@ void ReplayVulkanFeature::CreateConsumer(decode::FileProcessor*                 
             replay_consumer_ = std::make_unique<gfxrecon::decode::VulkanReplayConsumer>(application_, replay_options_);
         }
 
-        replay_consumer_->SetFatalErrorHandler([](const char* message) { throw std::runtime_error(message); });
+        FinalizeConsumer();
     }
 }
 
@@ -81,10 +80,7 @@ void ReplayVulkanFeature::RegisterDecodeComponents(graphics::FpsInfo* fps_info)
 {
     if (is_enabled_)
     {
-        replay_consumer_->SetFpsInfo(fps_info);
-
-        decoder_.AddConsumer(replay_consumer_.get());
-        file_processor_->AddDecoder(&decoder_);
+        RegisterConsumerAndDecoder(fps_info);
 
         file_processor_->SetPrintBlockInfoFlag(
             replay_options_.enable_print_block_info, replay_options_.block_index_from, replay_options_.block_index_to);

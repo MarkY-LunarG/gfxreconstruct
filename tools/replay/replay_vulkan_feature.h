@@ -34,7 +34,9 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayVulkanFeature : public ReplayFeature
+class ReplayVulkanFeature : public ReplayFeatureImpl<decode::VulkanReplayConsumer,
+                                                      decode::VulkanDecoder,
+                                                      decode::VulkanReplayOptions>
 {
   public:
     ReplayVulkanFeature()
@@ -63,17 +65,12 @@ class ReplayVulkanFeature : public ReplayFeature
 
     virtual void SetupPreProcessingPass(decode::FileProcessor* file_processor) override;
     virtual void CompletePreProcessingPass() override;
-    void*        GetConsumer() override { return reinterpret_cast<void*>(replay_consumer_.get()); }
 
     void PostReplay() override;
 
   private:
-    decode::VulkanTrackedObjectInfoTable          tracked_object_info_table_;
-    decode::VulkanReplayOptions                   replay_options_;
-    std::unique_ptr<decode::VulkanReplayConsumer> replay_consumer_;
-    decode::VulkanDecoder                         decoder_;
+    decode::VulkanTrackedObjectInfoTable tracked_object_info_table_;
 
-    std::unique_ptr<decode::FileProcessor>            pre_processor_file_processor_;
     std::unique_ptr<decode::VulkanPreProcessConsumer> pre_processor_consumer_;
     std::unique_ptr<decode::VulkanDecoder>            pre_processor_decoder_;
 };

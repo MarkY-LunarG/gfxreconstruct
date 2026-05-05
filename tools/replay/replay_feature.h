@@ -31,6 +31,8 @@
 #include "graphics/frame_loop_info.h"
 #include "util/argument_parser.h"
 
+#include <memory>
+#include <stdexcept>
 #include <string>
 
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
@@ -86,13 +88,46 @@ class ReplayFeature
     std::shared_ptr<application::Application> application_;
     decode::FileProcessor*                    file_processor_{ nullptr };
     bool                                      needs_pre_processor_{ false };
-    decode::FileProcessor*                    pre_processor_file_processor_{ nullptr };
     bool                                      is_enabled_{ false };
     bool                                      can_adjust_fps_info_{ false };
     uint32_t                                  measurement_start_frame_{ 0 };
     bool                                      supports_recapture_{ false };
     bool                                      is_compositor_{ false };
     bool                                      supports_composition_{ false };
+};
+
+// Template base for features with a typed consumer, decoder, and options object.
+// Provides GetConsumer(), PostReplay(), and protected helpers used by CreateConsumer
+// and RegisterDecodeComponents implementations.
+template <typename ConsumerT, typename DecoderT, typename OptionsT>
+class ReplayFeatureImpl : public ReplayFeature
+{
+  public:
+    void* GetConsumer() override { return reinterpret_cast<void*>(replay_consumer_.get()); }
+    void  PostReplay() override { replay_consumer_.reset(); }
+
+  protected:
+    OptionsT                   replay_options_;
+    std::unique_ptr<ConsumerT> replay_consumer_;
+    DecoderT                   decoder_;
+
+    void InitConsumer(decode::FileProcessor* file_processor, std::shared_ptr<application::Application> application)
+    {
+        file_processor_ = file_processor;
+        application_    = application;
+    }
+
+    void FinalizeConsumer()
+    {
+        replay_consumer_->SetFatalErrorHandler([](const char* message) { throw std::runtime_error(message); });
+    }
+
+    void RegisterConsumerAndDecoder(graphics::FpsInfo* fps_info)
+    {
+        replay_consumer_->SetFpsInfo(fps_info);
+        decoder_.AddConsumer(replay_consumer_.get());
+        file_processor_->AddDecoder(&decoder_);
+    }
 };
 
 GFXRECON_END_NAMESPACE(replay)

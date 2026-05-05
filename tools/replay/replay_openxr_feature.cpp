@@ -48,11 +48,9 @@ void ReplayOpenXrFeature::CreateConsumer(decode::FileProcessor*                 
 
     if (is_enabled_)
     {
-        file_processor_ = file_processor;
-        application_    = application;
-
+        InitConsumer(file_processor, application);
         replay_consumer_ = std::make_unique<decode::OpenXrReplayConsumer>(application_, replay_options_);
-        replay_consumer_->SetFatalErrorHandler([](const char* message) { throw std::runtime_error(message); });
+        FinalizeConsumer();
     }
 }
 
@@ -60,10 +58,7 @@ void ReplayOpenXrFeature::RegisterDecodeComponents(graphics::FpsInfo* fps_info)
 {
     if (is_enabled_)
     {
-        replay_consumer_->SetFpsInfo(fps_info);
-
-        decoder_.AddConsumer(replay_consumer_.get());
-        file_processor_->AddDecoder(&decoder_);
+        RegisterConsumerAndDecoder(fps_info);
     }
 }
 
@@ -82,11 +77,6 @@ void ReplayOpenXrFeature::AddGraphicsFeatureForComposition(std::unique_ptr<Repla
     {
         GFXRECON_LOG_WARNING("GFXR does not currently support OpenXR composition with %s", feature->Label());
     }
-}
-
-void ReplayOpenXrFeature::PostReplay()
-{
-    replay_consumer_.reset();
 }
 
 GFXRECON_END_NAMESPACE(replay)

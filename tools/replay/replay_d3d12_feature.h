@@ -24,12 +24,12 @@
 #define GFXRECON_REPLAY_D3D12_FEATURE_H
 
 #if defined(D3D12_SUPPORT)
+
 #include "decode/dx12_pre_process_consumer.h"
 #include "decode/dx12_tracking_consumer.h"
 #include "generated/generated_dx12_decoder.h"
 #include "generated/generated_dx12_replay_consumer.h"
 #include "graphics/dx12_util.h"
-#endif // D3D12_SUPPORT
 #ifdef GFXRECON_AGS_SUPPORT
 #include "decode/custom_ags_consumer_base.h"
 #include "decode/custom_ags_decoder.h"
@@ -41,28 +41,21 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayD3d12Feature : public ReplayFeature
+class ReplayD3d12Feature : public ReplayFeatureImpl<decode::Dx12ReplayConsumer,
+                                                     decode::Dx12Decoder,
+                                                     decode::DxReplayOptions>
 {
   public:
     ReplayD3d12Feature() { can_adjust_fps_info_ = true; }
     virtual ~ReplayD3d12Feature() = default;
 
-    // Simple "getter" style methods
     std::string Label() override { return "D3D12"; }
 
-    void  QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
-    void  CreateConsumer(decode::FileProcessor*                    file_processor,
-                         std::shared_ptr<application::Application> application,
-                         gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) override;
-    void  RegisterDecodeComponents(graphics::FpsInfo* fps_info) override;
-    void* GetConsumer() override
-    {
-#if defined(D3D12_SUPPORT)
-        return reinterpret_cast<void*>(replay_consumer_.get());
-#else
-        return nullptr;
-#endif
-    }
+    void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
+    void CreateConsumer(decode::FileProcessor*                    file_processor,
+                        std::shared_ptr<application::Application> application,
+                        gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) override;
+    void RegisterDecodeComponents(graphics::FpsInfo* fps_info) override;
 
     virtual void SetupPreProcessingPass(decode::FileProcessor* file_processor) override;
     virtual void CompletePreProcessingPass() override;
@@ -70,15 +63,8 @@ class ReplayD3d12Feature : public ReplayFeature
     void PostReplay() override;
 
   private:
-#if defined(D3D12_SUPPORT)
-    decode::DxReplayOptions                     replay_options_;
-    std::unique_ptr<decode::Dx12ReplayConsumer> replay_consumer_;
-    decode::Dx12Decoder                         decoder_;
-
-    std::unique_ptr<decode::FileProcessor>          pre_processor_file_processor_;
     std::unique_ptr<decode::Dx12PreProcessConsumer> pre_processor_consumer_;
     std::unique_ptr<decode::Dx12Decoder>            pre_processor_decoder_;
-#endif // D3D12_SUPPORT
 
 #ifdef GFXRECON_AGS_SUPPORT
     decode::AgsReplayConsumer ags_replay_consumer_;
@@ -88,5 +74,7 @@ class ReplayD3d12Feature : public ReplayFeature
 
 GFXRECON_END_NAMESPACE(replay)
 GFXRECON_END_NAMESPACE(gfxrecon)
+
+#endif // D3D12_SUPPORT
 
 #endif // GFXRECON_REPLAY_D3D12_FEATURE_H
