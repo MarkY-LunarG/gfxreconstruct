@@ -41,7 +41,7 @@
 #include <memory>
 #include <stdexcept>
 
-static std::vector<std::unique_ptr<gfxrecon::replay::ReplayFeature>> g_features;
+static std::vector<std::unique_ptr<gfxrecon::replay::ReplayFeatureBase>> g_features;
 
 #if defined(D3D12_SUPPORT)
 
@@ -108,10 +108,10 @@ int main(int argc, const char** argv)
     // call each generator here and put the unique_ptr into our
     // internal unique_ptr vector.
     for (const auto& registered_creator :
-         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayFeature>::GetSingleton()
+         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayFeatureBase>::GetSingleton()
              .GetRegisteredFeatureCreators())
     {
-        g_features.push_back(std::move(registered_creator()));
+        g_features.push_back(registered_creator());
     }
 
     gfxrecon::util::ArgumentParser arg_parser(argc, argv, kOptions, kArguments);
@@ -186,24 +186,17 @@ int main(int argc, const char** argv)
                 feature->QueryOptions(arg_parser, filename);
             }
 
+            has_mfr = GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
+            GetMeasurementFilename(arg_parser, measurement_file_name);
+
             for (auto& feature : g_features)
             {
-                if (feature->CanAdjustFpsInfo())
-                {
-                    // Only do the initial measurement file/frame queries once
-                    if (!has_mfr)
-                    {
-                        has_mfr = GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
-                        GetMeasurementFilename(arg_parser, measurement_file_name);
-                    }
-
-                    feature->SetMeasurementStartFrame(measurement_start_frame);
-                    feature->QueryFpsInfoOptions(quit_after_measurement_frame_range,
-                                                 flush_measurement_frame_range,
-                                                 flush_inside_measurement_range,
-                                                 preload_measurement_frame_range,
-                                                 quit_after_frame);
-                }
+                feature->SetMeasurementStartFrame(measurement_start_frame);
+                feature->QueryFpsInfoOptions(quit_after_measurement_frame_range,
+                                             flush_measurement_frame_range,
+                                             flush_inside_measurement_range,
+                                             preload_measurement_frame_range,
+                                             quit_after_frame);
             }
             if (quit_after_frame)
             {
@@ -230,36 +223,17 @@ int main(int argc, const char** argv)
                 application->SetFrameLoopInfo(fl_info_ptr);
             }
 
-            gfxrecon::replay::ReplayFeature* compositing_feature = nullptr;
             for (auto& feature : g_features)
             {
                 feature->CreateConsumer(file_processor.get(), application, fl_info_ptr);
-
                 requires_pre_processing |= feature->NeedsPreProcessingPass();
-
-                if (feature->IsCompositingFeature())
-                {
-                    GFXRECON_ASSERT(compositing_feature == nullptr);
-                    compositing_feature = feature.get();
-                }
-
-                if (feature->SupportsRecapture())
-                {
-                    feature->DetectAndSetupRecapture();
-                }
+                feature->DetectAndSetupRecapture();
             }
 
-            // If there is a compositing feature, set the corresponding graphics
-            // API used for the composition.
-            if (compositing_feature)
+            // NOTE: This must be called after each feature has created their consumers.
+            for (auto& feature : g_features)
             {
-                for (auto& feature : g_features)
-                {
-                    if (feature->IsGraphicsFeatureSupportingComposition())
-                    {
-                        compositing_feature->AddGraphicsFeatureForComposition(feature);
-                    }
-                }
+                feature->LinkCompositionFeatures(g_features);
             }
 
             if (requires_pre_processing)
@@ -313,7 +287,7 @@ int main(int argc, const char** argv)
 
             for (auto& feature : g_features)
             {
-                feature->PostReplay();
+                feature->Destroy();
             }
         }
     }

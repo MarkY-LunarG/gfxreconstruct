@@ -34,39 +34,34 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayVulkanFeature : public ReplayPreProcessFeatureImpl<decode::VulkanReplayConsumer,
-                                                               decode::VulkanDecoder,
-                                                               decode::VulkanReplayOptions,
-                                                               decode::VulkanPreProcessConsumer>
+class ReplayVulkanFeature : public ReplayPreProcessFeature<decode::VulkanReplayConsumer,
+                                                           decode::VulkanDecoder,
+                                                           decode::VulkanReplayOptions,
+                                                           decode::VulkanPreProcessConsumer>
 {
   public:
-    ReplayVulkanFeature()
-    {
-        supports_recapture_   = true;
-        supports_composition_ = true;
-        can_adjust_fps_info_  = true;
-    }
+    ReplayVulkanFeature()          = default;
     virtual ~ReplayVulkanFeature() = default;
 
     // Simple "getter" style methods
-    std::string Label() override { return "Vulkan"; }
+    std::string Label() const final { return "Vulkan"; }
 
-    void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
+    void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) final;
     void QueryFpsInfoOptions(bool& quit_after_range,
                              bool& flush_range,
                              bool& flush_inside_range,
                              bool& preload_range,
-                             bool& quit_after_frame) override;
+                             bool& quit_after_frame) final;
     void CreateConsumer(decode::FileProcessor*                    file_processor,
                         std::shared_ptr<application::Application> application,
-                        gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) override;
-    void RegisterDecodeComponents(graphics::FpsInfo* fps_info) override;
+                        gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) final;
+    void RegisterDecodeComponents(graphics::FpsInfo* fps_info) final;
 
-    void DetectAndSetupRecapture() override;
+    void DetectAndSetupRecapture() final;
 
-    virtual void CompletePreProcessingPass() override;
+    void CompletePreProcessingPass() final;
 
-    void PostReplay() override;
+    void Destroy() final;
 
   private:
     decode::VulkanTrackedObjectInfoTable tracked_object_info_table_;

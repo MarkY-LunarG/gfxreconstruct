@@ -23,37 +23,37 @@
 #ifndef GFXRECON_REPLAY_OPENXR_FEATURE_H
 #define GFXRECON_REPLAY_OPENXR_FEATURE_H
 
+#include "replay_feature.h"
+
 #if ENABLE_OPENXR_SUPPORT
 
 #include "decode/openxr_tracked_object_info_table.h"
 #include "generated/generated_openxr_decoder.h"
 #include "generated/generated_openxr_replay_consumer.h"
 
-#include "replay_feature.h"
-
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
 class ReplayOpenXrFeature
-    : public ReplayFeatureImpl<decode::OpenXrReplayConsumer, decode::OpenXrDecoder, decode::OpenXrReplayOptions>
+    : public ReplayFeature<decode::OpenXrReplayConsumer, decode::OpenXrDecoder, decode::OpenXrReplayOptions>
 {
   public:
-    ReplayOpenXrFeature() { is_compositor_ = true; }
+    ReplayOpenXrFeature()          = default;
     virtual ~ReplayOpenXrFeature() = default;
 
     // Simple "getter" style methods
-    std::string Label() override { return "OpenXR"; }
+    std::string Label() const final { return "OpenXR"; }
 
-    void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
+    void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) final;
     void CreateConsumer(decode::FileProcessor*                    file_processor,
                         std::shared_ptr<application::Application> application,
-                        gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) override;
-    void RegisterDecodeComponents(graphics::FpsInfo* fps_info) override;
+                        gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) final;
+    void RegisterDecodeComponents(graphics::FpsInfo* fps_info) final;
 
-    void AddGraphicsFeatureForComposition(std::unique_ptr<ReplayFeature>& feature) override;
+    void LinkCompositionFeatures(const std::vector<std::unique_ptr<ReplayFeatureBase>>& features) final;
 
 #if defined(__ANDROID__)
-    void SetAndroidApp(struct android_app* app) override;
+    void SetAndroidApp(struct android_app* app) final;
 #endif
 
   private:

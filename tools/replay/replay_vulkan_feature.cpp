@@ -34,7 +34,7 @@ GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
 // Register this class as a feature in a module registry
-GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayFeature, ReplayVulkanFeature)
+GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayFeatureBase, ReplayVulkanFeature)
 
 void ReplayVulkanFeature::QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename)
 {
@@ -47,11 +47,14 @@ void ReplayVulkanFeature::QueryOptions(util::ArgumentParser& arg_parser, const s
 void ReplayVulkanFeature::QueryFpsInfoOptions(
     bool& quit_after_range, bool& flush_range, bool& flush_inside_range, bool& preload_range, bool& quit_after_frame)
 {
-    quit_after_range   = replay_options_.quit_after_measurement_frame_range;
-    flush_range        = replay_options_.flush_measurement_frame_range;
-    flush_inside_range = replay_options_.flush_inside_measurement_range;
-    preload_range      = replay_options_.preload_measurement_range;
-    quit_after_frame   = replay_options_.quit_after_frame;
+    if (is_enabled_)
+    {
+        quit_after_range   = replay_options_.quit_after_measurement_frame_range;
+        flush_range        = replay_options_.flush_measurement_frame_range;
+        flush_inside_range = replay_options_.flush_inside_measurement_range;
+        preload_range      = replay_options_.preload_measurement_range;
+        quit_after_frame   = replay_options_.quit_after_frame;
+    }
 }
 
 void ReplayVulkanFeature::CreateConsumer(decode::FileProcessor*                    file_processor,
@@ -120,7 +123,7 @@ void ReplayVulkanFeature::CompletePreProcessingPass()
                 if (!parse_dump_resources::parse_dump_resources_arg(replay_options_))
                 {
                     GFXRECON_LOG_FATAL("There was an error while parsing dump resources indices. Terminating.");
-                    exit(0);
+                    exit(1);
                 }
                 replay_consumer_->InitializeReplayDumpResources();
             }
@@ -130,7 +133,7 @@ void ReplayVulkanFeature::CompletePreProcessingPass()
     }
 }
 
-void ReplayVulkanFeature::PostReplay()
+void ReplayVulkanFeature::Destroy()
 {
     replay_consumer_.reset();
 

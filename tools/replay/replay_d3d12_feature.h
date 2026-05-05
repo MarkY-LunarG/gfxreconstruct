@@ -25,42 +25,47 @@
 
 #if defined(D3D12_SUPPORT)
 
-#include "decode/dx12_pre_process_consumer.h"
-#include "decode/dx12_tracking_consumer.h"
 #include "generated/generated_dx12_decoder.h"
 #include "generated/generated_dx12_replay_consumer.h"
-#include "graphics/dx12_util.h"
+#include "decode/dx12_pre_process_consumer.h"
 #ifdef GFXRECON_AGS_SUPPORT
 #include "decode/custom_ags_consumer_base.h"
 #include "decode/custom_ags_decoder.h"
 #include "decode/custom_ags_replay_consumer.h"
 #endif // GFXRECON_AGS_SUPPORT
+#include "decode/dx12_tracking_consumer.h"
+#include "graphics/dx12_util.h"
 
 #include "replay_feature.h"
 
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayD3d12Feature : public ReplayPreProcessFeatureImpl<decode::Dx12ReplayConsumer,
-                                                              decode::Dx12Decoder,
-                                                              decode::DxReplayOptions,
-                                                              decode::Dx12PreProcessConsumer>
+class ReplayD3d12Feature : public ReplayPreProcessFeature<decode::Dx12ReplayConsumer,
+                                                          decode::Dx12Decoder,
+                                                          decode::DxReplayOptions,
+                                                          decode::Dx12PreProcessConsumer>
 {
   public:
-    ReplayD3d12Feature() { can_adjust_fps_info_ = true; }
+    ReplayD3d12Feature()          = default;
     virtual ~ReplayD3d12Feature() = default;
 
-    std::string Label() override { return "D3D12"; }
+    std::string Label() const final { return "D3D12"; }
 
-    void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) override;
+    void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) final;
+    void QueryFpsInfoOptions(bool& quit_after_range,
+                             bool& flush_range,
+                             bool& flush_inside_range,
+                             bool& preload_range,
+                             bool& quit_after_frame) final;
     void CreateConsumer(decode::FileProcessor*                    file_processor,
                         std::shared_ptr<application::Application> application,
-                        gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) override;
-    void RegisterDecodeComponents(graphics::FpsInfo* fps_info) override;
+                        gfxrecon::graphics::FrameLoopInfo*        frame_loop_info) final;
+    void RegisterDecodeComponents(graphics::FpsInfo* fps_info) final;
 
-    virtual void CompletePreProcessingPass() override;
+    void CompletePreProcessingPass() final;
 
-    void PostReplay() override;
+    void Destroy() final;
 
   private:
 #ifdef GFXRECON_AGS_SUPPORT

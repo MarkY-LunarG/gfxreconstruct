@@ -24,6 +24,7 @@
 #if defined(D3D12_SUPPORT)
 
 #include "replay_d3d12_feature.h"
+#include "replay_settings.h"
 
 #include "util/feature_module_registry.h"
 #include "util/logging.h"
@@ -32,7 +33,7 @@ GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
 // Register this class as a feature in a module registry
-GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayFeature, ReplayD3d12Feature)
+GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayFeatureBase, ReplayD3d12Feature)
 
 void ReplayD3d12Feature::QueryOptions(gfxrecon::util::ArgumentParser& arg_parser, const std::string& capture_filename)
 {
@@ -40,6 +41,19 @@ void ReplayD3d12Feature::QueryOptions(gfxrecon::util::ArgumentParser& arg_parser
     replay_options_      = GetDxReplayOptions(arg_parser, capture_filename);
     is_enabled_          = replay_options_.enable_d3d12;
     needs_pre_processor_ = is_enabled_ && replay_options_.enable_dump_resources;
+}
+
+void ReplayD3d12Feature::QueryFpsInfoOptions(
+    bool& quit_after_range, bool& flush_range, bool& flush_inside_range, bool& preload_range, bool& quit_after_frame)
+{
+    if (is_enabled_)
+    {
+        quit_after_range   = replay_options_.quit_after_measurement_frame_range;
+        flush_range        = replay_options_.flush_measurement_frame_range;
+        flush_inside_range = replay_options_.flush_inside_measurement_range;
+        quit_after_frame   = replay_options_.quit_after_frame;
+        // preload_range intentionally not set: DxReplayOptions has no preload_measurement_range field
+    }
 }
 
 void ReplayD3d12Feature::CreateConsumer(decode::FileProcessor*                    file_processor,
@@ -72,16 +86,16 @@ void ReplayD3d12Feature::RegisterDecodeComponents(graphics::FpsInfo* fps_info)
         {
             decode::FileProcessor              file_processor_tracking;
             decode::Dx12TrackedObjectInfoTable tracked_object_info_table;
-            auto tracking_consumer = new decode::DX12TrackingConsumer(replay_options_, &tracked_object_info_table);
+            auto                               tracking_consumer =
+                std::make_unique<decode::DX12TrackingConsumer>(replay_options_, &tracked_object_info_table);
             if (file_processor_tracking.Initialize(capture_filename_))
             {
-                decoder_.AddConsumer(tracking_consumer);
+                decoder_.AddConsumer(tracking_consumer.get());
                 file_processor_tracking.AddDecoder(&decoder_);
                 file_processor_tracking.ProcessAllFrames();
                 file_processor_tracking.RemoveDecoder(&decoder_);
-                decoder_.RemoveConsumer(tracking_consumer);
+                decoder_.RemoveConsumer(tracking_consumer.get());
             }
-            delete tracking_consumer;
         }
 
         RegisterConsumerAndDecoder(fps_info);
@@ -110,7 +124,7 @@ void ReplayD3d12Feature::CompletePreProcessingPass()
     }
 }
 
-void ReplayD3d12Feature::PostReplay()
+void ReplayD3d12Feature::Destroy()
 {
     if (is_enabled_ && (file_processor_->GetCurrentFrameNumber() >= measurement_start_frame_) &&
         (file_processor_->GetErrorState() == gfxrecon::decode::BlockIOError::kErrorNone))

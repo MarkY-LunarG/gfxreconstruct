@@ -43,28 +43,25 @@ struct android_app;
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
-class ReplayFeature
+class ReplayFeatureBase
 {
   public:
-    virtual ~ReplayFeature() { PostReplay(); }
+    virtual ~ReplayFeatureBase() { Destroy(); }
 
-    virtual std::string Label() = 0;
+    virtual std::string Label() const = 0;
 
     // Options queries
     virtual void QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename) {}
 
     // Composition methods (for an API like OpenXR which uses other graphics APIs to
-    // compose final images).
-    bool         IsCompositingFeature() { return is_compositor_; }
-    bool         IsGraphicsFeatureSupportingComposition() { return supports_composition_; }
-    virtual void AddGraphicsFeatureForComposition(std::unique_ptr<ReplayFeature>& feature) {}
+    // compose final images). Called after CreateConsumer for all features so that
+    // compositing features can obtain consumer pointers from graphics features.
+    virtual void LinkCompositionFeatures(const std::vector<std::unique_ptr<ReplayFeatureBase>>& /*features*/) {}
 
     // Recapture methods (capturing while replaying)
-    bool         SupportsRecapture() { return supports_recapture_; }
     virtual void DetectAndSetupRecapture() {}
 
     // Frame and FPS methods
-    bool         CanAdjustFpsInfo() { return can_adjust_fps_info_; }
     void         SetMeasurementStartFrame(uint32_t frame) { measurement_start_frame_ = frame; }
     virtual void QueryFpsInfoOptions(bool& quit_after_range,
                                      bool& flush_range,
@@ -86,7 +83,7 @@ class ReplayFeature
     virtual void  RegisterDecodeComponents(graphics::FpsInfo* fps_info) = 0;
 
     // Cleanup
-    virtual void PostReplay() {}
+    virtual void Destroy() {}
 
 #if defined(__ANDROID__)
     virtual void SetAndroidApp(struct android_app* /*app*/) {}
@@ -98,22 +95,24 @@ class ReplayFeature
     decode::FileProcessor*                    file_processor_{ nullptr };
     bool                                      needs_pre_processor_{ false };
     bool                                      is_enabled_{ false };
-    bool                                      can_adjust_fps_info_{ false };
     uint32_t                                  measurement_start_frame_{ 0 };
-    bool                                      supports_recapture_{ false };
-    bool                                      is_compositor_{ false };
-    bool                                      supports_composition_{ false };
 };
 
 // Template base for features with a typed consumer, decoder, and options object.
-// Provides GetConsumer(), PostReplay(), and protected helpers used by CreateConsumer
+// Provides GetConsumer(), Destroy(), and protected helpers used by CreateConsumer
 // and RegisterDecodeComponents implementations.
 template <typename ConsumerT, typename DecoderT, typename OptionsT>
-class ReplayFeatureImpl : public ReplayFeature
+class ReplayFeature : public ReplayFeatureBase
 {
   public:
     void* GetConsumer() override { return reinterpret_cast<void*>(replay_consumer_.get()); }
-    void  PostReplay() override { replay_consumer_.reset(); }
+    void  Destroy() override
+    {
+        if (replay_consumer_)
+        {
+            replay_consumer_.reset();
+        }
+    }
 
   protected:
     OptionsT                   replay_options_;
@@ -149,7 +148,7 @@ class ReplayFeatureImpl : public ReplayFeature
 // Also provides a complete SetupPreProcessingPass() using those helpers plus the
 // shared dump-resources target opt-in, so most derived classes need no override.
 template <typename ConsumerT, typename DecoderT, typename OptionsT, typename PreConsumerT>
-class ReplayPreProcessFeatureImpl : public ReplayFeatureImpl<ConsumerT, DecoderT, OptionsT>
+class ReplayPreProcessFeature : public ReplayFeature<ConsumerT, DecoderT, OptionsT>
 {
   public:
     void SetupPreProcessingPass(decode::FileProcessor* file_processor) override

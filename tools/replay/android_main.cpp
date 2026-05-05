@@ -58,16 +58,16 @@ const int32_t kSwipeDistance = 200;
 void    ProcessAppCmd(struct android_app* app, int32_t cmd);
 int32_t ProcessInputEvent(struct android_app* app, AInputEvent* event);
 
-static std::unique_ptr<gfxrecon::decode::FileProcessor>              file_processor;
-static std::vector<std::unique_ptr<gfxrecon::replay::ReplayFeature>> g_features;
+static std::unique_ptr<gfxrecon::decode::FileProcessor>                  g_file_processor;
+static std::vector<std::unique_ptr<gfxrecon::replay::ReplayFeatureBase>> g_features;
 
 extern "C"
 {
     uint64_t MainGetCurrentBlockIndex()
     {
-        if (file_processor != nullptr)
+        if (g_file_processor != nullptr)
         {
-            return file_processor->GetCurrentBlockIndex();
+            return g_file_processor->GetCurrentBlockIndex();
         }
         else
         {
@@ -77,9 +77,9 @@ extern "C"
 
     bool MainGetLoadingTrimmedState()
     {
-        if (file_processor != nullptr)
+        if (g_file_processor != nullptr)
         {
-            return file_processor->GetLoadingTrimmedState();
+            return g_file_processor->GetLoadingTrimmedState();
         }
         else
         {
@@ -117,10 +117,10 @@ void android_main(struct android_app* app)
 
     // Load features from the module registry.
     for (const auto& registered_creator :
-         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayFeature>::GetSingleton()
+         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayFeatureBase>::GetSingleton()
              .GetRegisteredFeatureCreators())
     {
-        g_features.push_back(std::move(registered_creator()));
+        g_features.push_back(registered_creator());
     }
 
     std::string                    args = gfxrecon::util::GetIntentExtra(app, kArgsExtentKey);
@@ -165,14 +165,14 @@ void android_main(struct android_app* app)
 
             if (arg_parser.IsOptionSet(kPreloadMeasurementRangeOption) || enable_frame_loop)
             {
-                file_processor = std::make_unique<gfxrecon::decode::PreloadFileProcessor>();
+                g_file_processor = std::make_unique<gfxrecon::decode::PreloadFileProcessor>();
             }
             else
             {
-                file_processor = std::make_unique<gfxrecon::decode::FileProcessor>();
+                g_file_processor = std::make_unique<gfxrecon::decode::FileProcessor>();
             }
 
-            if (!file_processor->Initialize(filename))
+            if (!g_file_processor->Initialize(filename))
             {
                 GFXRECON_WRITE_CONSOLE("Failed to load file %s.", filename.c_str());
             }
@@ -191,32 +191,24 @@ void android_main(struct android_app* app)
                 std::string measurement_file_name;
 
                 auto application = std::make_shared<gfxrecon::application::Application>(
-                    kApplicationName, file_processor.get(), VK_KHR_ANDROID_SURFACE_EXTENSION_NAME, app);
+                    kApplicationName, g_file_processor.get(), VK_KHR_ANDROID_SURFACE_EXTENSION_NAME, app);
 
                 for (auto& feature : g_features)
                 {
                     feature->QueryOptions(arg_parser, filename);
                 }
 
+                has_mfr = GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
+                GetMeasurementFilename(arg_parser, measurement_file_name);
+
                 for (auto& feature : g_features)
                 {
-                    if (feature->CanAdjustFpsInfo())
-                    {
-                        // Only do the initial measurement file/frame queries once
-                        if (!has_mfr)
-                        {
-                            has_mfr =
-                                GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
-                            GetMeasurementFilename(arg_parser, measurement_file_name);
-                        }
-
-                        feature->SetMeasurementStartFrame(measurement_start_frame);
-                        feature->QueryFpsInfoOptions(quit_after_measurement_frame_range,
-                                                     flush_measurement_frame_range,
-                                                     flush_inside_measurement_range,
-                                                     preload_measurement_frame_range,
-                                                     quit_after_frame);
-                    }
+                    feature->SetMeasurementStartFrame(measurement_start_frame);
+                    feature->QueryFpsInfoOptions(quit_after_measurement_frame_range,
+                                                 flush_measurement_frame_range,
+                                                 flush_inside_measurement_range,
+                                                 preload_measurement_frame_range,
+                                                 quit_after_frame);
                 }
                 if (quit_after_frame)
                 {
@@ -243,38 +235,19 @@ void android_main(struct android_app* app)
                     application->SetFrameLoopInfo(fl_info_ptr);
                 }
 
-                gfxrecon::replay::ReplayFeature* compositing_feature = nullptr;
                 for (auto& feature : g_features)
                 {
-                    feature->CreateConsumer(file_processor.get(), application, fl_info_ptr);
+                    feature->CreateConsumer(g_file_processor.get(), application, fl_info_ptr);
+                    feature->SetAndroidApp(app);
 
                     requires_pre_processing |= feature->NeedsPreProcessingPass();
-
-                    if (feature->IsCompositingFeature())
-                    {
-                        GFXRECON_ASSERT(compositing_feature == nullptr);
-                        compositing_feature = feature.get();
-                    }
-
-                    if (feature->SupportsRecapture())
-                    {
-                        feature->DetectAndSetupRecapture();
-                    }
-
-                    feature->SetAndroidApp(app);
+                    feature->DetectAndSetupRecapture();
                 }
 
-                // If there is a compositing feature, set the corresponding graphics
-                // API used for the composition.
-                if (compositing_feature)
+                // NOTE: This must be called after each feature has created their consumers.
+                for (auto& feature : g_features)
                 {
-                    for (auto& feature : g_features)
-                    {
-                        if (feature->IsGraphicsFeatureSupportingComposition())
-                        {
-                            compositing_feature->AddGraphicsFeatureForComposition(feature);
-                        }
-                    }
+                    feature->LinkCompositionFeatures(g_features);
                 }
 
                 if (requires_pre_processing)
@@ -304,25 +277,25 @@ void android_main(struct android_app* app)
                 application->Run();
 
                 // Add one so that it matches the trim range frame number semantic
-                fps_info.EndFile(file_processor->GetCurrentFrameNumber() + 1);
+                fps_info.EndFile(g_file_processor->GetCurrentFrameNumber() + 1);
 
-                if ((file_processor->GetCurrentFrameNumber() > 0) &&
-                    (file_processor->GetErrorState() == gfxrecon::decode::BlockIOError::kErrorNone))
+                if ((g_file_processor->GetCurrentFrameNumber() > 0) &&
+                    (g_file_processor->GetErrorState() == gfxrecon::decode::BlockIOError::kErrorNone))
                 {
-                    if (file_processor->GetCurrentFrameNumber() < measurement_start_frame)
+                    if (g_file_processor->GetCurrentFrameNumber() < measurement_start_frame)
                     {
                         GFXRECON_LOG_WARNING(
                             "Measurement range start frame (%u) is greater than the last replayed frame (%u). "
                             "Measurements were never started, cannot calculate measurement range FPS.",
                             measurement_start_frame,
-                            file_processor->GetCurrentFrameNumber());
+                            g_file_processor->GetCurrentFrameNumber());
                     }
                     else
                     {
                         fps_info.LogMeasurements();
                     }
                 }
-                else if (file_processor->GetErrorState() != gfxrecon::decode::BlockIOError::kErrorNone)
+                else if (g_file_processor->GetErrorState() != gfxrecon::decode::BlockIOError::kErrorNone)
                 {
                     GFXRECON_WRITE_CONSOLE("A failure has occurred during replay");
                 }
@@ -333,7 +306,7 @@ void android_main(struct android_app* app)
 
                 for (auto& feature : g_features)
                 {
-                    feature->PostReplay();
+                    feature->Destroy();
                 }
             }
         }

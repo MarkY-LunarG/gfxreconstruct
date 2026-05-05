@@ -32,7 +32,7 @@ GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(replay)
 
 // Register this class as a feature in a module registry
-GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayFeature, ReplayOpenXrFeature)
+GFXR_UTIL_REGISTER_FEATURE_CREATOR(ReplayFeatureBase, ReplayOpenXrFeature)
 
 void ReplayOpenXrFeature::QueryOptions(util::ArgumentParser& arg_parser, const std::string& capture_filename)
 {
@@ -62,20 +62,34 @@ void ReplayOpenXrFeature::RegisterDecodeComponents(graphics::FpsInfo* fps_info)
     }
 }
 
-void ReplayOpenXrFeature::AddGraphicsFeatureForComposition(std::unique_ptr<ReplayFeature>& feature)
+void ReplayOpenXrFeature::LinkCompositionFeatures(const std::vector<std::unique_ptr<ReplayFeatureBase>>& features)
 {
-    if (feature->Label() == "Vulkan")
+    if (!is_enabled_)
     {
-        decode::VulkanReplayConsumer* vulkan_consumer =
-            reinterpret_cast<decode::VulkanReplayConsumer*>(feature->GetConsumer());
-        if (vulkan_consumer != nullptr)
-        {
-            replay_consumer_->SetVulkanReplayConsumer(vulkan_consumer);
-        }
+        return;
     }
-    else
+
+    for (const auto& feature : features)
     {
-        GFXRECON_LOG_WARNING("GFXR does not currently support OpenXR composition with %s", feature->Label());
+        if (feature.get() == this)
+        {
+            continue;
+        }
+
+        if (feature->Label() == "Vulkan")
+        {
+            auto* vulkan_consumer = reinterpret_cast<decode::VulkanReplayConsumer*>(feature->GetConsumer());
+            if (vulkan_consumer != nullptr)
+            {
+                replay_consumer_->SetVulkanReplayConsumer(vulkan_consumer);
+            }
+        }
+        else if (feature->GetConsumer() != nullptr)
+        {
+            // Warn only for other active (enabled) features we don't know how to compose with
+            GFXRECON_LOG_WARNING("GFXR does not currently support OpenXR composition with %s",
+                                 feature->Label().c_str());
+        }
     }
 }
 
