@@ -25,6 +25,8 @@
 
 #include "convert_feature.h"
 
+#include "decode/openxr_detection_consumer.h"
+
 #include "generated/generated_openxr_decoder.h"
 #include "generated/generated_openxr_json_consumer.h"
 #include "util/feature_module_registry.h"
@@ -32,10 +34,13 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(convert)
 
-using OpenXrJsonConsumer = gfxrecon::decode::MetadataJsonConsumer<
-    gfxrecon::decode::MarkerJsonConsumer<gfxrecon::decode::OpenXrExportJsonConsumer>>;
+using OpenXrJsonConsumer = decode::MetadataJsonConsumer<decode::MarkerJsonConsumer<decode::OpenXrExportJsonConsumer>>;
 
-using OpenXrConvertFeature = ConvertFeature<OpenXrJsonConsumer, gfxrecon::decode::OpenXrDecoder>;
+class OpenXrConvertFeature
+    : public ConvertFeature<OpenXrJsonConsumer, decode::OpenXrDecoder, decode::OpenXrDetectionConsumer>
+{
+    bool WasDetected() final { return detect_consumer_ ? detect_consumer_->WasOpenXrAPIDetected() : false; }
+};
 
 // Register this class as a feature in a module registry
 GFXR_UTIL_REGISTER_FEATURE_CREATOR(ConvertFeatureBase, OpenXrConvertFeature);

@@ -25,6 +25,8 @@
 
 #include "convert_feature.h"
 
+#include "decode/dx12_detection_consumer.h"
+
 #include "generated/generated_dx12_decoder.h"
 #include "generated/generated_dx12_json_consumer.h"
 #include "util/feature_module_registry.h"
@@ -32,10 +34,17 @@
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(convert)
 
-using Dx12JsonConsumer =
-    gfxrecon::decode::MetadataJsonConsumer<gfxrecon::decode::MarkerJsonConsumer<gfxrecon::decode::Dx12JsonConsumer>>;
+using Dx12JsonConsumer = decode::MetadataJsonConsumer<decode::MarkerJsonConsumer<decode::Dx12JsonConsumer>>;
 
-using Dx12ConvertFeature = ConvertFeature<Dx12JsonConsumer, gfxrecon::decode::Dx12Decoder>;
+class Dx12ConvertFeature : public ConvertFeature<Dx12JsonConsumer, decode::Dx12Decoder, decode::Dx12DetectionConsumer>
+{
+    void InitDetectConsumer() final
+    {
+        detect_consumer_ = new decode::Dx12DetectionConsumer(decode::Dx12DetectionConsumer::kNoBlockLimit);
+    }
+
+    bool WasDetected() final { return detect_consumer_ ? detect_consumer_->WasD3D12APIDetected() : false; }
+};
 
 // Register this class as a feature in a module registry
 GFXR_UTIL_REGISTER_FEATURE_CREATOR(ConvertFeatureBase, Dx12ConvertFeature);

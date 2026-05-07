@@ -23,6 +23,8 @@
 
 #include "convert_feature.h"
 
+#include "decode/vulkan_detection_consumer.h"
+
 #include "generated/generated_vulkan_decoder.h"
 #include "generated/generated_vulkan_json_consumer.h"
 #include "util/feature_module_registry.h"
@@ -33,7 +35,16 @@ GFXRECON_BEGIN_NAMESPACE(convert)
 using VulkanJsonConsumer = gfxrecon::decode::MetadataJsonConsumer<
     gfxrecon::decode::MarkerJsonConsumer<gfxrecon::decode::VulkanExportJsonConsumer>>;
 
-using VulkanConvertFeature = ConvertFeature<VulkanJsonConsumer, gfxrecon::decode::VulkanDecoder>;
+class VulkanConvertFeature
+    : public ConvertFeature<VulkanJsonConsumer, decode::VulkanDecoder, decode::VulkanDetectionConsumer>
+{
+    void InitDetectConsumer() final
+    {
+        detect_consumer_ = new decode::VulkanDetectionConsumer(decode::VulkanDetectionConsumer::kNoBlockLimit);
+    }
+
+    bool WasDetected() final { return detect_consumer_ ? detect_consumer_->WasVulkanAPIDetected() : false; }
+};
 
 // Register this class as a feature in a module registry
 GFXR_UTIL_REGISTER_FEATURE_CREATOR(ConvertFeatureBase, VulkanConvertFeature);

@@ -37,29 +37,82 @@ class ConvertFeatureBase
   public:
     virtual ~ConvertFeatureBase() = default;
 
-    virtual void Initialize(decode::FileProcessor& file_processor, decode::JsonWriter* json_writer) = 0;
-    virtual void Destroy()                                                                          = 0;
+    // Detection pass logic
+    virtual void SetupDetectionPass(decode::FileProcessor& file_processor) = 0;
+    virtual void CleanupDetectionPass()                                    = 0;
+    virtual bool WasDetected()                                             = 0;
+
+    // Generate usage logic
+    virtual void SetupConvertPass(decode::FileProcessor& file_processor, decode::JsonWriter* json_writer) = 0;
+    virtual void CleanupConvertPass()                                                                     = 0;
 };
 
 // Template used by all API instantiations.
-template <class ConsumerT, class DecoderT>
+template <class ConsumerT, class DecoderT, class DetectConsumerT>
 class ConvertFeature : public ConvertFeatureBase
 {
   public:
-    ~ConvertFeature() { Destroy(); }
+    ~ConvertFeature()
+    {
+        // Cleanup both passes, just in case one or both didn't already
+        CleanupDetectionPass();
+        CleanupConvertPass();
+    }
 
-    void Initialize(decode::FileProcessor& file_processor, decode::JsonWriter* json_writer) final
+    virtual void InitDetectConsumer() { detect_consumer_ = new DetectConsumerT(); }
+
+    void SetupDetectionPass(decode::FileProcessor& file_processor) final
+    {
+        detection_decoder_ = new DecoderT();
+        if (detection_decoder_ != nullptr)
+        {
+            InitDetectConsumer();
+            if (detect_consumer_ != nullptr)
+            {
+                detection_decoder_->AddConsumer(detect_consumer_);
+                file_processor.AddDecoder(detection_decoder_);
+            }
+            else
+            {
+                GFXRECON_LOG_WARNING("Failed to setup detection pass consumer");
+                delete detection_decoder_;
+                detection_decoder_ = nullptr;
+            }
+        }
+        else
+        {
+            GFXRECON_LOG_WARNING("Failed to setup detection pass decoder");
+        }
+    }
+
+    virtual void CleanupDetectionPass() override
+    {
+        if (detection_decoder_)
+        {
+            delete detection_decoder_;
+            detection_decoder_ = nullptr;
+        }
+        if (detect_consumer_)
+        {
+            delete detect_consumer_;
+            detect_consumer_ = nullptr;
+        }
+    }
+
+    void SetupConvertPass(decode::FileProcessor& file_processor, decode::JsonWriter* json_writer) final
     {
         json_consumer_.Initialize(json_writer);
         decoder_.AddConsumer(&json_consumer_);
         file_processor.AddDecoder(&decoder_);
     }
 
-    void Destroy() final { json_consumer_.Destroy(); }
+    void CleanupConvertPass() final { json_consumer_.Destroy(); }
 
-  private:
-    ConsumerT json_consumer_;
-    DecoderT  decoder_;
+  protected:
+    ConsumerT        json_consumer_;
+    DecoderT         decoder_;
+    DecoderT*        detection_decoder_{ nullptr };
+    DetectConsumerT* detect_consumer_{ nullptr };
 };
 
 GFXRECON_END_NAMESPACE(convert)

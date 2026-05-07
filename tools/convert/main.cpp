@@ -180,6 +180,33 @@ std::string FormatFrameNumber(uint32_t frame_number)
     return stream.str();
 }
 
+bool ValidApiDetected(const std::string&                                                   input_filename,
+                      std::vector<std::unique_ptr<gfxrecon::convert::ConvertFeatureBase>>& convert_features)
+{
+    bool                            api_detected = false;
+    gfxrecon::decode::FileProcessor file_processor;
+    if (file_processor.Initialize(input_filename))
+    {
+        for (auto& feature : convert_features)
+        {
+            feature->SetupDetectionPass(file_processor);
+        }
+
+        file_processor.ProcessAllFrames();
+
+        for (auto& feature : convert_features)
+        {
+            api_detected |= feature->WasDetected();
+        }
+
+        for (auto& feature : convert_features)
+        {
+            feature->CleanupDetectionPass();
+        }
+    }
+    return api_detected;
+}
+
 int main(int argc, const char** argv)
 {
     int                                                                 ret_code = 0;
@@ -256,19 +283,13 @@ int main(int argc, const char** argv)
 
     gfxrecon::decode::FileProcessor file_processor;
 
-#ifndef D3D12_SUPPORT
-    bool detected_d3d12  = false;
-    bool detected_vulkan = false;
-    bool detected_openxr = false;
-    gfxrecon::decode::DetectAPIs(input_filename, detected_d3d12, detected_vulkan, detected_openxr);
-
-    if (!detected_vulkan && !is_asset_file)
+    if (!ValidApiDetected(input_filename, convert_features) && !is_asset_file)
     {
-        GFXRECON_LOG_INFO("Capture file does not contain Vulkan content.  D3D12 content may be present but "
-                          "gfxrecon-convert is not compiled with D3D12 support.");
+        GFXRECON_LOG_INFO("Capture file does not contain detectable API content.  Platform-specific API content may be "
+                          "present, but not detectable with this executable.");
         goto exit;
     }
-#endif
+
     if (file_per_frame && output_to_stdout)
     {
         GFXRECON_LOG_WARNING("Outputting a file per frame is not consistent with outputting to stdout.");
@@ -332,7 +353,7 @@ int main(int argc, const char** argv)
 
             for (auto& feature : convert_features)
             {
-                feature->Initialize(file_processor, &json_writer);
+                feature->SetupConvertPass(file_processor, &json_writer);
             }
 
             json_writer.StartStream(&out_stream);
