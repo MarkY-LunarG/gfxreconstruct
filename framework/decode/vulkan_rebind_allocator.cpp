@@ -108,6 +108,7 @@ VkResult VulkanRebindAllocator::Initialize(uint32_t                             
                                            VkInstance                              instance,
                                            VkPhysicalDevice                        physical_device,
                                            VkDevice                                device,
+                                           const VkDeviceCreateInfo&               device_create_info,
                                            const std::vector<std::string>&         enabled_device_extensions,
                                            VkPhysicalDeviceType                    capture_device_type,
                                            const VkPhysicalDeviceMemoryProperties& capture_memory_properties,
@@ -173,15 +174,23 @@ VkResult VulkanRebindAllocator::Initialize(uint32_t                             
         functions_.get_physical_device_queue_family_properties(
             physical_device, &queue_family_count, queue_family_properties.data());
 
+        std::vector<bool> used_queue_families(queue_family_count, false);
+        for (uint32_t i = 0; i < device_create_info.queueCreateInfoCount; ++i)
+        {
+            used_queue_families[device_create_info.pQueueCreateInfos[i].queueFamilyIndex] = true;
+        }
+
         staging_queue_family_ = 0;
         for (const VkQueueFamilyProperties& elt : queue_family_properties)
         {
-            if (elt.queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_TRANSFER_BIT))
+            if ((elt.queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_TRANSFER_BIT)) &&
+                used_queue_families[staging_queue_family_])
             {
                 break;
             }
             staging_queue_family_++;
         }
+        assert(staging_queue_family_ < queue_family_count);
 
         VkCommandPoolCreateInfo cmd_pool_info = {};
         cmd_pool_info.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -1891,9 +1900,9 @@ void VulkanRebindAllocator::WriteBoundResourceStaging(ResourceAllocInfo* resourc
     if (result == VK_SUCCESS)
     {
         VkSubmitInfo compute_submit_info{};
-        compute_submit_info.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        compute_submit_info.commandBufferCount   = 1;
-        compute_submit_info.pCommandBuffers      = &staging_resources.cmd_buffer;
+        compute_submit_info.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        compute_submit_info.commandBufferCount = 1;
+        compute_submit_info.pCommandBuffers    = &staging_resources.cmd_buffer;
         GFXRECON_NARROWING_ASSIGN(compute_submit_info.waitSemaphoreCount, waiting_semaphores.size());
         compute_submit_info.pWaitSemaphores      = waiting_semaphores.data();
         compute_submit_info.pWaitDstStageMask    = waiting_semaphores_dst_stage_mask.data();
@@ -3088,11 +3097,11 @@ VkResult VulkanRebindAllocator::QueueBindSparse(VkQueue                 queue,
         }
 
         GFXRECON_NARROWING_ASSIGN(modified_bind_info.bufferBindCount, modified_buffer_bind_infos[i].size());
-        modified_bind_info.pBufferBinds         = modified_buffer_bind_infos[i].data();
+        modified_bind_info.pBufferBinds = modified_buffer_bind_infos[i].data();
         GFXRECON_NARROWING_ASSIGN(modified_bind_info.imageOpaqueBindCount, modified_image_opaque_bind_infos[i].size());
-        modified_bind_info.pImageOpaqueBinds    = modified_image_opaque_bind_infos[i].data();
+        modified_bind_info.pImageOpaqueBinds = modified_image_opaque_bind_infos[i].data();
         GFXRECON_NARROWING_ASSIGN(modified_bind_info.imageBindCount, modified_image_bind_infos[i].size());
-        modified_bind_info.pImageBinds          = modified_image_bind_infos[i].data();
+        modified_bind_info.pImageBinds = modified_image_bind_infos[i].data();
     }
 
     std::vector<std::unique_lock<std::mutex>> block_locks;
