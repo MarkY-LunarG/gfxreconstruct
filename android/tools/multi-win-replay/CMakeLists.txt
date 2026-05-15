@@ -30,6 +30,8 @@ add_library(gfxrecon-replay
                 ${GFXRECON_SOURCE_DIR}/tools/replay/recapture_vulkan_entry.h
                 ${GFXRECON_SOURCE_DIR}/framework/generated/generated_vulkan_recapture_func_table.h
                 ${GFXRECON_SOURCE_DIR}/tools/replay/replay_feature.h
+                ${GFXRECON_SOURCE_DIR}/tools/replay/replay_main_common.h
+                ${GFXRECON_SOURCE_DIR}/tools/replay/replay_main_common.cpp
                 ${GFXRECON_SOURCE_DIR}/tools/replay/replay_openxr_feature.h
                 ${GFXRECON_SOURCE_DIR}/tools/replay/replay_openxr_feature.cpp
                 ${GFXRECON_SOURCE_DIR}/tools/replay/replay_vulkan_feature.h

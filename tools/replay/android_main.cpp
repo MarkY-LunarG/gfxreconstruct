@@ -22,32 +22,26 @@
 */
 
 #include "replay_settings.h"
+#include "replay_main_common.h"
 
 #include "application/android_context.h"
 #include "application/android_window.h"
 #include "decode/file_processor.h"
-#include "decode/preload_file_processor.h"
 #include "format/format.h"
 #include "util/android/activity.h"
 #include "util/android/intent.h"
-#include "util/argument_parser.h"
-#include "util/feature_module_registry.h"
 #include "util/logging.h"
 #include "util/platform.h"
 #include "parse_dump_resources_cli.h"
-
-#include "replay_feature.h"
 
 #include <android/log.h>
 #include <android/window.h>
 
 #include <cstdlib>
 #include <exception>
-#include <limits>
 #include <memory>
 #include <string>
 #include <vector>
-#include <utility>
 
 const char kArgsExtentKey[]      = "args";
 const char kDefaultCaptureFile[] = "/sdcard/gfxrecon_capture" GFXRECON_FILE_EXTENSION;
@@ -58,6 +52,7 @@ const int32_t kSwipeDistance = 200;
 void    ProcessAppCmd(struct android_app* app, int32_t cmd);
 int32_t ProcessInputEvent(struct android_app* app, AInputEvent* event);
 
+// Globals required by the extern "C" query callbacks called from outside this TU.
 static std::unique_ptr<gfxrecon::decode::FileProcessor>                  g_file_processor;
 static std::vector<std::unique_ptr<gfxrecon::replay::ReplayFeatureBase>> g_features;
 
@@ -65,45 +60,12 @@ extern "C"
 {
     uint64_t MainGetCurrentBlockIndex()
     {
-        if (g_file_processor != nullptr)
-        {
-            return g_file_processor->GetCurrentBlockIndex();
-        }
-        else
-        {
-            return 0;
-        }
+        return g_file_processor ? g_file_processor->GetCurrentBlockIndex() : 0;
     }
 
     bool MainGetLoadingTrimmedState()
     {
-        if (g_file_processor != nullptr)
-        {
-            return g_file_processor->GetLoadingTrimmedState();
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
-
-void RunPreProcessConsumer(const std::string& input_filename)
-{
-    gfxrecon::decode::FileProcessor pre_file_processor;
-    if (pre_file_processor.Initialize(input_filename))
-    {
-        for (auto& feature : g_features)
-        {
-            feature->SetupPreProcessingPass(&pre_file_processor);
-        }
-
-        pre_file_processor.ProcessAllFrames();
-
-        for (auto& feature : g_features)
-        {
-            feature->CompletePreProcessingPass();
-        }
+        return g_file_processor ? g_file_processor->GetLoadingTrimmedState() : false;
     }
 }
 
@@ -115,13 +77,7 @@ void android_main(struct android_app* app)
     // Keep screen on while window is active.
     ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
 
-    // Load features from the module registry.
-    for (const auto& registered_creator :
-         gfxrecon::util::FeatureModuleRegistry<gfxrecon::replay::ReplayFeatureBase>::GetSingleton()
-             .GetRegisteredFeatureCreators())
-    {
-        g_features.push_back(registered_creator());
-    }
+    gfxrecon::replay::LoadFeatures(g_features);
 
     std::string                    args = gfxrecon::util::GetIntentExtra(app, kArgsExtentKey);
     gfxrecon::util::ArgumentParser arg_parser(false, args.c_str(), kOptions, kArguments);
@@ -143,172 +99,25 @@ void android_main(struct android_app* app)
 
     if (run)
     {
-        // Update logging with values retrieved from command line arguments
         gfxrecon::util::Log::Settings log_settings;
         GetLogSettings(arg_parser, log_settings);
         gfxrecon::util::Log::UpdateWithSettings(log_settings);
 
         std::string filename = kDefaultCaptureFile;
-
         if (arg_parser.GetPositionalArgumentsCount() == 1)
         {
-            const std::vector<std::string>& positional_arguments = arg_parser.GetPositionalArguments();
-            filename                                             = positional_arguments[0];
+            filename = arg_parser.GetPositionalArguments()[0];
         }
 
         try
         {
-            uint32_t loop_frame        = 0;
-            uint32_t loop_count        = gfxrecon::graphics::FrameLoopInfo::INFINITE_ITERATIONS;
-            bool     enable_frame_loop = GetLoopFrame(arg_parser, loop_frame);
-            GetLoopCount(arg_parser, loop_count);
+            auto make_application = [&](gfxrecon::decode::FileProcessor* fp) {
+                return std::make_shared<gfxrecon::application::Application>(
+                    kApplicationName, fp, VK_KHR_ANDROID_SURFACE_EXTENSION_NAME, app);
+            };
 
-            if (arg_parser.IsOptionSet(kPreloadMeasurementRangeOption) || enable_frame_loop)
-            {
-                g_file_processor = std::make_unique<gfxrecon::decode::PreloadFileProcessor>();
-            }
-            else
-            {
-                g_file_processor = std::make_unique<gfxrecon::decode::FileProcessor>();
-            }
-
-            if (!g_file_processor->Initialize(filename))
-            {
-                GFXRECON_WRITE_CONSOLE("Failed to load file %s.", filename.c_str());
-            }
-            else
-            {
-                bool        has_mfr                            = false;
-                bool        requires_pre_processing            = false;
-                bool        quit_after_frame                   = false;
-                uint32_t    quit_frame                         = std::numeric_limits<uint32_t>::max();
-                uint32_t    measurement_start_frame            = 0;
-                uint32_t    measurement_end_frame              = 0;
-                bool        quit_after_measurement_frame_range = false;
-                bool        flush_measurement_frame_range      = false;
-                bool        flush_inside_measurement_range     = false;
-                bool        preload_measurement_frame_range    = false;
-                std::string measurement_file_name;
-
-                auto application = std::make_shared<gfxrecon::application::Application>(
-                    kApplicationName, g_file_processor.get(), VK_KHR_ANDROID_SURFACE_EXTENSION_NAME, app);
-
-                for (auto& feature : g_features)
-                {
-                    feature->QueryOptions(arg_parser, filename);
-                }
-
-                has_mfr = GetMeasurementFrameRange(arg_parser, measurement_start_frame, measurement_end_frame);
-                GetMeasurementFilename(arg_parser, measurement_file_name);
-
-                for (auto& feature : g_features)
-                {
-                    feature->SetMeasurementStartFrame(measurement_start_frame);
-                    feature->QueryFpsInfoOptions(quit_after_measurement_frame_range,
-                                                 flush_measurement_frame_range,
-                                                 flush_inside_measurement_range,
-                                                 preload_measurement_frame_range,
-                                                 quit_after_frame);
-                }
-                if (quit_after_frame)
-                {
-                    GetQuitAfterFrame(arg_parser, quit_frame);
-                }
-
-                gfxrecon::graphics::FpsInfo fps_info(static_cast<uint64_t>(measurement_start_frame),
-                                                     static_cast<uint64_t>(measurement_end_frame),
-                                                     has_mfr,
-                                                     quit_after_measurement_frame_range,
-                                                     flush_measurement_frame_range,
-                                                     flush_inside_measurement_range,
-                                                     preload_measurement_frame_range,
-                                                     measurement_file_name,
-                                                     quit_after_frame,
-                                                     quit_frame);
-
-                gfxrecon::graphics::FrameLoopInfo  fl_info;
-                gfxrecon::graphics::FrameLoopInfo* fl_info_ptr = nullptr;
-                if (enable_frame_loop)
-                {
-                    fl_info     = gfxrecon::graphics::FrameLoopInfo(loop_frame, loop_count);
-                    fl_info_ptr = &fl_info;
-                    application->SetFrameLoopInfo(fl_info_ptr);
-                }
-
-                for (auto& feature : g_features)
-                {
-                    feature->CreateConsumer(g_file_processor.get(), application, fl_info_ptr);
-                    feature->SetAndroidApp(app);
-
-                    requires_pre_processing |= feature->NeedsPreProcessingPass();
-                    feature->DetectAndSetupRecapture();
-                }
-
-                // NOTE: This must be called after each feature has created their consumers.
-                for (auto& feature : g_features)
-                {
-                    feature->LinkCompositionFeatures(g_features);
-                }
-
-                if (requires_pre_processing)
-                {
-                    RunPreProcessConsumer(filename);
-                }
-
-                for (auto& feature : g_features)
-                {
-                    feature->RegisterDecodeComponents(&fps_info);
-                }
-
-                application->SetPauseFrame(GetPauseFrame(arg_parser));
-
-                // Warn if the capture layer is active.
-                CheckActiveLayers(kLayerProperty);
-
-                // Start the application in the paused state, preventing replay from starting before the app
-                // gained focus event is received.
-                application->SetPaused(true);
-
-                app->userData = application.get();
-                application->SetFpsInfo(&fps_info);
-
-                fps_info.BeginFile();
-
-                application->Run();
-
-                // Add one so that it matches the trim range frame number semantic
-                fps_info.EndFile(g_file_processor->GetCurrentFrameNumber() + 1);
-
-                if ((g_file_processor->GetCurrentFrameNumber() > 0) &&
-                    (g_file_processor->GetErrorState() == gfxrecon::decode::BlockIOError::kErrorNone))
-                {
-                    if (g_file_processor->GetCurrentFrameNumber() < measurement_start_frame)
-                    {
-                        GFXRECON_LOG_WARNING(
-                            "Measurement range start frame (%u) is greater than the last replayed frame (%u). "
-                            "Measurements were never started, cannot calculate measurement range FPS.",
-                            measurement_start_frame,
-                            g_file_processor->GetCurrentFrameNumber());
-                    }
-                    else
-                    {
-                        fps_info.LogMeasurements();
-                    }
-                }
-                else if (g_file_processor->GetErrorState() != gfxrecon::decode::BlockIOError::kErrorNone)
-                {
-                    GFXRECON_WRITE_CONSOLE("A failure has occurred during replay");
-                }
-                else
-                {
-                    GFXRECON_WRITE_CONSOLE("File did not contain any frames");
-                }
-
-                for (auto& feature : g_features)
-                {
-                    feature->Destroy();
-                }
-            }
+            gfxrecon::replay::RunReplay(
+                g_file_processor, g_features, arg_parser, filename, kLayerProperty, make_application, app);
         }
         catch (std::runtime_error& error)
         {

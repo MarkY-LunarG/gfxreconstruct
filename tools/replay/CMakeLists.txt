@@ -33,6 +33,8 @@ target_sources(gfxrecon-replay
                     ${CMAKE_CURRENT_LIST_DIR}/../tool_settings.h
                     ${CMAKE_CURRENT_LIST_DIR}/replay_settings.h
                     ${CMAKE_CURRENT_LIST_DIR}/replay_feature.h
+                    ${CMAKE_CURRENT_LIST_DIR}/replay_main_common.h
+                    ${CMAKE_CURRENT_LIST_DIR}/replay_main_common.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/replay_d3d12_feature.h
                     ${CMAKE_CURRENT_LIST_DIR}/replay_d3d12_feature.cpp
                     ${CMAKE_CURRENT_LIST_DIR}/replay_openxr_feature.h
