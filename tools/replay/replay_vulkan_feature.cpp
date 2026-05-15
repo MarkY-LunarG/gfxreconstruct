@@ -40,7 +40,7 @@ void ReplayVulkanFeature::QueryOptions(util::ArgumentParser& arg_parser, const s
 {
     capture_filename_    = capture_filename;
     replay_options_      = GetVulkanReplayOptions(arg_parser, capture_filename, &tracked_object_info_table_);
-    is_enabled_          = replay_options_.enable_vulkan;
+    is_enabled_          = true;
     needs_pre_processor_ = is_enabled_ && replay_options_.enable_dump_resources;
 }
 
@@ -109,8 +109,8 @@ void ReplayVulkanFeature::CompletePreProcessingPass()
 {
     if (needs_pre_processor_)
     {
-        replay_options_.enable_vulkan = pre_processor_consumer_->WasVulkanAPIDetected();
-        if (replay_options_.enable_vulkan)
+        is_enabled_ = pre_processor_consumer_->WasVulkanAPIDetected();
+        if (is_enabled_)
         {
             if (replay_options_.using_dump_resources_target)
             {

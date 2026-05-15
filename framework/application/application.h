@@ -40,6 +40,10 @@
 #include <vector>
 #include <limits>
 
+#if defined(__ANDROID__)
+struct android_app;
+#endif
+
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(application)
 
@@ -89,10 +93,11 @@ class Application final
     void InitializeDx12WsiContext();
 #endif
 
-    void StopRunning()
-    {
-        running_ = false;
-    }
+#if defined(__ANDROID__)
+    struct android_app* GetAndroidApplication() { return android_app_; }
+#endif
+
+    void StopRunning() { running_ = false; }
 
     uint32_t GetCurrentFrameNumber() const
     {
@@ -118,6 +123,10 @@ class Application final
     std::string                                                  cli_wsi_extension_; ///< WSI extension selected on CLI, empty string if no CLI selection
     graphics::FpsInfo*                                           fps_info_;          ///< A optional FPS info object that logs the FPS across a configured framerange.
                                                                                      ///< capture file data.
+
+#if defined(__ANDROID__)
+    struct android_app* android_app_{nullptr};
+#endif
     // clang-format on
 };
 

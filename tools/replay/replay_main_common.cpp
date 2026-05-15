@@ -71,12 +71,7 @@ bool RunReplay(std::unique_ptr<decode::FileProcessor>&                          
                util::ArgumentParser&                                                            arg_parser,
                const std::string&                                                               filename,
                const std::string&                                                               active_layers_value,
-               std::function<std::shared_ptr<application::Application>(decode::FileProcessor*)> make_application
-#if defined(__ANDROID__)
-               ,
-               struct android_app* app
-#endif
-)
+               std::function<std::shared_ptr<application::Application>(decode::FileProcessor*)> make_application)
 {
     uint32_t loop_frame        = 0;
     uint32_t loop_count        = graphics::FrameLoopInfo::INFINITE_ITERATIONS;
@@ -145,21 +140,16 @@ bool RunReplay(std::unique_ptr<decode::FileProcessor>&                          
                                quit_after_frame,
                                quit_frame);
 
-    graphics::FrameLoopInfo  fl_info;
-    graphics::FrameLoopInfo* fl_info_ptr = nullptr;
+    graphics::FrameLoopInfo fl_info;
     if (enable_frame_loop)
     {
-        fl_info     = graphics::FrameLoopInfo(loop_frame, loop_count);
-        fl_info_ptr = &fl_info;
-        application->SetFrameLoopInfo(fl_info_ptr);
+        fl_info = graphics::FrameLoopInfo(loop_frame, loop_count);
+        application->SetFrameLoopInfo(&fl_info);
     }
 
     for (auto& feature : features)
     {
-        feature->CreateConsumer(file_processor_out.get(), application, fl_info_ptr);
-#if defined(__ANDROID__)
-        feature->SetAndroidApp(app);
-#endif
+        feature->CreateConsumer(file_processor_out.get(), application, enable_frame_loop ? &fl_info : nullptr);
         requires_pre_processing |= feature->NeedsPreProcessingPass();
         feature->DetectAndSetupRecapture();
     }
@@ -186,7 +176,6 @@ bool RunReplay(std::unique_ptr<decode::FileProcessor>&                          
 #if defined(__ANDROID__)
     // Start paused; replay begins once APP_CMD_GAINED_FOCUS fires.
     application->SetPaused(true);
-    app->userData = application.get();
 #endif
 
     application->SetFpsInfo(&fps_info);

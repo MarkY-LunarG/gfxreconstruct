@@ -117,7 +117,7 @@ void android_main(struct android_app* app)
             };
 
             gfxrecon::replay::RunReplay(
-                g_file_processor, g_features, arg_parser, filename, kLayerProperty, make_application, app);
+                g_file_processor, g_features, arg_parser, filename, kLayerProperty, make_application);
         }
         catch (std::runtime_error& error)
         {

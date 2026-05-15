@@ -50,6 +50,12 @@ void ReplayOpenXrFeature::CreateConsumer(decode::FileProcessor*                 
     {
         InitConsumer(file_processor, application);
         replay_consumer_ = std::make_unique<decode::OpenXrReplayConsumer>(application_, replay_options_);
+#if defined(__ANDROID__)
+        if (replay_consumer_ != nullptr)
+        {
+            replay_consumer_->SetAndroidApp(application->GetAndroidApplication());
+        }
+#endif
         FinalizeConsumer();
     }
 }
@@ -92,16 +98,6 @@ void ReplayOpenXrFeature::LinkCompositionFeatures(const std::vector<std::unique_
         }
     }
 }
-
-#if defined(__ANDROID__)
-void ReplayOpenXrFeature::SetAndroidApp(struct android_app* app)
-{
-    if (replay_consumer_ != nullptr)
-    {
-        replay_consumer_->SetAndroidApp(app);
-    }
-}
-#endif
 
 GFXRECON_END_NAMESPACE(replay)
 GFXRECON_END_NAMESPACE(gfxrecon)

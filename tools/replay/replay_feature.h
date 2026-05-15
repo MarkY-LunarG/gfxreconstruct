@@ -85,10 +85,6 @@ class ReplayFeatureBase
     // Cleanup
     virtual void Destroy() {}
 
-#if defined(__ANDROID__)
-    virtual void SetAndroidApp(struct android_app* /*app*/) {}
-#endif
-
   protected:
     std::string                               capture_filename_;
     std::shared_ptr<application::Application> application_;

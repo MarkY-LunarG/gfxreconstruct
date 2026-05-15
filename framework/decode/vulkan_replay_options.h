@@ -154,7 +154,6 @@ static constexpr int kUnspecifiedColorAttachment = -1;
 
 struct VulkanReplayOptions : public ReplayOptions
 {
-    bool                    enable_vulkan{ true };
     bool                    capture{ false };
     bool                    omit_pipeline_cache_data{ false };
     bool                    use_colorspace_fallback{ false };

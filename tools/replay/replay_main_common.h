@@ -24,7 +24,6 @@
 #define GFXRECON_REPLAY_MAIN_COMMON_H
 
 #if defined(__ANDROID__)
-// Forward declaration; the full type is only needed in replay_main_common.cpp.
 struct android_app;
 #endif
 
@@ -65,12 +64,7 @@ bool RunReplay(std::unique_ptr<decode::FileProcessor>&                          
                util::ArgumentParser&                                                            arg_parser,
                const std::string&                                                               filename,
                const std::string&                                                               active_layers_value,
-               std::function<std::shared_ptr<application::Application>(decode::FileProcessor*)> make_application
-#if defined(__ANDROID__)
-               ,
-               struct android_app* app = nullptr
-#endif
-);
+               std::function<std::shared_ptr<application::Application>(decode::FileProcessor*)> make_application);
 
 GFXRECON_END_NAMESPACE(replay)
 GFXRECON_END_NAMESPACE(gfxrecon)

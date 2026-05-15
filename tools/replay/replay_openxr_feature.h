@@ -52,10 +52,6 @@ class ReplayOpenXrFeature
 
     void LinkCompositionFeatures(const std::vector<std::unique_ptr<ReplayFeatureBase>>& features) final;
 
-#if defined(__ANDROID__)
-    void SetAndroidApp(struct android_app* app) final;
-#endif
-
   private:
     decode::OpenXrTrackedObjectInfoTable tracked_object_info_table_;
 };
