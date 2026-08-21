@@ -23,6 +23,7 @@
 
 #include "replay_settings.h"
 #include "replay_main_common.h"
+#include "tool_feature_options.h"
 
 #include "application/android_context.h"
 #include "application/android_window.h"
@@ -80,22 +81,34 @@ void android_main(struct android_app* app)
 
     gfxrecon::replay::LoadFeatures(g_features);
 
+    // Each Feature adds its own command-line entries to the shared name lists, so an entry
+    // exists only when the build contains the Feature that reads it.
+    std::string options   = kOptions;
+    std::string arguments = kArguments;
+    AppendFeatureOptions(g_features, options, arguments);
+
     std::string                    args = gfxrecon::util::GetIntentExtra(app, kArgsExtentKey);
-    gfxrecon::util::ArgumentParser arg_parser(false, args.c_str(), kOptions, kArguments);
+    gfxrecon::util::ArgumentParser arg_parser(false, args.c_str(), options, arguments);
 
     app->onAppCmd     = ProcessAppCmd;
     app->onInputEvent = ProcessInputEvent;
 
     bool run = true;
 
-    if (CheckOptionPrintUsage(kApplicationName, arg_parser) ||
-        CheckOptionPrintFeatureVersions<gfxrecon::replay::ReplayFeatureBase>(kApplicationName, arg_parser))
+    if (CheckOptionPrintUsage(kApplicationName, arg_parser))
+    {
+        PrintFeatureUsage(g_features);
+        run = false;
+    }
+    else if (CheckOptionPrintFeatureVersions<gfxrecon::replay::ReplayFeatureBase>(kApplicationName, arg_parser))
     {
         run = false;
     }
-    else if (arg_parser.IsInvalid() || (arg_parser.GetPositionalArgumentsCount() > 1))
+    else if (arg_parser.IsInvalid() || (arg_parser.GetPositionalArgumentsCount() > 1) ||
+             !CheckFeatureOptionValues(g_features, arg_parser))
     {
         PrintUsage(kApplicationName);
+        PrintFeatureUsage(g_features);
         run = false;
     }
 

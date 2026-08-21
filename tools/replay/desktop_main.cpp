@@ -24,6 +24,7 @@
 
 #include "replay_settings.h"
 #include "replay_main_common.h"
+#include "tool_feature_options.h"
 
 #include "application/application.h"
 #include "decode/file_processor.h"
@@ -84,17 +85,30 @@ int main(int argc, const char** argv)
     std::vector<std::unique_ptr<gfxrecon::replay::ReplayFeatureBase>> features;
     gfxrecon::replay::LoadFeatures(features);
 
-    gfxrecon::util::ArgumentParser arg_parser(argc, argv, kOptions, kArguments);
+    // Each Feature adds its own command-line entries to the shared name lists, so an entry
+    // exists only when the build contains the Feature that reads it.
+    std::string options   = kOptions;
+    std::string arguments = kArguments;
+    AppendFeatureOptions(features, options, arguments);
 
-    if (CheckOptionPrintFeatureVersions<gfxrecon::replay::ReplayFeatureBase>(argv[0], arg_parser) ||
-        CheckOptionPrintUsage(argv[0], arg_parser))
+    gfxrecon::util::ArgumentParser arg_parser(argc, argv, options, arguments);
+
+    if (CheckOptionPrintFeatureVersions<gfxrecon::replay::ReplayFeatureBase>(argv[0], arg_parser))
     {
         gfxrecon::util::Log::Release();
         exit(0);
     }
-    else if (arg_parser.IsInvalid() || (arg_parser.GetPositionalArgumentsCount() != 1))
+    else if (CheckOptionPrintUsage(argv[0], arg_parser))
+    {
+        PrintFeatureUsage(features);
+        gfxrecon::util::Log::Release();
+        exit(0);
+    }
+    else if (arg_parser.IsInvalid() || (arg_parser.GetPositionalArgumentsCount() != 1) ||
+             !CheckFeatureOptionValues(features, arg_parser))
     {
         PrintUsage(argv[0]);
+        PrintFeatureUsage(features);
         gfxrecon::util::Log::Release();
         exit(-1);
     }
