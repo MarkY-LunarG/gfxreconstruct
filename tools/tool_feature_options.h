@@ -25,14 +25,16 @@
 // kArguments strings for the entries that all of its Features share. Each Feature returns the
 // entries that belong only to that Feature, and these functions put the two sets together.
 //
-// The three steps in a tool main are:
+// The steps in a tool main are:
 //
-//   1. AppendFeatureOptions()    -- before the tool builds the ArgumentParser
+//   1. AppendFeatureOptions()     -- before the tool builds the ArgumentParser
 //   2. CheckFeatureOptionValues() -- after the tool builds the ArgumentParser
-//   3. PrintFeatureUsage()        -- after the usage function of the tool
+//   3. BuildFeatureSynopsis()     -- in the usage function of the tool, for the "Usage:" line
+//   4. PrintFeatureUsage()        -- after the usage function of the tool
 //
 // An entry exists only when its Feature is built into the tool, so a Feature that the build
-// removes also removes its entries from the parser and from the usage text.
+// removes also removes its entries from the parser and from the usage text. An entry with an
+// empty description is accepted but is not documented, which suits an experimental entry.
 
 #ifndef GFXRECON_TOOL_FEATURE_OPTIONS_H
 #define GFXRECON_TOOL_FEATURE_OPTIONS_H
@@ -189,6 +191,53 @@ inline bool CheckFeatureOptionValues(const std::vector<std::unique_ptr<FeatureBa
     return valid;
 }
 
+// Builds the part of the "Usage:" line that comes from the Features, as a set of bracketed
+// fragments such as "[--dxr] [--gpu <index>]". A tool puts this text between its own leading
+// options and its positional arguments. An entry with an empty description stays out of the
+// synopsis, the same as it stays out of the usage sections.
+template <typename FeatureBaseT>
+inline std::string BuildFeatureSynopsis(const std::vector<std::unique_ptr<FeatureBaseT>>& features)
+{
+    std::string synopsis;
+
+    for (const auto& feature : features)
+    {
+        for (const auto& desc : feature->GetOptionDescs())
+        {
+            if (desc.description.empty())
+            {
+                continue;
+            }
+
+            const std::vector<std::string> desc_names = SplitFeatureOptionNames(desc.trigger_names);
+            const std::string value = (desc.has_argument && !desc.name.empty()) ? (" " + desc.name) : std::string();
+            std::string       fragment;
+
+            for (const auto& name : desc_names)
+            {
+                if (!fragment.empty())
+                {
+                    fragment += " | ";
+                }
+                fragment += name + value;
+            }
+
+            if (fragment.empty())
+            {
+                continue;
+            }
+
+            if (!synopsis.empty())
+            {
+                synopsis += " ";
+            }
+            synopsis += "[" + fragment + "]";
+        }
+    }
+
+    return synopsis;
+}
+
 // Prints one usage section for each Feature that adds command-line entries. Call this function
 // directly after the usage function of the tool.
 template <typename FeatureBaseT>
@@ -202,7 +251,12 @@ inline void PrintFeatureUsage(const std::vector<std::unique_ptr<FeatureBaseT>>& 
     for (const auto& feature : features)
     {
         const std::vector<gfxrecon::util::FeatureOptionDesc> descs = feature->GetOptionDescs();
-        if (descs.empty())
+
+        const bool has_documented_entry =
+            std::any_of(descs.begin(), descs.end(), [](const gfxrecon::util::FeatureOptionDesc& desc) {
+                return !desc.description.empty();
+            });
+        if (!has_documented_entry)
         {
             continue;
         }
@@ -213,6 +267,12 @@ inline void PrintFeatureUsage(const std::vector<std::unique_ptr<FeatureBaseT>>& 
 
         for (const auto& desc : descs)
         {
+            // An entry with no description stays out of the usage text.
+            if (desc.description.empty())
+            {
+                continue;
+            }
+
             // The parser separates alternative names with a pipe. The usage text spaces it out.
             std::string names = desc.trigger_names;
             for (size_t pos = names.find('|'); pos != std::string::npos; pos = names.find('|', pos + 3))
