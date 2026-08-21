@@ -126,17 +126,21 @@ int32_t main(int32_t argc, const char** argv)
         g_optimize_features.push_back(creator());
     }
 
-    // Aggregate option flags and argument keys from all features plus common flags.
-    std::string options   = "-h|--help,--version";
-    std::string arguments = "";
+    // Aggregate option flags and argument keys from all features plus common flags. The
+    // ArgumentParser keeps its own copy of the names, so the two lists go out of scope as soon
+    // as it is built.
+    gfxrecon::util::ArgumentParser arg_parser = [argc, argv]() {
+        std::string options   = "-h|--help,--version";
+        std::string arguments = "";
 
 #if defined(WIN32) && defined(_DEBUG)
-    options += ",--no-debug-popup";
+        options += ",--no-debug-popup";
 #endif
 
-    AppendFeatureOptions(g_optimize_features, options, arguments);
+        AppendFeatureOptions(g_optimize_features, options, arguments);
 
-    gfxrecon::util::ArgumentParser arg_parser(argc, argv, options, arguments);
+        return gfxrecon::util::ArgumentParser(argc, argv, options, arguments);
+    }();
 
     if (CheckOptionPrintUsage(argv[0], arg_parser) ||
         CheckOptionPrintFeatureVersions<gfxrecon::optimize::OptimizeFeature>(argv[0], arg_parser))

@@ -72,8 +72,6 @@ void WaitForExit()
 void WaitForExit() {}
 #endif
 
-const char kLayerEnvVar[] = "VK_INSTANCE_LAYERS";
-
 int main(int argc, const char** argv)
 {
     int return_code = 0;
@@ -86,12 +84,14 @@ int main(int argc, const char** argv)
     gfxrecon::replay::LoadFeatures(features);
 
     // Each Feature adds its own command-line entries to the shared name lists, so an entry
-    // exists only when the build contains the Feature that reads it.
-    std::string options   = kOptions;
-    std::string arguments = kArguments;
-    AppendFeatureOptions(features, options, arguments);
-
-    gfxrecon::util::ArgumentParser arg_parser(argc, argv, options, arguments);
+    // exists only when the build contains the Feature that reads it. The ArgumentParser keeps
+    // its own copy of the names, so the two lists go out of scope as soon as it is built.
+    gfxrecon::util::ArgumentParser arg_parser = [&features, argc, argv]() {
+        std::string options   = kOptions;
+        std::string arguments = kArguments;
+        AppendFeatureOptions(features, options, arguments);
+        return gfxrecon::util::ArgumentParser(argc, argv, options, arguments);
+    }();
 
     if (CheckOptionPrintFeatureVersions<gfxrecon::replay::ReplayFeatureBase>(argv[0], arg_parser))
     {
@@ -132,12 +132,7 @@ int main(int argc, const char** argv)
             return std::make_shared<gfxrecon::application::Application>(kApplicationName, fp, wsi_extension, nullptr);
         };
 
-        if (!gfxrecon::replay::RunReplay(file_processor,
-                                         features,
-                                         arg_parser,
-                                         filename,
-                                         gfxrecon::util::platform::GetEnv(kLayerEnvVar),
-                                         make_application))
+        if (!gfxrecon::replay::RunReplay(file_processor, features, arg_parser, filename, make_application))
         {
             return_code = -1;
         }

@@ -57,14 +57,12 @@ void RunPreProcessConsumer(const std::string& filename, std::vector<std::unique_
 //
 // file_processor_out  Receives the constructed FileProcessor; Android keeps a
 //                     global reference so the extern "C" query callbacks work.
-// active_layers_value String forwarded verbatim to CheckActiveLayers().
 // make_application    Platform factory called with the new FileProcessor
 //                     pointer; should return a fully constructed Application.
 bool RunReplay(std::unique_ptr<decode::FileProcessor>&                                          file_processor_out,
                std::vector<std::unique_ptr<ReplayFeatureBase>>&                                 features,
                util::ArgumentParser&                                                            arg_parser,
                const std::string&                                                               filename,
-               const std::string&                                                               active_layers_value,
                std::function<std::shared_ptr<application::Application>(decode::FileProcessor*)> make_application);
 
 GFXRECON_END_NAMESPACE(replay)

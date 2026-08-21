@@ -46,7 +46,6 @@
 
 const char kArgsExtentKey[]      = "args";
 const char kDefaultCaptureFile[] = "/sdcard/gfxrecon_capture" GFXRECON_FILE_EXTENSION;
-const char kLayerProperty[]      = "debug.vulkan.layers";
 
 const int32_t kSwipeDistance = 200;
 
@@ -82,13 +81,15 @@ void android_main(struct android_app* app)
     gfxrecon::replay::LoadFeatures(g_features);
 
     // Each Feature adds its own command-line entries to the shared name lists, so an entry
-    // exists only when the build contains the Feature that reads it.
-    std::string options   = kOptions;
-    std::string arguments = kArguments;
-    AppendFeatureOptions(g_features, options, arguments);
-
-    std::string                    args = gfxrecon::util::GetIntentExtra(app, kArgsExtentKey);
-    gfxrecon::util::ArgumentParser arg_parser(false, args.c_str(), options, arguments);
+    // exists only when the build contains the Feature that reads it. The ArgumentParser keeps
+    // its own copy of the names, so the two lists go out of scope as soon as it is built.
+    const std::string              args       = gfxrecon::util::GetIntentExtra(app, kArgsExtentKey);
+    gfxrecon::util::ArgumentParser arg_parser = [&args]() {
+        std::string options   = kOptions;
+        std::string arguments = kArguments;
+        AppendFeatureOptions(g_features, options, arguments);
+        return gfxrecon::util::ArgumentParser(false, args.c_str(), options, arguments);
+    }();
 
     app->onAppCmd     = ProcessAppCmd;
     app->onInputEvent = ProcessInputEvent;
@@ -131,8 +132,7 @@ void android_main(struct android_app* app)
                     kApplicationName, fp, VK_KHR_ANDROID_SURFACE_EXTENSION_NAME, app);
             };
 
-            gfxrecon::replay::RunReplay(
-                g_file_processor, g_features, arg_parser, filename, kLayerProperty, make_application);
+            gfxrecon::replay::RunReplay(g_file_processor, g_features, arg_parser, filename, make_application);
         }
         catch (std::runtime_error& error)
         {

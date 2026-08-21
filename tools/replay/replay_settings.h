@@ -28,28 +28,20 @@
 #define GFXRECON_REPLAY_SETTINGS_H
 
 const char kOptions[] =
-    "-h|--help,--version,--log-debugview,--no-debug-popup,--paused,--sync,--sfa|--skip-failed-allocations,--opcd|--"
-    "omit-pipeline-cache-data,--remove-unsupported,--validate,--debug-device-lost,--create-dummy-allocations,--"
-    "screenshot-all,--onhb|--omit-null-hardware-buffers,--qamr|--quit-after-measurement-range,--fmr|--flush-"
-    "measurement-range,--flush-inside-measurement-range,--vssb|--virtual-swapchain-skip-blit,--use-captured-swapchain-"
-    "indices,--dcp,--discard-cached-psos,--use-colorspace-fallback,--use-cached-psos,--dx12-override-object-names,--"
-    "dx12-ags-inject-markers,--offscreen-swapchain-frame-boundary,--wait-before-present,--dump-resources-before-draw,"
-    "--dump-resources-modifiable-state-only,--pbi-all,--preload-measurement-range,--add-new-pipeline-caches,--"
-    "screenshot-ignore-FrameBoundaryANDROID,--screenshot-apply-prerotation,--deduplicate-device,--log-timestamps,--"
-    "capture,--idle-before-submit,--"
-    "serialize-render-passes,--serialize-queue-submissions,--async-processing,--isolate-render-passes,--serialize-"
-    "compute-"
-    "and-transfer";
+    "-h|--help,--version,--log-debugview,--no-debug-popup,--paused,--sync,--remove-unsupported,--validate,"
+    "--debug-device-lost,--create-dummy-allocations,--screenshot-all,--onhb|--omit-null-hardware-buffers,"
+    "--qamr|--quit-after-measurement-range,--fmr|--flush-measurement-range,--flush-inside-measurement-range,--dcp,"
+    "--discard-cached-psos,--use-cached-psos,--dx12-override-object-names,--dx12-ags-inject-markers,"
+    "--dump-resources-before-draw,--dump-resources-modifiable-state-only,--pbi-all,--preload-measurement-range,"
+    "--log-timestamps,--async-processing";
 const char kArguments[] =
-    "--log-level,--log-file,--cpu-mask,--gpu,--gpu-group,--pause-frame,--wsi,--surface-index,-m|--memory-translation,"
-    "--replace-shaders,--screenshots,--screenshot-interval,--denied-messages,--allowed-messages,--screenshot-format,--"
-    "screenshot-dir,--screenshot-prefix,--screenshot-size,--screenshot-scale,--mfr|--measurement-frame-range,--fw|--"
-    "force-windowed,--fwo|--force-windowed-origin,--batching-memory-usage,--measurement-file,--swapchain,--sgfs|--skip-"
-    "get-fence-status,--sgfr|--skip-get-fence-ranges,--dump-resources,--dump-resources-dir,--dump-resources-image-"
-    "format,pbis,--pcj|--pipeline-creation-jobs,--save-pipeline-cache,--load-pipeline-cache,--quit-after-frame,--"
-    "present-mode,--wait-before-first-submit,--present-override,--frame-"
-    "warm-up-spirv,--frame-warm-up-load,--wait-before-frame,--loop-frame,--loop-count,--"
-    "replay-event-plugin-path,--replay-event-plugin-params";
+    "--log-level,--log-file,--cpu-mask,--gpu,--pause-frame,--wsi,--screenshots,--screenshot-interval,"
+    "--denied-messages,--allowed-messages,--screenshot-format,--screenshot-dir,--screenshot-prefix,"
+    "--screenshot-size,--screenshot-scale,--mfr|--measurement-frame-range,--fw|--force-windowed,"
+    "--fwo|--force-windowed-origin,--batching-memory-usage,--measurement-file,--dump-resources,"
+    "--dump-resources-dir,--dump-resources-image-format,pbis,--pcj|--pipeline-creation-jobs,--quit-after-frame,"
+    "--wait-before-first-submit,--frame-warm-up-spirv,--frame-warm-up-load,--wait-before-frame,--loop-frame,"
+    "--loop-count";
 
 static void PrintUsage(const char* exe_name)
 {
@@ -209,26 +201,6 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE("       \t\t\tdisplayed when abort() is called (Windows debug only).");
 #endif
 #endif
-    GFXRECON_WRITE_CONSOLE("")
-    GFXRECON_WRITE_CONSOLE("Vulkan only:")
-    GFXRECON_WRITE_CONSOLE("  --capture\t\tCapture the replaying GFXR file. Capture uses the same log");
-    GFXRECON_WRITE_CONSOLE("       \t\t\toptions as replay. All other capture option behavior and");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tusage is the same as when capturing with the GFXR layer. The");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tcapture functionality is included in the `gfxrecon-replay`");
-    GFXRECON_WRITE_CONSOLE("       \t\t\texecutable--no GFXR capture layer is added to the Vulkan layer");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tchain.");
-    GFXRECON_WRITE_CONSOLE("  --sfa\t\t\tSkip vkAllocateMemory, vkAllocateCommandBuffers, and");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tvkAllocateDescriptorSets calls that failed during");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tcapture (same as --skip-failed-allocations).");
-    GFXRECON_WRITE_CONSOLE("  --replace-shaders <dir>");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tReplace the shader code in each CreateShaderModule");
-    GFXRECON_WRITE_CONSOLE("       \t\t\twith the contents of the file <dir>/sh<handle_id> if found, where");
-    GFXRECON_WRITE_CONSOLE("       \t\t\t<handle_id> is the handle id of the CreateShaderModule call.");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tSee gfxrecon-extract.");
-    GFXRECON_WRITE_CONSOLE("  --opcd\t\tOmit pipeline cache data from calls to");
-    GFXRECON_WRITE_CONSOLE("        \t\tvkCreatePipelineCache and skip calls to");
-    GFXRECON_WRITE_CONSOLE("        \t\tvkGetPipelineCacheData (same as");
-    GFXRECON_WRITE_CONSOLE("        \t\t--omit-pipeline-cache-data).");
     GFXRECON_WRITE_CONSOLE("  --wsi <platform>\tForce replay to use the specified wsi platform. If no surface");
     GFXRECON_WRITE_CONSOLE("                  \twas available at capture time the option is ignored and no");
     GFXRECON_WRITE_CONSOLE("                  \tsurface is chosen.");
@@ -236,68 +208,9 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE("                  \tauto (default): Picks the same surface as at capture time if");
     GFXRECON_WRITE_CONSOLE("                  \t                possible, otherwise picks a surface available");
     GFXRECON_WRITE_CONSOLE("                  \t                on the replay device");
-    GFXRECON_WRITE_CONSOLE("  --surface-index <N>\tRestrict rendering to the Nth surface object created.");
-    GFXRECON_WRITE_CONSOLE("                  \tUsed with captures that include multiple surfaces.  Default");
-    GFXRECON_WRITE_CONSOLE("                  \tis -1 (render to all surfaces).");
     GFXRECON_WRITE_CONSOLE("  --sync\t\tSynchronize after each queue submission with vkQueueWaitIdle.");
     GFXRECON_WRITE_CONSOLE("  --remove-unsupported\tRemove unsupported extensions and features from instance");
     GFXRECON_WRITE_CONSOLE("                      \tand device creation parameters.");
-    GFXRECON_WRITE_CONSOLE("  -m <mode>\t\tEnable memory translation for replay on GPUs with memory");
-    GFXRECON_WRITE_CONSOLE("          \t\ttypes that are not compatible with the capture GPU's");
-    GFXRECON_WRITE_CONSOLE("          \t\tmemory types.  Available modes are:");
-    GFXRECON_WRITE_CONSOLE("          \t\t    %s\tNo memory translation is performed.  This", kMemoryTranslationNone);
-    GFXRECON_WRITE_CONSOLE("          \t\t         \tis the default behavior.");
-    GFXRECON_WRITE_CONSOLE("          \t\t    %s\tAttempt to map capture memory types to", kMemoryTranslationRemap);
-    GFXRECON_WRITE_CONSOLE("          \t\t         \tcompatible replay memory types, without");
-    GFXRECON_WRITE_CONSOLE("          \t\t         \taltering memory allocation behavior.");
-    GFXRECON_WRITE_CONSOLE("          \t\t    %s\tAdjust memory allocation sizes and", kMemoryTranslationRealign);
-    GFXRECON_WRITE_CONSOLE("          \t\t         \tresource binding offsets based on");
-    GFXRECON_WRITE_CONSOLE("          \t\t         \treplay memory properties.");
-    GFXRECON_WRITE_CONSOLE("          \t\t    %s\tChange memory allocation behavior based", kMemoryTranslationRebind);
-    GFXRECON_WRITE_CONSOLE("          \t\t         \ton resource usage and replay memory");
-    GFXRECON_WRITE_CONSOLE("          \t\t         \tproperties.  Resources may be bound");
-    GFXRECON_WRITE_CONSOLE("          \t\t         \tto different allocations with different");
-    GFXRECON_WRITE_CONSOLE("          \t\t         \toffsets.  Uses VMA to manage allocations");
-    GFXRECON_WRITE_CONSOLE("          \t\t         \tand suballocations.");
-    GFXRECON_WRITE_CONSOLE("  --swapchain <mode>\tChoose a swapchain mode to replay.");
-    GFXRECON_WRITE_CONSOLE("          \t\tAvailable modes are:");
-    GFXRECON_WRITE_CONSOLE("          \t\t    %s\tVirtual Swapchain of images which match", kSwapchainVirtual);
-    GFXRECON_WRITE_CONSOLE("          \t\t         \tthe swapchain in effect at capture time and");
-    GFXRECON_WRITE_CONSOLE("          \t\t         \twhich are copied to the underlying swapchain of the");
-    GFXRECON_WRITE_CONSOLE("          \t\t         \timplementation being replayed on. Also displays");
-    GFXRECON_WRITE_CONSOLE("          \t\t         \toffscreen frame boundaries to an additional window.");
-    GFXRECON_WRITE_CONSOLE("          \t\t         \tThis is only available and default for Vulkan.");
-    GFXRECON_WRITE_CONSOLE("          \t\t    %s\tUse the swapchain indices stored in the ", kSwapchainCaptured);
-    GFXRECON_WRITE_CONSOLE("          \t\t         \tcapture directly on the swapchain setup for replay.");
-    GFXRECON_WRITE_CONSOLE("          \t\t    %s\tDisable creating swapchains, surfaces", kSwapchainOffscreen);
-    GFXRECON_WRITE_CONSOLE("          \t\t         \tand windows. To see rendering, add the --screenshots option.");
-    GFXRECON_WRITE_CONSOLE("  --present-mode <mode>\tSet swapchain's VkPresentModeKHR.");
-    GFXRECON_WRITE_CONSOLE("          \t\tAvailable modes are:");
-    GFXRECON_WRITE_CONSOLE("          \t\t\t%s: Present mode used at capture time.", kPresentModeCapture);
-    GFXRECON_WRITE_CONSOLE("          \t\t\t%s: VK_PRESENT_MODE_IMMEDIATE_KHR", kPresentModeImmediate);
-    GFXRECON_WRITE_CONSOLE("          \t\t\t%s: VK_PRESENT_MODE_MAILBOX_KHR", kPresentModeMailbox);
-    GFXRECON_WRITE_CONSOLE("          \t\t\t%s: VK_PRESENT_MODE_FIFO_KHR", kPresentModeFifo);
-    GFXRECON_WRITE_CONSOLE("          \t\t\t%s: VK_PRESENT_MODE_FIFO_RELAXED_KHR", kPresentModeFifoRelaxed);
-    GFXRECON_WRITE_CONSOLE("  --present-override <debug-name>");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tAdditionally present an image identified by a substring match against its");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tVK_EXT_debug_utils object name (depth/stencil images are ignored). The");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tmatched image is presented in a dedicated swapchain on every present and");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tused for screenshot operations. Multi-layer images are presented tiled");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tinto a single window, one tile per array layer. If multiple images");
-    GFXRECON_WRITE_CONSOLE("       \t\t\tmatch, the most recently named one is used.");
-    GFXRECON_WRITE_CONSOLE("  --vssb");
-    GFXRECON_WRITE_CONSOLE("          \t\tSkip blit to real swapchain to gain performance during replay.");
-    GFXRECON_WRITE_CONSOLE("  --use-captured-swapchain-indices");
-    GFXRECON_WRITE_CONSOLE("          \t\tSame as \"--swapchain captured\".");
-    GFXRECON_WRITE_CONSOLE("          \t\tIgnored if the \"--swapchain\" option is used.");
-    GFXRECON_WRITE_CONSOLE("  --offscreen-swapchain-frame-boundary");
-    GFXRECON_WRITE_CONSOLE("          \t\tShould only be used with offscreen swapchain.");
-    GFXRECON_WRITE_CONSOLE("          \t\tActivates the extension VK_EXT_frame_boundary (always supported if");
-    GFXRECON_WRITE_CONSOLE("          \t\ttrimming, checks for driver support otherwise) and inserts command");
-    GFXRECON_WRITE_CONSOLE("          \t\tbuffer submission with VkFrameBoundaryEXT where vkQueuePresentKHR");
-    GFXRECON_WRITE_CONSOLE("          \t\twas called in the original capture.");
-    GFXRECON_WRITE_CONSOLE("          \t\tThis allows preserving frames when capturing a replay that uses.");
-    GFXRECON_WRITE_CONSOLE("          \t\toffscreen swapchain.");
     GFXRECON_WRITE_CONSOLE("  --measurement-frame-range <start_frame>-<end_frame>");
     GFXRECON_WRITE_CONSOLE("          \t\tCustom framerange to measure FPS for.");
     GFXRECON_WRITE_CONSOLE("          \t\tThis range will include the start frame but not the end frame.");
@@ -305,10 +218,6 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE("          \t\tframe but can be configured for any range. If the end frame is past the");
     GFXRECON_WRITE_CONSOLE("          \t\tlast frame in the trace it will be clamped to the frame after the last");
     GFXRECON_WRITE_CONSOLE("          \t\t(so in that case the results would include the last frame).");
-    GFXRECON_WRITE_CONSOLE("  --use-colorspace-fallback");
-    GFXRECON_WRITE_CONSOLE("          \t\tSwap the swapchain color space if unsupported by replay device.");
-    GFXRECON_WRITE_CONSOLE("          \t\tCheck if color space is not supported by replay device and fallback to "
-                           "VK_COLOR_SPACE_SRGB_NONLINEAR_KHR.");
     GFXRECON_WRITE_CONSOLE("  --measurement-file <file>");
     GFXRECON_WRITE_CONSOLE("          \t\tWrite measurements to a file at the specified path.");
     GFXRECON_WRITE_CONSOLE("          \t\tDefault is: '/sdcard/gfxrecon-measurements.json' on android and");
@@ -325,25 +234,6 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE("          \t\tIf this is specified the replayer will flush")
     GFXRECON_WRITE_CONSOLE("          \t\tand wait for all current GPU work to finish at the");
     GFXRECON_WRITE_CONSOLE("          \t\tend of each frame inside the measurement range.");
-    GFXRECON_WRITE_CONSOLE("  --gpu-group <index>\tUse the specified device group for replay, where index");
-    GFXRECON_WRITE_CONSOLE("          \t\tis the zero-based index to the array of physical device group");
-    GFXRECON_WRITE_CONSOLE("          \t\treturned by vkEnumeratePhysicalDeviceGroups.  Replay may fail");
-    GFXRECON_WRITE_CONSOLE("          \t\tif the specified device group is not compatible with the");
-    GFXRECON_WRITE_CONSOLE("          \t\toriginal capture device group.");
-    GFXRECON_WRITE_CONSOLE("  --sgfs <status>");
-    GFXRECON_WRITE_CONSOLE("          \t\tSpecify behavior to skip calls to vkWaitForFences and vkGetFenceStatus:");
-    GFXRECON_WRITE_CONSOLE("          \t\t\tstatus=0 : Don't skip");
-    GFXRECON_WRITE_CONSOLE("          \t\t\tstatus=1 : Skip unsuccessful calls");
-    GFXRECON_WRITE_CONSOLE("          \t\t\tstatus=2 : Always skip");
-    GFXRECON_WRITE_CONSOLE("          \t\tIf no skip frame range is specified (--sgfr), the status applies to all");
-    GFXRECON_WRITE_CONSOLE("          \t\tframes.");
-    GFXRECON_WRITE_CONSOLE("  --sgfr <frame-ranges>");
-    GFXRECON_WRITE_CONSOLE("          \t\tFrame ranges where --sgfs applies. The format is:");
-    GFXRECON_WRITE_CONSOLE("          \t\t\t<frame-start-1>-<frame-end-1>[,<frame-start-1>-<frame-end-1>]*");
-    GFXRECON_WRITE_CONSOLE("  --wait-before-present");
-    GFXRECON_WRITE_CONSOLE("          \t\tForce wait on completion of queue operations for all queues");
-    GFXRECON_WRITE_CONSOLE("          \t\tbefore calling Present. This is needed for accurate acquisition");
-    GFXRECON_WRITE_CONSOLE("          \t\tof instrumentation data on some platforms.");
 #if !defined(_WIN32)
     GFXRECON_WRITE_CONSOLE("  --dump-resources <filename>.json");
     GFXRECON_WRITE_CONSOLE("          \t\tExtract dump resources block indices and options from the");
@@ -355,33 +245,8 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE("          \t\tIf <num_jobs> is negative it will be added to the number of cpu-cores");
     GFXRECON_WRITE_CONSOLE("          \t\tDefault: 0 (do not use asynchronous operations).");
     GFXRECON_WRITE_CONSOLE("          \t\tSame as --pcj <num_jobs>");
-    GFXRECON_WRITE_CONSOLE("  --save-pipeline-cache <cache-file>");
-    GFXRECON_WRITE_CONSOLE("          \t\tIf set, produces pipeline caches at replay time instead of using");
-    GFXRECON_WRITE_CONSOLE("          \t\tthe one saved at capture time and save those caches in <cache-file>.");
-    GFXRECON_WRITE_CONSOLE("  --load-pipeline-cache <cache-file>");
-    GFXRECON_WRITE_CONSOLE("          \t\tIf set, loads data created by the `--save-pipeline-cache`");
-    GFXRECON_WRITE_CONSOLE("          \t\toption in <cache-file> and uses it to create the pipelines instead");
-    GFXRECON_WRITE_CONSOLE("          \t\tof the pipeline caches saved at capture time.");
-    GFXRECON_WRITE_CONSOLE("  --add-new-pipeline-caches");
-    GFXRECON_WRITE_CONSOLE("          \t\tIf set, allows gfxreconstruct to create new vkPipelineCache objects");
-    GFXRECON_WRITE_CONSOLE("          \t\twhen it encounters a pipeline created without cache. This option can");
-    GFXRECON_WRITE_CONSOLE("          \t\tbe used in coordination with `--save-pipeline-cache` and");
-    GFXRECON_WRITE_CONSOLE("          \t\t`--load-pipeline-cache`.");
-    GFXRECON_WRITE_CONSOLE("  --screenshot-ignore-FrameBoundaryANDROID");
-    GFXRECON_WRITE_CONSOLE("          \t\tIf set, frames switced with vkFrameBoundANDROID will be ignored from");
-    GFXRECON_WRITE_CONSOLE("          \t\tthe screenshot handler.");
-    GFXRECON_WRITE_CONSOLE("  --screenshot-apply-prerotation");
-    GFXRECON_WRITE_CONSOLE("          \t\tIf set, screenshots will respect the preTransform of the swapchain.");
-    GFXRECON_WRITE_CONSOLE("  --deduplicate-device");
-    GFXRECON_WRITE_CONSOLE("          \t\tIf set, at most one VkDevice will be created for each VkPhysicalDevice for "
-                           "RenderDoc and DXVK case.");
     GFXRECON_WRITE_CONSOLE("  --wait-before-first-submit <milliseconds>");
     GFXRECON_WRITE_CONSOLE("          \t\tWait specified milliseconds before submitting the first command buffer.");
-    GFXRECON_WRITE_CONSOLE("  --idle-before-submit");
-    GFXRECON_WRITE_CONSOLE("          \t\tWait for the GPU to become idle before each submit.");
-    GFXRECON_WRITE_CONSOLE("  --serialize-render-passes");
-    GFXRECON_WRITE_CONSOLE("          \t\tSerialize render passes by injecting execution barriers before render pass");
-    GFXRECON_WRITE_CONSOLE("          \t\tbegin during replay.");
     GFXRECON_WRITE_CONSOLE("  --frame-warm-up-spirv <spirv-file>");
     GFXRECON_WRITE_CONSOLE("          \t\tSpecify a user-provided SPIR-V compute shader for the warm-up pass.");
     GFXRECON_WRITE_CONSOLE("          \t\tThe shader must use entry point `main` and set 0, binding 0 as a");
@@ -394,21 +259,6 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE("  --wait-before-frame <milliseconds>");
     GFXRECON_WRITE_CONSOLE("          \t\tWait for the specified amount of milliseconds before starting to replay");
     GFXRECON_WRITE_CONSOLE("          \t\teach frame. Default is 0 (no wait).");
-    GFXRECON_WRITE_CONSOLE("  --serialize-queue-submissions");
-    GFXRECON_WRITE_CONSOLE("          \t\tSerialize submit entries within one vkQueueSubmit/vkQueueSubmit2");
-    GFXRECON_WRITE_CONSOLE("          \t\tcall by adding semaphores between consecutive submits.");
-    GFXRECON_WRITE_CONSOLE("  --replay-event-plugin-path <path>");
-    GFXRECON_WRITE_CONSOLE("          \t\tPath to a replay event plugin library. If specified, the");
-    GFXRECON_WRITE_CONSOLE("          \t\tplugin will be loaded and used to process replay events.");
-    GFXRECON_WRITE_CONSOLE("          \t\t(forwarded to replay tool)");
-    GFXRECON_WRITE_CONSOLE("  --replay-event-plugin-params <params>");
-    GFXRECON_WRITE_CONSOLE("          \t\tParameters to forward to the replay event plugin. The format");
-    GFXRECON_WRITE_CONSOLE("          \t\tof the parameters is determined by the plugin and is not");
-    GFXRECON_WRITE_CONSOLE("          \t\tinterpreted by the replay tool. (forwarded to replay tool)");
-    GFXRECON_WRITE_CONSOLE("  --isolate-render-passes");
-    GFXRECON_WRITE_CONSOLE(
-        "          \t\tIsolate render passes by splitting the command buffer into multiple submits.");
-
 #if defined(_WIN32)
     GFXRECON_WRITE_CONSOLE("")
     GFXRECON_WRITE_CONSOLE("D3D12 only:")

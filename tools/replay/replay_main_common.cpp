@@ -70,7 +70,6 @@ bool RunReplay(std::unique_ptr<decode::FileProcessor>&                          
                std::vector<std::unique_ptr<ReplayFeatureBase>>&                                 features,
                util::ArgumentParser&                                                            arg_parser,
                const std::string&                                                               filename,
-               const std::string&                                                               active_layers_value,
                std::function<std::shared_ptr<application::Application>(decode::FileProcessor*)> make_application)
 {
     uint32_t loop_frame        = 0;
@@ -191,7 +190,11 @@ bool RunReplay(std::unique_ptr<decode::FileProcessor>&                          
     }
 
     application->SetPauseFrame(GetPauseFrame(arg_parser));
-    CheckActiveLayers(active_layers_value);
+
+    for (auto& feature : features)
+    {
+        feature->CheckEnvironment();
+    }
 
 #if defined(__ANDROID__)
     // Start paused; replay begins once APP_CMD_GAINED_FOCUS fires.

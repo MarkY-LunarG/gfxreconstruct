@@ -45,9 +45,6 @@ GFXRECON_BEGIN_NAMESPACE(decode)
 
 typedef std::function<VulkanResourceAllocator*()> CreateResourceAllocator;
 
-// Default log level to use prior to loading settings.
-const util::LoggingSeverity kDefaultLogLevel = util::LoggingSeverity::kInfo;
-
 enum class SkipGetFenceStatus
 {
     NoSkip,
@@ -187,7 +184,7 @@ struct VulkanReplayOptions : public ReplayOptions
     std::vector<util::UintRange>        skip_get_fence_ranges;
     bool                                wait_before_present{ false };
     VkFlags                             debug_message_severity{ VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT };
+                                                                VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT };
 
     // Dumping resources related configurable replay options
     std::vector<BeginCmdBufQueueSubmitPair> BeginCommandBufferQueueSubmit_Indices;
