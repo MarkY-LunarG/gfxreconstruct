@@ -30,16 +30,13 @@
 const char kOptions[] =
     "-h|--help,--version,--log-debugview,--no-debug-popup,--paused,--sync,--remove-unsupported,--validate,"
     "--debug-device-lost,--create-dummy-allocations,--screenshot-all,--onhb|--omit-null-hardware-buffers,"
-    "--qamr|--quit-after-measurement-range,--fmr|--flush-measurement-range,--flush-inside-measurement-range,--dcp,"
-    "--discard-cached-psos,--use-cached-psos,--dx12-override-object-names,--dx12-ags-inject-markers,"
-    "--dump-resources-before-draw,--dump-resources-modifiable-state-only,--pbi-all,--preload-measurement-range,"
-    "--log-timestamps,--async-processing";
+    "--qamr|--quit-after-measurement-range,--fmr|--flush-measurement-range,--flush-inside-measurement-range,"
+    "--pbi-all,--preload-measurement-range,--log-timestamps,--async-processing";
 const char kArguments[] =
     "--log-level,--log-file,--cpu-mask,--gpu,--pause-frame,--wsi,--screenshots,--screenshot-interval,"
-    "--denied-messages,--allowed-messages,--screenshot-format,--screenshot-dir,--screenshot-prefix,"
-    "--screenshot-size,--screenshot-scale,--mfr|--measurement-frame-range,--fw|--force-windowed,"
-    "--fwo|--force-windowed-origin,--batching-memory-usage,--measurement-file,--dump-resources,"
-    "--dump-resources-dir,--dump-resources-image-format,pbis,--pcj|--pipeline-creation-jobs,--quit-after-frame,"
+    "--screenshot-format,--screenshot-dir,--screenshot-prefix,--screenshot-size,--screenshot-scale,"
+    "--mfr|--measurement-frame-range,--fw|--force-windowed,--fwo|--force-windowed-origin,--measurement-file,"
+    "--dump-resources,--dump-resources-dir,pbis,--pcj|--pipeline-creation-jobs,--quit-after-frame,"
     "--wait-before-first-submit,--frame-warm-up-spirv,--frame-warm-up-load,--wait-before-frame,--loop-frame,"
     "--loop-count";
 
@@ -196,6 +193,13 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE(
         "  --fwo <x,y>\t\tForce windowed mode if not already, and allow setting of a custom window location.");
     GFXRECON_WRITE_CONSOLE("          \t\t(Same as --force-windowed-origin)");
+    GFXRECON_WRITE_CONSOLE("  --debug-device-lost\tEnable automatic injection of breadcrumbs into command buffers");
+    GFXRECON_WRITE_CONSOLE("            \t\tand page fault reporting.");
+    GFXRECON_WRITE_CONSOLE("            \t\tUsed to debug Direct3D 12 device removed problems.");
+    GFXRECON_WRITE_CONSOLE("  --fw <width,height>\tSetup windowed and override resolution.");
+    GFXRECON_WRITE_CONSOLE("                     \t(Same as --force-windowed)");
+    GFXRECON_WRITE_CONSOLE("  --create-dummy-allocations");
+    GFXRECON_WRITE_CONSOLE("          \t\tEnable creation of dummy heaps and resources for replay validation.");
 #if defined(_DEBUG)
     GFXRECON_WRITE_CONSOLE("  --no-debug-popup\tDisable the 'Abort, Retry, Ignore' message box");
     GFXRECON_WRITE_CONSOLE("       \t\t\tdisplayed when abort() is called (Windows debug only).");
@@ -259,40 +263,6 @@ static void PrintUsage(const char* exe_name)
     GFXRECON_WRITE_CONSOLE("  --wait-before-frame <milliseconds>");
     GFXRECON_WRITE_CONSOLE("          \t\tWait for the specified amount of milliseconds before starting to replay");
     GFXRECON_WRITE_CONSOLE("          \t\teach frame. Default is 0 (no wait).");
-#if defined(_WIN32)
-    GFXRECON_WRITE_CONSOLE("")
-    GFXRECON_WRITE_CONSOLE("D3D12 only:")
-    GFXRECON_WRITE_CONSOLE(
-        "  --use-cached-psos  \tPermit using cached PSOs when creating graphics or compute pipelines.");
-    GFXRECON_WRITE_CONSOLE(
-        "       \t\t\tUsing cached PSOs may reduce PSO creation time but may result in replay errors.");
-    GFXRECON_WRITE_CONSOLE("  --debug-device-lost\tEnable automatic injection of breadcrumbs into command buffers");
-    GFXRECON_WRITE_CONSOLE("            \t\tand page fault reporting.");
-    GFXRECON_WRITE_CONSOLE("            \t\tUsed to debug Direct3D 12 device removed problems.");
-    GFXRECON_WRITE_CONSOLE("  --fw <width,height>\tSetup windowed and override resolution.");
-    GFXRECON_WRITE_CONSOLE("                     \t(Same as --force-windowed)");
-    GFXRECON_WRITE_CONSOLE("  --create-dummy-allocations");
-    GFXRECON_WRITE_CONSOLE("          \t\tEnable creation of dummy heaps and resources for replay validation.");
-    GFXRECON_WRITE_CONSOLE("  --dx12-override-object-names");
-    GFXRECON_WRITE_CONSOLE("          \t\tGenerate unique names for all ID3D12Objects and");
-    GFXRECON_WRITE_CONSOLE("          \t\tassign each object the generated name.");
-    GFXRECON_WRITE_CONSOLE("          \t\tThis is intended to assist in replay debugging.");
-    GFXRECON_WRITE_CONSOLE("  --dx12-ags-inject-markers");
-    GFXRECON_WRITE_CONSOLE("          \t\tLabel each API calls as block index of the trace");
-    GFXRECON_WRITE_CONSOLE("          \t\tRadeon GPU Detective could dump the label for debugging.");
-    GFXRECON_WRITE_CONSOLE("  --batching-memory-usage <pct>");
-    GFXRECON_WRITE_CONSOLE("          \t\tMax amount of memory consumption while loading a trimmed capture file.");
-    GFXRECON_WRITE_CONSOLE("          \t\tAcceptable values range from 0 to 100 (default: 80)");
-    GFXRECON_WRITE_CONSOLE("          \t\t0 means no batching at all");
-    GFXRECON_WRITE_CONSOLE("          \t\t100 means use all available system and GPU memory");
-    GFXRECON_WRITE_CONSOLE("  --dump-resources-modifiable-state-only");
-    GFXRECON_WRITE_CONSOLE(
-        "          \t\tOnly dump resources that are in a modifiable state set by D3D12 ResourceBarrier")
-    GFXRECON_WRITE_CONSOLE("  --dump-resources-image-format <format>");
-    GFXRECON_WRITE_CONSOLE("          \t\tImage file format to use when dumping image resources.");
-    GFXRECON_WRITE_CONSOLE("          \t\tAvailable formats are: bmp, png");
-
-#endif
 }
 
 #endif // GFXRECON_REPLAY_SETTINGS_H

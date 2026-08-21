@@ -23,6 +23,8 @@
 
 #include "replay_vulkan_feature.h"
 
+#include "tool_feature_options.h"
+
 #include "decode/vulkan_replay_frame_loop_consumer.h"
 #include "parse_dump_resources_cli.h"
 #if defined(GFXRECON_ENABLE_VULKAN)
@@ -511,12 +513,6 @@ std::string ReplayVulkanFeature::CompiledHeaderVersionString() const
 #else
     return "";
 #endif
-}
-
-// Joins two alternative names of one entry into the syntax that the ArgumentParser reads.
-static std::string AliasNames(const char* first, const char* second)
-{
-    return std::string(first) + "|" + second;
 }
 
 std::vector<util::FeatureOptionDesc> ReplayVulkanFeature::GetOptionDescs() const

@@ -23,11 +23,6 @@
 
 #include PROJECT_VERSION_HEADER_FILE
 
-#if defined(D3D12_SUPPORT)
-#include "decode/dx_replay_options.h"
-#include <initguid.h>
-#include "generated/generated_dx12_decoder.h"
-#endif
 #include "decode/file_processor.h"
 
 #include "decode/replay_options.h"
@@ -73,9 +68,6 @@ const char kPausedOption[]                       = "--paused";
 const char kPauseFrameArgument[]                 = "--pause-frame";
 const char kLoopFrameArgument[]                  = "--loop-frame";
 const char kLoopCountArgument[]                  = "--loop-count";
-const char kDiscardCachedPsosShortOption[]       = "--dcp";
-const char kDiscardCachedPsosLongOption[]        = "--discard-cached-psos";
-const char kUseCachedPsosOption[]                = "--use-cached-psos";
 const char kWsiArgument[]                        = "--wsi";
 const char kSyncOption[]                         = "--sync";
 const char kRemoveUnsupportedOption[]            = "--remove-unsupported";
@@ -84,8 +76,6 @@ const char kDebugDeviceLostOption[]              = "--debug-device-lost";
 const char kCreateDummyAllocationsOption[]       = "--create-dummy-allocations";
 const char kOmitNullHardwareBuffersLongOption[]  = "--omit-null-hardware-buffers";
 const char kOmitNullHardwareBuffersShortOption[] = "--onhb";
-const char kDeniedMessages[]                     = "--denied-messages";
-const char kAllowedMessages[]                    = "--allowed-messages";
 const char kScreenshotAllOption[]                = "--screenshot-all";
 const char kScreenshotRangeArgument[]            = "--screenshots";
 const char kScreenshotIntervalArgument[]         = "--screenshot-interval";
@@ -117,15 +107,6 @@ const char kPreloadMeasurementRangeOption[]      = "--preload-measurement-range"
 const char kWaitBeforeFirstSubmit[]              = "--wait-before-first-submit";
 const char kWaitBeforeFrame[]                    = "--wait-before-frame";
 const char kAsyncProcessingOption[]              = "--async-processing";
-
-#if defined(_WIN32)
-const char kDxTwoPassReplay[]                  = "--dx12-two-pass-replay";
-const char kDxOverrideObjectNames[]            = "--dx12-override-object-names";
-const char kDxAgsMarkRenderPasses[]            = "--dx12-ags-inject-markers";
-const char kBatchingMemoryUsageArgument[]      = "--batching-memory-usage";
-const char kDumpResourcesModifiableStateOnly[] = "--dump-resources-modifiable-state-only";
-const char kDumpResourcesBeforeDrawOption[]    = "--dump-resources-before-draw";
-#endif
 
 const char kDumpResourcesArgument[]    = "--dump-resources";
 const char kDumpResourcesDirArgument[] = "--dump-resources-dir";
@@ -742,35 +723,6 @@ static void SetWindowOrigin(gfxrecon::decode::ReplayOptions& options, const gfxr
     }
 }
 
-static std::vector<int32_t> GetFilteredMsgs(const gfxrecon::util::ArgumentParser& arg_parser,
-                                            const char*                           filter_messages)
-{
-    const auto&          value = arg_parser.GetArgumentValue(filter_messages);
-    std::vector<int32_t> msgs;
-    if (!value.empty())
-    {
-        std::vector<std::string> values;
-        std::istringstream       value_input;
-        value_input.str(value);
-
-        for (std::string val; std::getline(value_input, val, ',');)
-        {
-            size_t count = std::count_if(val.begin(), val.end(), ::isdigit);
-            if (count == val.length())
-            {
-                msgs.push_back(std::stoi(val));
-            }
-            else
-            {
-                GFXRECON_LOG_WARNING("Ignoring invalid filter messages\"%s\", which contains non-numeric values",
-                                     val.c_str());
-                break;
-            }
-        }
-    }
-    return msgs;
-}
-
 static void GetWaitBeforeFirstSubmit(const gfxrecon::util::ArgumentParser& arg_parser,
                                      uint32_t&                             wait_before_first_submit)
 {
@@ -968,81 +920,5 @@ static void GetReplayOptions(gfxrecon::decode::ReplayOptions&      options,
     options.screenshot_dir         = GetScreenshotDir(arg_parser);
     options.screenshot_file_prefix = arg_parser.GetArgumentValue(kScreenshotFilePrefixArgument);
 }
-
-#if defined(D3D12_SUPPORT)
-static gfxrecon::decode::DxReplayOptions GetDxReplayOptions(const gfxrecon::util::ArgumentParser& arg_parser,
-                                                            const std::string&                    filename)
-{
-    gfxrecon::decode::DxReplayOptions replay_options;
-    GetReplayOptions(replay_options, arg_parser, filename);
-
-    replay_options.DeniedDebugMessages  = GetFilteredMsgs(arg_parser, kDeniedMessages);
-    replay_options.AllowedDebugMessages = GetFilteredMsgs(arg_parser, kAllowedMessages);
-
-    if (arg_parser.IsOptionSet(kDxTwoPassReplay))
-    {
-        replay_options.enable_d3d12_two_pass_replay = true;
-    }
-
-    if (arg_parser.IsOptionSet(kDiscardCachedPsosLongOption) || arg_parser.IsOptionSet(kDiscardCachedPsosShortOption))
-    {
-        GFXRECON_LOG_WARNING("The parameters --dcp and --discard-cached-psos have been deprecated in favor for "
-                             "--use-cached-psos");
-    }
-
-    if (arg_parser.IsOptionSet(kUseCachedPsosOption))
-    {
-        replay_options.use_cached_psos = true;
-    }
-
-    if (arg_parser.IsOptionSet(kDxOverrideObjectNames))
-    {
-        replay_options.override_object_names = true;
-    }
-
-    if (arg_parser.IsOptionSet(kDxAgsMarkRenderPasses))
-    {
-#ifdef GFXRECON_AGS_SUPPORT
-        replay_options.ags_inject_markers = true;
-#else
-        GFXRECON_LOG_ERROR("Unsupported option --dx12-ags-inject-markers");
-#endif
-    }
-
-    const std::string& dump_resources = arg_parser.GetArgumentValue(kDumpResourcesArgument);
-    if (!dump_resources.empty() && dump_resources.find_first_not_of("0123456789,") == std::string::npos)
-    {
-        std::vector<std::string> values = gfxrecon::util::strings::SplitString(dump_resources, ',');
-        if (values.size() == 3)
-        {
-            replay_options.dump_resources_target.submit_index    = std::stoi(values[0]);
-            replay_options.dump_resources_target.command_index   = std::stoi(values[1]);
-            replay_options.dump_resources_target.draw_call_index = std::stoi(values[2]);
-            replay_options.enable_dump_resources                 = true;
-            replay_options.using_dump_resources_target           = true;
-        }
-    }
-
-    replay_options.dump_resources_output_dir            = GetDumpResourcesDir(arg_parser);
-    replay_options.dump_resources_before                = arg_parser.IsOptionSet(kDumpResourcesBeforeDrawOption);
-    replay_options.dump_resources_modifiable_state_only = arg_parser.IsOptionSet(kDumpResourcesModifiableStateOnly);
-
-    const std::string& memory_usage = arg_parser.GetArgumentValue(kBatchingMemoryUsageArgument);
-    if (!memory_usage.empty())
-    {
-        int memory_usage_int = std::stoi(memory_usage);
-        if (memory_usage_int >= 0 && memory_usage_int <= 100)
-        {
-            replay_options.memory_usage = static_cast<uint32_t>(memory_usage_int);
-        }
-        else
-        {
-            GFXRECON_LOG_WARNING(
-                "The parameter to --batching-memory-usage is out of range [0, 100], will use 80 as default value.");
-        }
-    }
-    return replay_options;
-}
-#endif
 
 #endif // GFXRECON_PLATFORM_SETTINGS_H

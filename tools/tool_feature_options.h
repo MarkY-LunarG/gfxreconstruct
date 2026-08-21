@@ -75,6 +75,12 @@ inline std::vector<std::string> SplitFeatureOptionNames(const std::string& name_
     return names;
 }
 
+// Joins two alternative names of one entry into the syntax that the ArgumentParser reads.
+inline std::string AliasNames(const char* first, const char* second)
+{
+    return std::string(first) + "|" + second;
+}
+
 // Joins the accepted values of one entry into the text that the usage output shows.
 inline std::string JoinFeatureOptionValues(const std::vector<std::string>& values)
 {
