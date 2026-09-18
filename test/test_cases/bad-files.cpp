@@ -117,6 +117,8 @@ static const BadFileCase kDocumentedCases[] = {
     { CaptureMutation::kBadCompressedPayload, kReplay, Expect::kFailure, "Failed to decompress block data" },
     { CaptureMutation::kBadMagic, kInfo, Expect::kFailure, "invalid four character code" },
     { CaptureMutation::kBadMagic, kReplay, Expect::kFailure, "invalid four character code" },
+    { CaptureMutation::kBadVersion, kInfo, Expect::kFailure, "later than currently supported version" },
+    { CaptureMutation::kBadVersion, kReplay, Expect::kFailure, "later than currently supported version" },
 };
 
 INSTANTIATE_TEST_SUITE_P(BadFiles, BadFile, testing::ValuesIn(kDocumentedCases), TestName);
@@ -124,19 +126,16 @@ INSTANTIATE_TEST_SUITE_P(BadFiles, BadFile, testing::ValuesIn(kDocumentedCases),
 // What the tools must do and do not do yet. Each row names the defect. Move a row up when its
 // fix lands.
 static const BadFileCase kKnownDefects[] = {
-    // gfxrecon-convert prints the message and then exits 0.
+    // gfxrecon-convert prints the message and then exits 0 whenever the file processor fails to
+    // initialize, so a file it cannot read looks like a success to a script.
     { CaptureMutation::kBadMagic, kConvert, Expect::kFailure, "invalid four character code" },
+    { CaptureMutation::kBadVersion, kConvert, Expect::kFailure, "later than currently supported version" },
     // The block parser allocates the size that the block header claims before any check, so a
     // corrupt size raises std::bad_alloc. gfxrecon-convert and gfxrecon-info abort on it with
     // no message, and gfxrecon-replay reports only "std::bad_alloc".
     { CaptureMutation::kBadBlockSize, kConvert, Expect::kFailure, "block" },
     { CaptureMutation::kBadBlockSize, kInfo, Expect::kFailure, "block" },
     { CaptureMutation::kBadBlockSize, kReplay, Expect::kFailure, "block" },
-    // The format string of the version error in ValidateFileHeader ends in a lone "%", so the
-    // logger asserts before it prints, and every tool aborts.
-    { CaptureMutation::kBadVersion, kConvert, Expect::kFailure, "later than currently supported version" },
-    { CaptureMutation::kBadVersion, kInfo, Expect::kFailure, "later than currently supported version" },
-    { CaptureMutation::kBadVersion, kReplay, Expect::kFailure, "later than currently supported version" },
 };
 
 INSTANTIATE_TEST_SUITE_P(DISABLED_BadFilesWithKnownDefects, BadFile, testing::ValuesIn(kKnownDefects), TestName);

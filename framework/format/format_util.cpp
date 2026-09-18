@@ -50,13 +50,12 @@ bool ValidateFileHeader(const FileHeader& header)
 
     if (header.fourcc != GFXRECON_FOURCC)
     {
-        GFXRECON_LOG_ERROR("Invalid file: File header does not contain the expected unrecognized four character code.");
+        GFXRECON_LOG_ERROR("Invalid file: File header does not contain the expected four character code.");
         valid = false;
     }
     else if (!VersionSupported(header))
     {
-
-        GFXRECON_LOG_ERROR("Invalid file: File format version %u.%u later than currently supported version %u.%",
+        GFXRECON_LOG_ERROR("Invalid file: File format version %u.%u later than currently supported version %u.%u",
                            header.major_version,
                            header.minor_version,
                            GFXRECON_CURRENT_FILE_MAJOR,
