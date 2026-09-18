@@ -25,6 +25,7 @@
 #define GFXRECON_DECODE_STRUCT_POINTER_DECODER_H
 
 #include "decode/custom_vulkan_struct_decoders_forward.h"
+#include "decode/parameter_decode_error.h"
 #include "decode/pointer_decoder_base.h"
 #include "decode/decode_allocator.h"
 #include "decode/value_decoder.h"
@@ -136,6 +137,12 @@ class StructPointerDecoder : public PointerDecoderBase
 
     size_t Decode(const uint8_t* buffer, size_t buffer_size)
     {
+        if (ParameterDecodeError::Pending())
+        {
+            // An earlier parameter of this call was corrupt. Decode nothing more.
+            return 0;
+        }
+
         size_t bytes_read = DecodeAttributes(buffer, buffer_size);
 
         // We should only be decoding structs.
@@ -144,6 +151,12 @@ class StructPointerDecoder : public PointerDecoderBase
         if (!IsNull())
         {
             size_t len = GetLength();
+
+            // Every encoded struct is at least one byte, so a length past the buffer is corrupt.
+            if (HasData() && !LengthFitsBuffer(len, 1, buffer_size - bytes_read))
+            {
+                return bytes_read;
+            }
 
             if (!is_memory_external_)
             {
@@ -194,6 +207,12 @@ class StructPointerDecoder : public PointerDecoderBase
     // and allocate and decode the appropriate child.
     size_t DecodeBaseHeader(const uint8_t* buffer, size_t buffer_size)
     {
+        if (ParameterDecodeError::Pending())
+        {
+            // An earlier parameter of this call was corrupt. Decode nothing more.
+            return 0;
+        }
+
         size_t bytes_read = DecodeAttributes(buffer, buffer_size);
 
         // We should only be decoding structs.
@@ -203,6 +222,11 @@ class StructPointerDecoder : public PointerDecoderBase
         if (!IsNull())
         {
             size_t len = GetLength();
+
+            if (HasData() && !LengthFitsBuffer(len, 1, buffer_size - bytes_read))
+            {
+                return bytes_read;
+            }
 
             if (!is_memory_external_)
             {
@@ -283,6 +307,12 @@ class StructPointerDecoder<T*> : public PointerDecoderBase
 
     size_t Decode(const uint8_t* buffer, size_t buffer_size)
     {
+        if (ParameterDecodeError::Pending())
+        {
+            // An earlier parameter of this call was corrupt. Decode nothing more.
+            return 0;
+        }
+
         size_t bytes_read = DecodeAttributes(buffer, buffer_size);
 
         // We should only be decoding 2D struct arrays.
@@ -293,7 +323,11 @@ class StructPointerDecoder<T*> : public PointerDecoderBase
         {
             assert(struct_memory_ == nullptr);
 
-            size_t len       = GetLength();
+            size_t len = GetLength();
+            if (!LengthFitsBuffer(len, 1, buffer_size - bytes_read))
+            {
+                return bytes_read;
+            }
             struct_memory_   = DecodeAllocator::Allocate<typename T::struct_type*>(len, false);
             decoded_structs_ = DecodeAllocator::Allocate<T*>(len, false);
             inner_lens_.resize(len);
@@ -354,6 +388,12 @@ class StructPointerDecoder<T*> : public PointerDecoderBase
     // and allocate and decode the appropriate child.
     size_t DecodeBaseHeader(const uint8_t* buffer, size_t buffer_size)
     {
+        if (ParameterDecodeError::Pending())
+        {
+            // An earlier parameter of this call was corrupt. Decode nothing more.
+            return 0;
+        }
+
         size_t bytes_read = DecodeAttributes(buffer, buffer_size);
 
         // We should only be decoding 2D struct arrays.

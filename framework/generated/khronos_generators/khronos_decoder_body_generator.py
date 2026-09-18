@@ -141,6 +141,12 @@ class KhronosDecoderBodyGenerator():
             arglist = arglist[:-2]
         arglist = 'call_info, ' + arglist
 
+        main_body += '    if (ParameterDecodeError::Pending())\n'
+        main_body += '    {\n'
+        main_body += '        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.\n'
+        main_body += '        return bytes_read;\n'
+        main_body += '    }\n'
+        main_body += '\n'
         main_body += '    for (auto consumer : GetConsumers())\n'
         main_body += '    {\n'
         main_body += '        consumer->Process_{}({});\n'.format(name, arglist)

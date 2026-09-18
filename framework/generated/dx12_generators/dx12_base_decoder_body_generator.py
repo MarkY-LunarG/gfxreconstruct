@@ -137,6 +137,12 @@ class Dx12BaseDecoderBodyGenerator():
             arglist = arglist[:-2]
         arglist = 'call_info, ' + arglist
 
+        body += '    if (ParameterDecodeError::Pending())\n'
+        body += '    {\n'
+        body += '        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.\n'
+        body += '        return bytes_read;\n'
+        body += '    }\n'
+        body += '\n'
         body += '    for (auto consumer : GetConsumers())\n'
         body += '    {\n'
         body += '        consumer->Process_{}({});\n'.format(name, arglist)

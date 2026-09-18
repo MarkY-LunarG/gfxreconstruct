@@ -25,6 +25,7 @@
 #ifndef GFXRECON_DECODE_VALUE_DECODER_H
 #define GFXRECON_DECODE_VALUE_DECODER_H
 
+#include "decode/parameter_decode_error.h"
 #include "format/platform_types.h"
 #include "format/format.h"
 #include "util/defines.h"
@@ -41,6 +42,7 @@
 #include <cassert>
 #include <chrono>
 #include <cstdint>
+#include <string>
 #include <type_traits>
 #include <memory.h>
 
@@ -142,6 +144,11 @@ class ValueDecoder
     {
         assert(arr != nullptr);
 
+        if (ParameterDecodeError::Pending())
+        {
+            return 0;
+        }
+
         size_t bytes_read = 0;
         size_t data_size  = len * sizeof(SrcT);
 
@@ -153,6 +160,10 @@ class ValueDecoder
                 bytes_read += DecodeValue((buffer + bytes_read), (buffer_size - bytes_read), &from_value);
                 arr[i] = TypeCast<DstT>(from_value);
             }
+        }
+        else
+        {
+            ReportShortBuffer(data_size, buffer_size);
         }
 
         return bytes_read;
@@ -182,10 +193,23 @@ class ValueDecoder
         return reinterpret_cast<DstT>(value);
     }
 
+    // The parameter buffer ended before a value or an array. The call cannot be decoded, and the
+    // dispatch fails the block.
+    static void ReportShortBuffer(size_t needed, size_t available)
+    {
+        ParameterDecodeError::Report("the parameter buffer holds " + std::to_string(available) +
+                                     " bytes where a value needs " + std::to_string(needed));
+    }
+
     template <typename T>
     static size_t DecodeValue(const uint8_t* buffer, size_t buffer_size, T* value)
     {
         assert(value != nullptr);
+
+        if (ParameterDecodeError::Pending())
+        {
+            return 0;
+        }
 
         size_t bytes_read = 0;
         size_t data_size  = sizeof(T);
@@ -195,6 +219,10 @@ class ValueDecoder
             bytes_read = data_size;
             memcpy(value, buffer, data_size);
         }
+        else
+        {
+            ReportShortBuffer(data_size, buffer_size);
+        }
 
         return bytes_read;
     }
@@ -203,6 +231,11 @@ class ValueDecoder
     static size_t DecodeValueFrom(const uint8_t* buffer, size_t buffer_size, DstT* value)
     {
         assert(value != nullptr);
+
+        if (ParameterDecodeError::Pending())
+        {
+            return 0;
+        }
 
         size_t bytes_read = 0;
         size_t data_size  = sizeof(SrcT);
@@ -214,6 +247,10 @@ class ValueDecoder
             memcpy(&from_type, buffer, data_size);
             (*value) = TypeCast<DstT>(from_type);
         }
+        else
+        {
+            ReportShortBuffer(data_size, buffer_size);
+        }
 
         return bytes_read;
     }
@@ -223,6 +260,11 @@ class ValueDecoder
     {
         assert(arr != nullptr);
 
+        if (ParameterDecodeError::Pending())
+        {
+            return 0;
+        }
+
         size_t bytes_read = 0;
         size_t data_size  = len * sizeof(T);
 
@@ -230,6 +272,10 @@ class ValueDecoder
         {
             bytes_read = data_size;
             memcpy(arr, buffer, data_size);
+        }
+        else
+        {
+            ReportShortBuffer(data_size, buffer_size);
         }
 
         return bytes_read;

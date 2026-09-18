@@ -25,6 +25,7 @@
 
 #include "decode/custom_vulkan_struct_decoders.h"
 #include "decode/decode_allocator.h"
+#include "decode/parameter_decode_error.h"
 #include "decode/value_decoder.h"
 #include "format/format.h"
 #include "generated/generated_vulkan_struct_decoders.h"
@@ -47,6 +48,12 @@ DescriptorUpdateTemplateDecoder::~DescriptorUpdateTemplateDecoder() {}
 
 size_t DescriptorUpdateTemplateDecoder::Decode(const uint8_t* buffer, size_t buffer_size)
 {
+    if (ParameterDecodeError::Pending())
+    {
+        // An earlier parameter of this call was corrupt. Decode nothing more.
+        return 0;
+    }
+
     size_t bytes_read = DecodeAttributes(buffer, buffer_size);
 
     // The update template should identify as a struct pointer.

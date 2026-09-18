@@ -24,6 +24,7 @@
 #ifndef GFXRECON_DECODE_POINTER_DECODER_H
 #define GFXRECON_DECODE_POINTER_DECODER_H
 
+#include "decode/parameter_decode_error.h"
 #include "decode/pointer_decoder_base.h"
 #include "decode/decode_allocator.h"
 #include "decode/value_decoder.h"
@@ -158,6 +159,12 @@ class PointerDecoder : public PointerDecoderBase
     template <typename SrcT>
     size_t DecodeFrom(const uint8_t* buffer, size_t buffer_size)
     {
+        if (ParameterDecodeError::Pending())
+        {
+            // An earlier parameter of this call was corrupt. Decode nothing more.
+            return 0;
+        }
+
         size_t bytes_read = DecodeAttributes(buffer, buffer_size);
 
         // We should not be decoding string arrays or structs.
@@ -192,6 +199,10 @@ class PointerDecoder : public PointerDecoderBase
 
         if (HasData())
         {
+            if (!LengthFitsBuffer(len, sizeof(SrcT), buffer_size))
+            {
+                return bytes_read;
+            }
             data_      = DecodeAllocator::Allocate<T>(len, false);
             bytes_read = ValueDecoder::DecodeArrayFrom<SrcT>(buffer, buffer_size, data_, len);
         }
@@ -299,6 +310,12 @@ class PointerDecoder<T*> : public PointerDecoderBase
     template <typename SrcT>
     size_t DecodeFrom(const uint8_t* buffer, size_t buffer_size)
     {
+        if (ParameterDecodeError::Pending())
+        {
+            // An earlier parameter of this call was corrupt. Decode nothing more.
+            return 0;
+        }
+
         size_t bytes_read = DecodeAttributes(buffer, buffer_size);
 
         // We should not be decoding pointers, arrays, or structs.

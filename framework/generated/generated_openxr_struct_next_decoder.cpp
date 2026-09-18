@@ -37,6 +37,7 @@
 
 #include "decode/custom_openxr_struct_decoders.h"
 #include "decode/decode_allocator.h"
+#include "decode/parameter_decode_error.h"
 #include "decode/openxr_next_node.h"
 #include "decode/openxr_next_typed_node.h"
 #include "generated/generated_openxr_struct_decoders.h"
@@ -53,6 +54,12 @@ size_t DecodeNextStruct(const uint8_t* parameter_buffer, size_t buffer_size, Ope
     assert(next != nullptr);
 
     size_t bytes_read = 0;
+
+    if (ParameterDecodeError::Pending())
+    {
+        // An earlier parameter of this call was corrupt. Decode nothing more.
+        return 0;
+    }
     uint32_t attrib = 0;
 
     if ((parameter_buffer != nullptr) && (buffer_size >= sizeof(attrib)))
@@ -80,8 +87,9 @@ size_t DecodeNextStruct(const uint8_t* parameter_buffer, size_t buffer_size, Ope
             switch (*type)
             {
             default:
-                // TODO: This may need to be a fatal error
-                GFXRECON_LOG_ERROR("Failed to decode next value with unrecognized XrStructureType = %s", (util::ToString(*type).c_str()));
+                // The encoding has no size for a struct this build does not know, so the decoder
+                // cannot skip it. The block stops here.
+                ParameterDecodeError::Report("a next value has an unrecognized XrStructureType of " + util::ToString(*type));
                 break;
             case XR_TYPE_ACTION_CREATE_INFO:
                 (*next) = DecodeAllocator::Allocate<OpenXrNextTypedNode<Decoded_XrActionCreateInfo>>();

@@ -24,7 +24,10 @@
 #ifndef GFXRECON_DECODE_POINTER_DECODER_BASE_H
 #define GFXRECON_DECODE_POINTER_DECODER_BASE_H
 
+#include "decode/parameter_decode_error.h"
 #include "decode/value_decoder.h"
+
+#include <string>
 #include "format/format.h"
 #include "util/defines.h"
 
@@ -66,6 +69,21 @@ class PointerDecoderBase
     }
 
     uint32_t GetAttributeMask() const { return attrib_; }
+
+    // True when count elements of element_size bytes can follow in a buffer of buffer_size bytes.
+    // False reports the length, so the dispatch fails the block, and the caller must not allocate.
+    // A file with a corrupt length field otherwise makes the decoder ask for gigabytes.
+    static bool LengthFitsBuffer(size_t count, size_t element_size, size_t buffer_size)
+    {
+        if ((element_size != 0) && (count > buffer_size / element_size))
+        {
+            ParameterDecodeError::Report("an array length of " + std::to_string(count) +
+                                         " elements cannot fit in the " + std::to_string(buffer_size) +
+                                         " bytes that remain in the parameter buffer");
+            return false;
+        }
+        return true;
+    }
 
     uint64_t GetAddress() const { return address_; }
 
