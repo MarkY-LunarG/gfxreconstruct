@@ -62,6 +62,8 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
         test_cases/screenshots.cpp
         test_cases/cross-driver.cpp
         test_cases/memory-translation.cpp
+        test_cases/bad-files.cpp
+        capture_mutations.cpp
         verify-gfxr.cpp)
 
     if(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
@@ -72,7 +74,7 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
 
     add_executable(gfxrecon-testapp-runner ${GFXRECON_TESTCASES})
 
-    add_dependencies(gfxrecon-testapp-runner gfxrecon-test-launcher VkICD_mock_icd gfxrecon-convert gfxrecon-replay VkLayer_gfxreconstruct)
+    add_dependencies(gfxrecon-testapp-runner gfxrecon-test-launcher VkICD_mock_icd gfxrecon-convert gfxrecon-info gfxrecon-replay VkLayer_gfxreconstruct)
     # stb_image decodes the PNG screenshots for the pixel comparison.
     target_include_directories(gfxrecon-testapp-runner PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${GFXRECON_SOURCE_DIR}/external/stb)
     target_link_libraries(gfxrecon-testapp-runner
@@ -231,6 +233,7 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
     endif ()
     install(DIRECTORY known_good DESTINATION ${GFXRECON_INSTALL_TESTDIR})
     install(TARGETS gfxrecon-convert RUNTIME DESTINATION ${GFXRECON_INSTALL_TESTDIR})
+    install(TARGETS gfxrecon-info RUNTIME DESTINATION ${GFXRECON_INSTALL_TESTDIR})
     install(TARGETS gfxrecon-replay RUNTIME DESTINATION ${GFXRECON_INSTALL_TESTDIR})
     if (UNIX)
         install(FILES $<TARGET_FILE_DIR:VkLayer_gfxreconstruct>/VkLayer_gfxreconstruct.json DESTINATION ${GFXRECON_INSTALL_LAYER_INSTALL_DIR})

@@ -14,6 +14,7 @@ This file explains how the tests fit together, how to run them, and how to keep 
 | `test_cases/` | The gtest cases. Each file holds the cases for one app or one topic. |
 | `known_good/` | One reference capture per app. A case compares a new capture against it. `known_good/<driver>/` holds the reference images for the pixel cases on that driver. |
 | `verify-gfxr.{h,cpp}` | The harness functions that the cases call. |
+| `capture_mutations.{h,cpp}` | Makes a damaged capture from a good one, for the bad-file cases. |
 | `run-tests.sh.in`, `run-tests.ps1.in`, `run-tests_macos.sh.in` | Templates for the run scripts. CMake fills in the paths. |
 | `test_environment.cmake.in` | The loader environment and the driver label that ctest gives every case, for the driver that `GFXRECON_TEST_DRIVER` names. |
 
@@ -150,6 +151,13 @@ It checks only the exit codes.
 The cases are in `test_cases/cross-driver.cpp`.
 `test_cases/memory-translation.cpp` runs each mode on the same device, on every driver.
 
+`tool_expect_failure(tool, args, pattern)` and `tool_expect_success(tool, args, pattern)` run
+one tool from the test directory with its output in a log file, and check how it ended.
+A tool that dies from a signal fails both, so a crash never passes as a refusal.
+When the pattern is not empty, the log must match it.
+`test_cases/bad-files.cpp` uses them on six kinds of damaged capture, made at test time from
+`known_good/triangle.gfxr`, so nothing damaged is committed.
+
 `reruns.cpp` runs each capture app two more times.
 One run has `GFXRECON_CAPTURE_PROCESS_NAME` set to a name that does not match.
 The layer must load and write no file.
@@ -247,3 +255,8 @@ It runs when the mock backs device memory and executes copies.
 `CrossDriver.DISABLED_MockCaptureRemapsOnLavapipe` waits for a harness function that expects a
 failure.
 The replayer refuses the mapping by design, because lavapipe has no lazily allocated memory type.
+
+The `DISABLED_BadFilesWithKnownDefects` rows in `test_cases/bad-files.cpp` state what a tool must
+do on a damaged file and does not do yet.
+Each row names its defect.
+A row moves to the enabled list when the fix lands.

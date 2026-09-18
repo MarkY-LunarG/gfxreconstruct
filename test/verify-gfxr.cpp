@@ -5,6 +5,10 @@
 #include <stb_image.h>
 
 #include <cmath>
+#include <regex>
+#if !defined(_WIN32)
+#include <sys/wait.h>
+#endif
 #include "verify-gfxr.h"
 
 #include <gtest/gtest.h>
@@ -476,6 +480,110 @@ double rms_difference_percent(const std::string& image_path, const std::string& 
     }
     const double rms = std::sqrt(total_square_difference / static_cast<double>(component_count));
     return 100.0 * rms / 255.0;
+}
+
+std::filesystem::path prepare_results_directory(const char* name)
+{
+    Paths paths{ name, nullptr, false };
+    prepare_case_directory(paths);
+    return paths.case_directory;
+}
+
+// How a child process ended. std::system returns the raw wait status on POSIX and the exit code
+// on Windows. On POSIX the command runs under a shell, and a shell reports a child that a signal
+// killed as exit code 128 plus the signal number, so that range counts as a signal too. Signal
+// numbers stop at 64 on Linux, and 255, the exit code of a fatal replay error, stays an exit.
+struct ProcessEnd
+{
+    bool exited        = false; // False when a signal ended the process.
+    int  exit_code     = 0;
+    int  signal_number = 0;
+};
+
+static ProcessEnd decode_status(int status)
+{
+    ProcessEnd end;
+#if defined(_WIN32)
+    end.exited    = true;
+    end.exit_code = status;
+#else
+    if (WIFSIGNALED(status))
+    {
+        end.signal_number = WTERMSIG(status);
+    }
+    else if (WIFEXITED(status))
+    {
+        const int code = WEXITSTATUS(status);
+        if (code > 128 && code <= 128 + 64)
+        {
+            end.signal_number = code - 128;
+        }
+        else
+        {
+            end.exited    = true;
+            end.exit_code = code;
+        }
+    }
+#endif
+    return end;
+}
+
+// Run a tool with its output in log_path. The redirection goes through the shell that
+// std::system uses on every platform.
+static ProcessEnd run_tool(const char*                     tool,
+                           const std::vector<std::string>& args,
+                           const std::filesystem::path&    log_path,
+                           std::string&                    log)
+{
+    Paths                 paths{ tool, nullptr, false };
+    std::filesystem::path tool_path = paths.base_path / tool;
+#if defined(_WIN32)
+    tool_path += ".exe";
+#endif
+    std::vector<std::string> full_args = args;
+    full_args.push_back(">");
+    full_args.push_back("\"" + log_path.string() + "\"");
+    full_args.push_back("2>&1");
+    ProcessEnd end = decode_status(run_command(paths.base_path, tool_path, full_args));
+
+    std::ifstream log_file{ log_path };
+    log.assign(std::istreambuf_iterator<char>(log_file), std::istreambuf_iterator<char>());
+    return end;
+}
+
+static void
+expect_tool_end(const char* tool, std::vector<std::string> args, const char* log_pattern, bool expect_success)
+{
+    // The log lands next to the other outputs of the running case.
+    const std::filesystem::path log_path = Paths{ tool, nullptr, false }.case_directory / (std::string(tool) + ".log");
+    std::filesystem::create_directories(log_path.parent_path());
+
+    std::string      log;
+    const ProcessEnd end = run_tool(tool, args, log_path, log);
+    ASSERT_TRUE(end.exited) << tool << " died from signal " << end.signal_number << ", see " << log_path;
+    if (expect_success)
+    {
+        ASSERT_EQ(end.exit_code, 0) << tool << " exited " << end.exit_code << ", see " << log_path;
+    }
+    else
+    {
+        ASSERT_NE(end.exit_code, 0) << tool << " exited 0 and had to refuse, see " << log_path;
+    }
+    if (log_pattern != nullptr && log_pattern[0] != '\0')
+    {
+        ASSERT_TRUE(std::regex_search(log, std::regex(log_pattern)))
+            << tool << " did not print a message that matches \"" << log_pattern << "\", see " << log_path;
+    }
+}
+
+void tool_expect_failure(const char* tool, std::vector<std::string> args, const char* log_pattern)
+{
+    expect_tool_end(tool, std::move(args), log_pattern, false);
+}
+
+void tool_expect_success(const char* tool, std::vector<std::string> args, const char* log_pattern)
+{
+    expect_tool_end(tool, std::move(args), log_pattern, true);
 }
 
 void run_in_background(const char* test_name)

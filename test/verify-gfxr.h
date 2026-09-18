@@ -3,6 +3,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -88,5 +89,15 @@ double rms_difference_percent(const std::string& image_path, const std::string& 
 
 // Images that differ by no more than this percentage count as the same image.
 extern const double kRmsThresholdPercent;
+
+// Make an empty results directory for a case that is not about one app, and return it.
+std::filesystem::path prepare_results_directory(const char* name);
+
+// Run one tool from the test directory, such as "gfxrecon-convert", with its output in a log
+// file in the results directory of the case, and check how it ended. A tool that dies from a
+// signal fails either function, so a crash never passes as a refusal. When log_pattern is not
+// empty, the log must match it as a regular expression.
+void tool_expect_failure(const char* tool, std::vector<std::string> args, const char* log_pattern);
+void tool_expect_success(const char* tool, std::vector<std::string> args, const char* log_pattern);
 
 #endif // GFXRECONSTRUCT_VERIFY_GFXR_H
