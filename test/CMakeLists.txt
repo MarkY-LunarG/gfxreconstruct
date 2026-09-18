@@ -60,6 +60,7 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
         test_cases/json-normalizer.cpp
         test_cases/reruns.cpp
         test_cases/screenshots.cpp
+        test_cases/cross-driver.cpp
         verify-gfxr.cpp)
 
     if(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
@@ -160,6 +161,13 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
         "GFXRECON_TEST_DRIVER=lavapipe"
         "VK_DRIVER_FILES=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}"
         "VK_ICD_FILENAMES=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}")
+
+    # A cross-driver case captures on one driver and replays on the other, so the harness needs
+    # both manifests whatever the current driver is. An empty lavapipe manifest skips those cases.
+    list(APPEND GFXRECON_TEST_ENVIRONMENT
+        "GFXRECON_TEST_MOCK_ICD_JSON=${GFXRECON_TEST_APPS_DIR}/VkICD_mock_icd.json"
+        "GFXRECON_TEST_MOCK_ICD_LIBRARY=${GFXRECON_TEST_MOCK_ICD_LIBRARY}"
+        "GFXRECON_TEST_LAVAPIPE_ICD_JSON=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}")
 
     # ctest reads this file after the discovery file, so it sees GFXRECON_TESTAPP_TESTS.
     configure_file(test_environment.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_environment.cmake @ONLY)

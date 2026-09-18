@@ -65,7 +65,8 @@ Each test app case has the label `smoke` and one driver label.
 `mock-only` marks a case that compares against a known-good file, or an app that needs the mock
 or an extension that lavapipe does not have.
 `any-driver` marks the rest.
-`real-driver` marks the pixel comparisons, which need a driver that executes shaders.
+`real-driver` marks the pixel comparisons, which need a driver that executes shaders, and the
+cross-driver cases, which need lavapipe.
 `test_environment.cmake.in` holds the name patterns that select `mock-only` and `real-driver`,
 with a reason each.
 ctest disables every case whose driver is not the current one.
@@ -136,6 +137,13 @@ full range, and the two images match when it is 1.18 percent or less.
 That rule and that threshold come from `imageutils.py` in the VulkanTests project.
 The cases are in `test_cases/screenshots.cpp`, and `ScreenshotCompare` there proves the rule on
 the reference images with no driver.
+
+`capture_on_replay_on(name, capture_driver, replay_driver, args)` captures on one driver and
+replays on the other, with the given replay arguments.
+The mock has six memory types and lavapipe has one, so this is the test of the memory
+translation modes across real memory properties.
+It checks only the exit codes.
+The cases are in `test_cases/cross-driver.cpp`.
 
 `reruns.cpp` runs each capture app two more times.
 One run has `GFXRECON_CAPTURE_PROCESS_NAME` set to a name that does not match.
@@ -230,3 +238,12 @@ A pass here means the harness reads a file from an earlier run.
 The app copies bytes through `VK_EXT_host_image_copy` and compares them.
 The mock moves no bytes.
 It runs when the mock backs device memory and executes copies.
+
+The two `CrossDriver` realign cases are disabled.
+`gfxrecon-replay -m realign` faults on any capture from an app that puts a debug messenger in
+the instance pNext chain, as soon as the loader logs a message.
+The comment above the cases names the cause.
+
+`CrossDriver.DISABLED_MockCaptureRemapsOnLavapipe` waits for a harness function that expects a
+failure.
+The replayer refuses the mapping by design, because lavapipe has no lazily allocated memory type.

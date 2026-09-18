@@ -68,6 +68,14 @@ void verify_no_capture(const char* test_name);
  */
 void capture_and_replay(const char* test_name, std::vector<std::string> extra_replay_args = {});
 
+// Capture the app on one driver and replay the capture on the other, with the given extra replay
+// arguments, such as a memory translation mode. The drivers are "mock" and "lavapipe". The case
+// skips when the replay or capture driver has no manifest configured. Asserts the exit codes.
+void capture_on_replay_on(const char*              test_name,
+                          const char*              capture_driver,
+                          const char*              replay_driver,
+                          std::vector<std::string> extra_replay_args = {});
+
 // Capture the app, replay it with a screenshot of one frame, and compare the screenshot against
 // known_good/<driver>/<name>_frame_<frame>.png with the RMS rule. The driver is the value of
 // GFXRECON_TEST_DRIVER, "mock" when unset.

@@ -386,6 +386,44 @@ static void replay_capture(EnvironmentVariables&           env_vars,
                          << " in path " << paths.base_path;
 }
 
+// Point the loader at one driver for the commands that follow. The manifests come from the ctest
+// environment list. Returns false, with the reason, when the driver has no manifest configured.
+static bool select_driver(EnvironmentVariables& env_vars, const std::string& driver, std::string& reason)
+{
+    const char* manifest = nullptr;
+    if (driver == "mock")
+    {
+        manifest = std::getenv("GFXRECON_TEST_MOCK_ICD_JSON");
+    }
+    else if (driver == "lavapipe")
+    {
+        manifest = std::getenv("GFXRECON_TEST_LAVAPIPE_ICD_JSON");
+    }
+    else
+    {
+        reason = "unknown driver \"" + driver + "\"";
+        return false;
+    }
+    if (manifest == nullptr || manifest[0] == '\0')
+    {
+        reason = "no manifest is configured for the " + driver + " driver";
+        return false;
+    }
+    env_vars.SetEnv("VK_DRIVER_FILES", manifest);
+    env_vars.SetEnv("VK_ICD_FILENAMES", manifest);
+    if (driver == "mock")
+    {
+        const char* library = std::getenv("GFXRECON_TEST_MOCK_ICD_LIBRARY");
+        env_vars.SetEnv("GFXRECON_TESTAPP_MOCK_ICD", library != nullptr ? library : "");
+    }
+    else
+    {
+        // A test app takes a missing variable as "no mock".
+        env_vars.UnsetEnv("GFXRECON_TESTAPP_MOCK_ICD");
+    }
+    return true;
+}
+
 // The threshold comes from imageutils.py in VulkanTests. Differences under it are hard to see.
 // Differences over it are visible.
 const double kRmsThresholdPercent = 1.18;
@@ -590,6 +628,33 @@ void capture_and_replay(const char* test_name, std::vector<std::string> extra_re
 
     // Asserts only that the replay tool exits 0: no crash, no assertion, no replay error.
     ASSERT_NO_FATAL_FAILURE(capture_app(env_vars, paths, test_name));
+    ASSERT_NO_FATAL_FAILURE(replay_capture(env_vars, paths, test_name, extra_replay_args));
+}
+
+void capture_on_replay_on(const char*              test_name,
+                          const char*              capture_driver,
+                          const char*              replay_driver,
+                          std::vector<std::string> extra_replay_args)
+{
+    EnvironmentVariables env_vars;
+
+    Paths paths{ test_name, nullptr, false };
+
+    bool working_directory_exists = std::filesystem::exists(paths.working_directory);
+    ASSERT_TRUE(working_directory_exists) << "working directory does not exist: " << paths.working_directory;
+
+    std::string reason;
+    if (!select_driver(env_vars, capture_driver, reason))
+    {
+        GTEST_SKIP() << reason;
+    }
+    prepare_case_directory(paths);
+    ASSERT_NO_FATAL_FAILURE(capture_app(env_vars, paths, test_name));
+
+    if (!select_driver(env_vars, replay_driver, reason))
+    {
+        GTEST_SKIP() << reason;
+    }
     ASSERT_NO_FATAL_FAILURE(replay_capture(env_vars, paths, test_name, extra_replay_args));
 }
 
