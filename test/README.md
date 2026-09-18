@@ -30,6 +30,7 @@ The known-good files are captures on the mock, so a case that compares against o
 the mock.
 Every case carries a label that says which driver it needs, and a run on lavapipe disables the
 cases that need the mock.
+The Linux CI jobs run the suite on both drivers.
 
 ## Build and run
 
@@ -77,8 +78,10 @@ cd build/linux/x64/output/test
 ./run-tests.sh triangle        # One app, no comparison.
 ```
 
-Each ctest run also writes `ctest-results.xml` in the test directory.
-CI shows that file on the job summary page.
+Each run script run also writes a JUnit file in the test directory.
+A run on the mock writes `ctest-results.xml` and a run on lavapipe writes
+`ctest-results-lavapipe.xml`, so the two do not overwrite each other.
+CI shows both files on the job summary page.
 
 Select the driver with `GFXRECON_TEST_DRIVER`.
 The value is `mock`, the default, or `lavapipe`.

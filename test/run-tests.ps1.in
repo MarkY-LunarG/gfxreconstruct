@@ -34,9 +34,11 @@ $driver = if ($env:GFXRECON_TEST_DRIVER) { $env:GFXRECON_TEST_DRIVER } else { "m
 switch ($driver) {
     "mock" {
 @GFXRECON_TEST_ENVIRONMENT_MOCK_EXPORTS@
+        $junit_file = "ctest-results.xml"
     }
     "lavapipe" {
 @GFXRECON_TEST_ENVIRONMENT_LAVAPIPE_EXPORTS@
+        $junit_file = "ctest-results-lavapipe.xml"
         if (-not $env:VK_DRIVER_FILES) {
             Write-Error "No lavapipe manifest is configured. Configure with -DGFXRECON_TEST_LAVAPIPE_ICD_JSON=<path>."
             exit 1
@@ -61,8 +63,9 @@ if ($ctest_config) {
 }
 
 if ($args.Count -eq 0 -or $args[0].StartsWith("-")) {
-    # ctest also writes a JUnit file next to the captures, for CI reports.
-    & $ctest --test-dir $test_build_dir @config_args --output-on-failure --output-junit "$pwd\ctest-results.xml" @args
+    # ctest also writes a JUnit file next to the captures, for CI reports. The name carries the
+    # driver, so a run on the mock and a run on lavapipe do not overwrite each other.
+    & $ctest --test-dir $test_build_dir @config_args --output-on-failure --output-junit "$pwd\$junit_file" @args
     exit $LASTEXITCODE
 } else {
     $test_dir = "$pwd"

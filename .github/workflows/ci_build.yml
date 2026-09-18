@@ -103,6 +103,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libx11-xcb-dev libxcb-keysyms1-dev libwayland-dev libxrandr-dev liblz4-dev libzstd-dev
+        # mesa-vulkan-drivers holds lavapipe, the software rasterizer that the second test step uses.
+        sudo apt-get install -y mesa-vulkan-drivers
     - uses: lukka/get-cmake@latest
       with:
         cmakeVersion: 3.24
@@ -127,16 +129,28 @@ jobs:
         # user differs from the real user, and the tests need neither root nor a capability.
         cd ${{matrix.config.build_dir}}/linux/x64/output/test
         ./run-tests.sh
+    - name: Run test app test cases on lavapipe
+      id: test_apps_lavapipe
+      # The second tier. ctest disables the cases that hold on the mock only, so this runs the
+      # "any-driver" cases. It runs after a failure of the mock step, so both reports appear.
+      if: ${{ !cancelled() && steps.test_apps.outcome != 'skipped' }}
+      run: |
+        dpkg-query -W -f='mesa-vulkan-drivers ${Version}\n' mesa-vulkan-drivers
+        grep api_version /usr/share/vulkan/icd.d/lvp_icd.x86_64.json
+        cd ${{matrix.config.build_dir}}/linux/x64/output/test
+        GFXRECON_TEST_DRIVER=lavapipe ./run-tests.sh
     - name: Report test results
-      # The run-tests script makes ctest write this JUnit file. The summary goes to the job page
-      # and needs no extra permissions, so it also works for a pull request from a fork.
+      # The run-tests script makes ctest write one JUnit file per driver. The summary goes to the
+      # job page and needs no extra permissions, so it also works for a pull request from a fork.
       uses: test-summary/action@v2
       if: ${{ !cancelled() && steps.test_apps.outcome != 'skipped' }}
       with:
-        paths: ${{matrix.config.build_dir}}/linux/x64/output/test/ctest-results.xml
+        paths: |
+          ${{matrix.config.build_dir}}/linux/x64/output/test/ctest-results.xml
+          ${{matrix.config.build_dir}}/linux/x64/output/test/ctest-results-lavapipe.xml
     - name: Upload test failure artifacts
       uses: actions/upload-artifact@v4
-      if: ${{ failure() && steps.test_apps.conclusion == 'failure' }}
+      if: ${{ failure() && (steps.test_apps.conclusion == 'failure' || steps.test_apps_lavapipe.conclusion == 'failure') }}
       with:
         name: ${{ matrix.config.test_failure_artifact }}
         path: ${{matrix.config.build_dir}}/linux/x64/output/test
