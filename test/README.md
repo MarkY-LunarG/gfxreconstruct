@@ -255,8 +255,3 @@ It runs when the mock backs device memory and executes copies.
 `CrossDriver.DISABLED_MockCaptureRemapsOnLavapipe` waits for a harness function that expects a
 failure.
 The replayer refuses the mapping by design, because lavapipe has no lazily allocated memory type.
-
-The `DISABLED_BadFilesWithKnownDefects` rows in `test_cases/bad-files.cpp` state what a tool must
-do on a damaged file and does not do yet.
-Each row names its defect.
-A row moves to the enabled list when the fix lands.

@@ -101,7 +101,8 @@ static const char* const kConvert = "gfxrecon-convert";
 static const char* const kInfo    = "gfxrecon-info";
 static const char* const kReplay  = "gfxrecon-replay";
 
-// What the tools do today, and what they must keep doing.
+// What the tools do, and must keep doing. A row that a tool does not meet yet goes in a second
+// list under an instantiation with the DISABLED_ prefix, with the defect named above it.
 static const BadFileCase kDocumentedCases[] = {
     // A cut on a block boundary looks like a normal end of file. No tool can tell, and none does.
     { CaptureMutation::kTruncatedAtBlock, kConvert, Expect::kSuccess, "" },
@@ -121,19 +122,9 @@ static const BadFileCase kDocumentedCases[] = {
     { CaptureMutation::kBadVersion, kConvert, Expect::kFailure, "later than currently supported version" },
     { CaptureMutation::kBadVersion, kInfo, Expect::kFailure, "later than currently supported version" },
     { CaptureMutation::kBadVersion, kReplay, Expect::kFailure, "later than currently supported version" },
+    { CaptureMutation::kBadBlockSize, kConvert, Expect::kFailure, "Invalid block header" },
+    { CaptureMutation::kBadBlockSize, kInfo, Expect::kFailure, "Invalid block header" },
+    { CaptureMutation::kBadBlockSize, kReplay, Expect::kFailure, "Invalid block header" },
 };
 
 INSTANTIATE_TEST_SUITE_P(BadFiles, BadFile, testing::ValuesIn(kDocumentedCases), TestName);
-
-// What the tools must do and do not do yet. Each row names the defect. Move a row up when its
-// fix lands.
-static const BadFileCase kKnownDefects[] = {
-    // The block parser allocates the size that the block header claims before any check, so a
-    // corrupt size raises std::bad_alloc. gfxrecon-convert and gfxrecon-info abort on it with
-    // no message, and gfxrecon-replay reports only "std::bad_alloc".
-    { CaptureMutation::kBadBlockSize, kConvert, Expect::kFailure, "block" },
-    { CaptureMutation::kBadBlockSize, kInfo, Expect::kFailure, "block" },
-    { CaptureMutation::kBadBlockSize, kReplay, Expect::kFailure, "block" },
-};
-
-INSTANTIATE_TEST_SUITE_P(DISABLED_BadFilesWithKnownDefects, BadFile, testing::ValuesIn(kKnownDefects), TestName);

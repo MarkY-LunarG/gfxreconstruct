@@ -33,6 +33,7 @@
 #include "util/logging.h"
 
 #include <cstdlib>
+#include <filesystem>
 #include <new>
 
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
@@ -94,6 +95,10 @@ bool FStreamFileInputStream::Open(const std::string& filename)
     if (success)
     {
         last_read_status_ = util::platform::FileReadStatus::kSuccess;
+
+        std::error_code size_error;
+        const auto      size = std::filesystem::file_size(filename, size_error);
+        file_size_           = size_error ? -1 : static_cast<int64_t>(size);
         GFXRECON_ASSERT(read_ahead_buffer_ == nullptr);
         read_ahead_buffer_ =
             static_cast<char*>(util::platform::AlignedAlloc(kReadAheadBufferSize, kReadAheadAlignment));
