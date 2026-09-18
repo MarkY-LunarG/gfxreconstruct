@@ -161,6 +161,12 @@ When the pattern is not empty, the log must match it.
 A fatal problem is a message and a non-zero exit.
 A value outside the fixed set of an option is a warning, and the tool takes the default.
 
+`app_expect_success(app, env, capture_expected, pattern)` and `app_expect_failure(app, env,
+pattern)` run a test app under the capture layer with extra environment variables, with the
+output in a log file, and check the exit, the log and whether a capture file appeared.
+`test_cases/layer-faults.cpp` uses them on settings with wrong values and on a capture path
+that cannot be opened.
+
 `reruns.cpp` runs each capture app two more times.
 One run has `GFXRECON_CAPTURE_PROCESS_NAME` set to a name that does not match.
 The layer must load and write no file.

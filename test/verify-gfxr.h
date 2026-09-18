@@ -100,4 +100,20 @@ std::filesystem::path prepare_results_directory(const char* name);
 void tool_expect_failure(const char* tool, std::vector<std::string> args, const char* log_pattern);
 void tool_expect_success(const char* tool, std::vector<std::string> args, const char* log_pattern);
 
+// One environment variable for an app run. A null value unsets the variable.
+struct EnvVar
+{
+    const char* name;
+    const char* value;
+};
+
+// Run a test app under the capture layer with extra environment variables, such as a setting
+// with a wrong value, with the output of the app and the layer in a log file in the results
+// directory. The capture path is set before the extra variables, so a row can override it.
+// app_expect_success asserts exit 0, that the log matches log_pattern, and that a capture file
+// exists or does not exist as capture_expected says. app_expect_failure asserts a non-zero exit
+// without a signal, and the log pattern.
+void app_expect_success(const char* app, std::vector<EnvVar> env, bool capture_expected, const char* log_pattern);
+void app_expect_failure(const char* app, std::vector<EnvVar> env, const char* log_pattern);
+
 #endif // GFXRECONSTRUCT_VERIFY_GFXR_H

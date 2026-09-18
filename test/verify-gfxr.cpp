@@ -576,6 +576,66 @@ expect_tool_end(const char* tool, std::vector<std::string> args, const char* log
     }
 }
 
+static void expect_app_end(const char*                app,
+                           const std::vector<EnvVar>& env,
+                           bool                       expect_success,
+                           bool                       capture_expected,
+                           const char*                log_pattern)
+{
+    EnvironmentVariables env_vars;
+
+    Paths paths{ app, nullptr, false };
+    ASSERT_TRUE(std::filesystem::exists(paths.working_directory))
+        << "working directory does not exist: " << paths.working_directory;
+    prepare_case_directory(paths);
+
+    env_vars.SetEnv("GFXRECON_CAPTURE_FILE", paths.capture_path.string().c_str());
+    for (const EnvVar& variable : env)
+    {
+        if (variable.value != nullptr)
+        {
+            env_vars.SetEnv(variable.name, variable.value);
+        }
+        else
+        {
+            env_vars.UnsetEnv(variable.name);
+        }
+    }
+
+    const std::filesystem::path log_path = paths.case_directory / (std::string(app) + ".log");
+    const ProcessEnd            end      = decode_status(run_command(
+        paths.working_directory, paths.full_executable_path, { app, ">", "\"" + log_path.string() + "\"", "2>&1" }));
+    std::ifstream               log_file{ log_path };
+    const std::string           log{ std::istreambuf_iterator<char>(log_file), std::istreambuf_iterator<char>() };
+
+    ASSERT_TRUE(end.exited) << app << " died from signal " << end.signal_number << ", see " << log_path;
+    if (expect_success)
+    {
+        ASSERT_EQ(end.exit_code, 0) << app << " exited " << end.exit_code << ", see " << log_path;
+        ASSERT_EQ(std::filesystem::exists(paths.capture_path), capture_expected)
+            << (capture_expected ? "no capture file at " : "a capture file appeared at ") << paths.capture_path;
+    }
+    else
+    {
+        ASSERT_NE(end.exit_code, 0) << app << " exited 0 and had to fail, see " << log_path;
+    }
+    if (log_pattern != nullptr && log_pattern[0] != '\0')
+    {
+        ASSERT_TRUE(std::regex_search(log, std::regex(log_pattern)))
+            << app << " and the layer did not print a message that matches \"" << log_pattern << "\", see " << log_path;
+    }
+}
+
+void app_expect_success(const char* app, std::vector<EnvVar> env, bool capture_expected, const char* log_pattern)
+{
+    expect_app_end(app, env, true, capture_expected, log_pattern);
+}
+
+void app_expect_failure(const char* app, std::vector<EnvVar> env, const char* log_pattern)
+{
+    expect_app_end(app, env, false, false, log_pattern);
+}
+
 void tool_expect_failure(const char* tool, std::vector<std::string> args, const char* log_pattern)
 {
     expect_tool_end(tool, std::move(args), log_pattern, false);
