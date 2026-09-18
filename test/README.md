@@ -144,6 +144,7 @@ The mock has six memory types and lavapipe has one, so this is the test of the m
 translation modes across real memory properties.
 It checks only the exit codes.
 The cases are in `test_cases/cross-driver.cpp`.
+`test_cases/memory-translation.cpp` runs each mode on the same device, on every driver.
 
 `reruns.cpp` runs each capture app two more times.
 One run has `GFXRECON_CAPTURE_PROCESS_NAME` set to a name that does not match.
@@ -238,11 +239,6 @@ A pass here means the harness reads a file from an earlier run.
 The app copies bytes through `VK_EXT_host_image_copy` and compares them.
 The mock moves no bytes.
 It runs when the mock backs device memory and executes copies.
-
-The two `CrossDriver` realign cases are disabled.
-`gfxrecon-replay -m realign` faults on any capture from an app that puts a debug messenger in
-the instance pNext chain, as soon as the loader logs a message.
-The comment above the cases names the cause.
 
 `CrossDriver.DISABLED_MockCaptureRemapsOnLavapipe` waits for a harness function that expects a
 failure.

@@ -61,6 +61,7 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
         test_cases/reruns.cpp
         test_cases/screenshots.cpp
         test_cases/cross-driver.cpp
+        test_cases/memory-translation.cpp
         verify-gfxr.cpp)
 
     if(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")

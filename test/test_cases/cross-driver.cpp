@@ -25,11 +25,10 @@ TEST(CrossDriver, DISABLED_MockCaptureRemapsOnLavapipe)
     capture_on_replay_on("triangle", "mock", "lavapipe", { "-m", "remap" });
 }
 
-// The realign pre-pass creates its instance with the captured VkInstanceCreateInfo as is. The
-// pNext chain holds the app's VkDebugUtilsMessengerCreateInfoEXT with the app's callback pointer,
-// and the loader calls it for its first message, so the replayer faults. The replay path replaces
-// that pointer and the pre-pass must do the same. Enable both realign cases with that fix.
-TEST(CrossDriver, DISABLED_MockCaptureRealignsOnLavapipe)
+// The realign pre-pass creates an instance of its own from the captured VkInstanceCreateInfo. The
+// triangle app puts a debug messenger in the pNext chain, so this case also proves that the
+// pre-pass does not hand the app's callback pointer to the loader.
+TEST(CrossDriver, MockCaptureRealignsOnLavapipe)
 {
     capture_on_replay_on("triangle", "mock", "lavapipe", { "-m", "realign" });
 }
@@ -44,7 +43,7 @@ TEST(CrossDriver, LavapipeCaptureRemapsOnMock)
     capture_on_replay_on("triangle", "lavapipe", "mock", { "-m", "remap" });
 }
 
-TEST(CrossDriver, DISABLED_LavapipeCaptureRealignsOnMock)
+TEST(CrossDriver, LavapipeCaptureRealignsOnMock)
 {
     capture_on_replay_on("triangle", "lavapipe", "mock", { "-m", "realign" });
 }
