@@ -24,6 +24,7 @@
 #ifndef GFXRECON_DECODE_STRING_ARRAY_DECODER_H
 #define GFXRECON_DECODE_STRING_ARRAY_DECODER_H
 
+#include "decode/parameter_decode_error.h"
 #include "decode/pointer_decoder_base.h"
 #include "decode/decode_allocator.h"
 #include "decode/value_decoder.h"
@@ -53,6 +54,12 @@ class BasicStringArrayDecoder : public PointerDecoderBase
 
     size_t Decode(const uint8_t* buffer, size_t buffer_size)
     {
+        if (ParameterDecodeError::Pending())
+        {
+            // An earlier parameter of this call was corrupt. Decode nothing more.
+            return 0;
+        }
+
         size_t bytes_read = DecodeAttributes(buffer, buffer_size);
 
         // We should only be decoding string arrays.

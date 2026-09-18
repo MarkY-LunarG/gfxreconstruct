@@ -97,6 +97,28 @@ static const MalformedContentCase kDocumentedCases[] = {
     { CaptureMutation::kHandleNeverCreated, kGood, kConvert, Expect::kSuccess, "" },
     { CaptureMutation::kDrawBeforeBeginCommandBuffer, kGood, kConvert, Expect::kSuccess, "" },
     { CaptureMutation::kMissingStateSetup, kTrimmed, kConvert, Expect::kSuccess, "" },
+    // A length field that cannot fit in the parameter buffer is refused before any allocation.
+    { CaptureMutation::kCountBomb, kGood, kConvert, Expect::kFailure, "cannot fit in the .* bytes that remain" },
+    { CaptureMutation::kCountBomb, kGood, kReplay, Expect::kFailure, "cannot fit in the .* bytes that remain" },
+    // A parameter buffer that ends before the call does fails the block, with the block index.
+    { CaptureMutation::kParameterBufferShortByOne,
+      kGood,
+      kConvert,
+      Expect::kFailure,
+      "the parameter buffer holds .* bytes where a value needs" },
+    { CaptureMutation::kParameterBufferShortByHalf,
+      kGood,
+      kConvert,
+      Expect::kFailure,
+      "the parameter buffer holds .* bytes where a value needs" },
+    { CaptureMutation::kParameterBufferShortByHalf,
+      kGood,
+      kReplay,
+      Expect::kFailure,
+      "the parameter buffer holds .* bytes where a value needs" },
+    // An extension struct this build does not know cannot be skipped, so the block stops there.
+    { CaptureMutation::kUnknownStructureType, kGood, kConvert, Expect::kFailure, "unrecognized VkStructureType" },
+    { CaptureMutation::kUnknownStructureType, kGood, kReplay, Expect::kFailure, "unrecognized VkStructureType" },
 };
 
 INSTANTIATE_TEST_SUITE_P(MalformedContentFiles, MalformedContent, testing::ValuesIn(kDocumentedCases), TestName);
@@ -104,18 +126,6 @@ INSTANTIATE_TEST_SUITE_P(MalformedContentFiles, MalformedContent, testing::Value
 // What the tools must do and do not do yet. Each group names its defect. Move a row up when its
 // fix lands.
 static const MalformedContentCase kKnownDefects[] = {
-    // The decoder allocates the number of elements that an array length field claims. A length
-    // of 0x7fffffff is gigabytes, and the tools end in std::bad_alloc: convert aborts, replay
-    // stops with only the exception text. The decoder must compare the length with the bytes
-    // that remain in the parameter buffer and refuse the block.
-    { CaptureMutation::kCountBomb, kGood, kConvert, Expect::kFailure, "block" },
-    { CaptureMutation::kCountBomb, kGood, kReplay, Expect::kFailure, "block" },
-    // The decoder reads a parameter past the end of its buffer and says nothing. A buffer cut in
-    // half decodes vkCmdDraw with an instanceCount of 32610 from whatever follows it in memory,
-    // and replay runs that draw. The decoder must stop the block with an error.
-    { CaptureMutation::kParameterBufferShortByOne, kGood, kConvert, Expect::kFailure, "block" },
-    { CaptureMutation::kParameterBufferShortByHalf, kGood, kConvert, Expect::kFailure, "block" },
-    { CaptureMutation::kParameterBufferShortByHalf, kGood, kReplay, Expect::kFailure, "block" },
     // The replayer faults on a command buffer handle that no call created, instead of reporting
     // the id.
     { CaptureMutation::kHandleNeverCreated, kGood, kReplay, Expect::kFailure, "handle|id" },
@@ -126,11 +136,6 @@ static const MalformedContentCase kKnownDefects[] = {
     // call, and lavapipe faults. The replayer must refuse the call with a message before any
     // driver sees it, so the row expects the same failure on every driver.
     { CaptureMutation::kDrawBeforeBeginCommandBuffer, kGood, kReplay, Expect::kFailure, "command buffer" },
-    // After an unknown sType in a pNext chain the decoder reports it and then reads on out of
-    // step, until a length field is garbage and std::bad_alloc ends the tool. The encoding has
-    // no size for a struct the decoder does not know, so the block must stop at the error.
-    { CaptureMutation::kUnknownStructureType, kGood, kConvert, Expect::kFailure, "unrecognized VkStructureType" },
-    { CaptureMutation::kUnknownStructureType, kGood, kReplay, Expect::kFailure, "unrecognized VkStructureType" },
     // A block with an ApiCallId that this build does not know is dropped without a word. The
     // tools must say so once, with the id, so a capture from a newer layer is not read as a
     // capture with fewer calls.

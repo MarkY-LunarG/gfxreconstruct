@@ -24,6 +24,7 @@
 #ifndef GFXRECON_DECODE_STRING_DECODER_H
 #define GFXRECON_DECODE_STRING_DECODER_H
 
+#include "decode/parameter_decode_error.h"
 #include "decode/pointer_decoder_base.h"
 #include "decode/decode_allocator.h"
 #include "decode/value_decoder.h"
@@ -62,6 +63,12 @@ class BasicStringDecoder : public PointerDecoderBase
 
     size_t Decode(const uint8_t* buffer, size_t buffer_size)
     {
+        if (ParameterDecodeError::Pending())
+        {
+            // An earlier parameter of this call was corrupt. Decode nothing more.
+            return 0;
+        }
+
         size_t bytes_read = DecodeAttributes(buffer, buffer_size);
 
         // We should only be decoding individual strings.
@@ -72,6 +79,11 @@ class BasicStringDecoder : public PointerDecoderBase
         {
             size_t string_len = GetLength();
             size_t alloc_len  = string_len + 1;
+
+            if (!LengthFitsBuffer(string_len, sizeof(EncodeT), buffer_size - bytes_read))
+            {
+                return bytes_read;
+            }
 
             if (!is_memory_external_)
             {
