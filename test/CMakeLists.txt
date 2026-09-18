@@ -63,6 +63,7 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
         test_cases/cross-driver.cpp
         test_cases/memory-translation.cpp
         test_cases/bad-files.cpp
+        test_cases/replay-command-line.cpp
         capture_mutations.cpp
         verify-gfxr.cpp)
 

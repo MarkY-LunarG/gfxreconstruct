@@ -157,6 +157,9 @@ A tool that dies from a signal fails both, so a crash never passes as a refusal.
 When the pattern is not empty, the log must match it.
 `test_cases/bad-files.cpp` uses them on six kinds of damaged capture, made at test time from
 `known_good/triangle.gfxr`, so nothing damaged is committed.
+`test_cases/replay-command-line.cpp` uses them on command lines that are wrong.
+A fatal problem is a message and a non-zero exit.
+A value outside the fixed set of an option is a warning, and the tool takes the default.
 
 `reruns.cpp` runs each capture app two more times.
 One run has `GFXRECON_CAPTURE_PROCESS_NAME` set to a name that does not match.
