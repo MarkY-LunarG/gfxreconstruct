@@ -29,4 +29,34 @@ if (GFXRECON_TESTAPP_TESTS)
     endif ()
 
     set_tests_properties(${GFXRECON_TESTAPP_TESTS} PROPERTIES ENVIRONMENT "${environment}")
+
+    # Label every case by the driver it needs, next to the "smoke" label from discovery. A case
+    # whose name matches one of these patterns is "mock-only". Every other case is "any-driver".
+    # A "real-driver" label comes with the first pixel test. When the driver is not the mock, a
+    # mock-only case is disabled, so ctest reports it as not run and the run passes on what holds.
+    set(mock_only_patterns
+        # A known-good file is a capture on the mock, so a comparison against it holds there only.
+        "CorrectGFXR"
+        # The hardware buffer that the ahb app imports is the host mock in android_mock/.
+        "^AndroidHardwareBuffer[.]" "/ahb$"
+        # Lavapipe does not have VK_KHR_pipeline_binary.
+        "^PipelineBinaries[.]" "/pipeline_binaries$"
+        # Lavapipe does not have VK_KHR_present_wait.
+        "^WaitForPresent[.]" "/wait_for_present$"
+        # The app faults on lavapipe in a write to memory from vkMapMemory. Remove when it is fixed.
+        "^SerializeComputeAndTransfer[.]" "/serialize_compute_and_transfer$")
+
+    foreach (test IN LISTS GFXRECON_TESTAPP_TESTS)
+        set(driver_label "any-driver")
+        foreach (pattern IN LISTS mock_only_patterns)
+            if (test MATCHES "${pattern}")
+                set(driver_label "mock-only")
+                break()
+            endif ()
+        endforeach ()
+        set_tests_properties(${test} PROPERTIES LABELS "smoke;${driver_label}")
+        if (driver_label STREQUAL "mock-only" AND NOT driver STREQUAL "mock")
+            set_tests_properties(${test} PROPERTIES DISABLED TRUE)
+        endif ()
+    endforeach ()
 endif ()

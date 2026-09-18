@@ -15,7 +15,7 @@ This file explains how the tests fit together, how to run them, and how to keep 
 | `known_good/` | One reference capture per app. A case compares a new capture against it. |
 | `verify-gfxr.{h,cpp}` | The harness functions that the cases call. |
 | `run-tests.sh.in`, `run-tests.ps1.in`, `run-tests_macos.sh.in` | Templates for the run scripts. CMake fills in the paths. |
-| `test_environment.cmake.in` | The loader environment that ctest gives every case, for the driver that `GFXRECON_TEST_DRIVER` names. |
+| `test_environment.cmake.in` | The loader environment and the driver label that ctest gives every case, for the driver that `GFXRECON_TEST_DRIVER` names. |
 
 ## The tiers
 
@@ -28,6 +28,8 @@ Lavapipe executes shaders and has memory properties that differ from the mock.
 `GFXRECON_TEST_DRIVER=lavapipe` in the shell selects it, as the next section shows.
 The known-good files are captures on the mock, so a case that compares against one holds only on
 the mock.
+Every case carries a label that says which driver it needs, and a run on lavapipe disables the
+cases that need the mock.
 
 ## Build and run
 
@@ -51,9 +53,19 @@ Select cases by label or by name:
 ```bash
 ctest --test-dir build/linux/x64 -L unit          # The Catch2 unit tests only.
 ctest --test-dir build/linux/x64 -L smoke         # The test app cases only.
+ctest --test-dir build/linux/x64 -L any-driver    # The test app cases that hold on every driver.
 ctest --test-dir build/linux/x64 -R Triangle      # Every case whose name matches.
 ctest --test-dir build/linux/x64 -N               # List the cases and run nothing.
 ```
+
+Each test app case has the label `smoke` and one driver label.
+`mock-only` marks a case that compares against a known-good file, or an app that needs the mock
+or an extension that lavapipe does not have.
+`any-driver` marks the rest.
+`real-driver` is reserved for the pixel comparisons, which do not exist yet.
+`test_environment.cmake.in` holds the name patterns that select `mock-only`, with a reason each.
+When the driver is not the mock, ctest disables every `mock-only` case, so a plain run on
+lavapipe runs the `any-driver` cases and reports the rest as not run.
 
 The run script in `<install>/test` does the same for the test app cases and adds one mode.
 An argument that is an app name runs that app alone, without a comparison:
@@ -119,6 +131,9 @@ When you add an app, add its name to the lists in that file.
 If the app cannot run on the mock yet, add the case with the `DISABLED_` prefix.
 Write the blocker in a comment above it.
 ctest lists a disabled case and does not run it.
+
+If the app cannot run on lavapipe, add a name pattern for it to `test_environment.cmake.in`.
+Write the reason next to the pattern.
 
 ## Make or update a known-good file
 
