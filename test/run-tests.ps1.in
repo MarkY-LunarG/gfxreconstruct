@@ -1,15 +1,18 @@
 # Run the test cases with ctest, or run one test app directly.
 #
 # Usage, from the install test directory after an install:
-#   .\run-tests.ps1               Run every test case.
+#   .\run-tests.ps1               Run every test case on every driver that this machine has.
 #   .\run-tests.ps1 -L smoke      Pass every argument to ctest. Examples: -L <label>, -R <regex>, -j 4.
-#   .\run-tests.ps1 triangle      Run one test app without the runner and without a comparison.
+#   .\run-tests.ps1 triangle      Run one test app on the mock ICD, without the runner and without a
+#                                 comparison.
 #   $env:GFXRECON_TEST_DRIVER="lavapipe"; .\run-tests.ps1 -L smoke
-#                                 Run on lavapipe instead of the mock ICD. Works with every mode.
+#                                 Run on one driver only: mock, lavapipe, or all, the default.
+#                                 Works with every mode. The single app mode takes all as mock.
 #
 # A plain "ctest --test-dir <build>\test -C <config>" also works, because CMake gives every test
-# case the same environment. This script adds the single app mode and the registry entries that
-# an administrator shell needs, because the loader ignores the path variables for an administrator.
+# case the same environment. This script adds the run over every driver, the single app mode and
+# the registry entries that an administrator shell needs, because the loader ignores the path
+# variables for an administrator.
 #
 # CMake generates this file from test/run-tests.ps1.in. Edit the template, not this file. The
 # environment comes from GFXRECON_TEST_ENVIRONMENT in test/CMakeLists.txt.
@@ -28,32 +31,12 @@ if ($is_admin) {
 }
 
 @GFXRECON_TEST_ENVIRONMENT_EXPORTS@
-# GFXRECON_TEST_DRIVER selects the driver: mock, the default, or lavapipe. ctest reads it through
-# test_environment.cmake. The single app mode reads it here.
-$driver = if ($env:GFXRECON_TEST_DRIVER) { $env:GFXRECON_TEST_DRIVER } else { "mock" }
-switch ($driver) {
-    "mock" {
-@GFXRECON_TEST_ENVIRONMENT_MOCK_EXPORTS@
-        $junit_file = "ctest-results.xml"
-    }
-    "lavapipe" {
-@GFXRECON_TEST_ENVIRONMENT_LAVAPIPE_EXPORTS@
-        $junit_file = "ctest-results-lavapipe.xml"
-        if (-not $env:VK_DRIVER_FILES) {
-            Write-Error "No lavapipe manifest is configured. Configure with -DGFXRECON_TEST_LAVAPIPE_ICD_JSON=<path>."
-            exit 1
-        }
-    }
-    default {
-        Write-Error "GFXRECON_TEST_DRIVER is `"$driver`". Use mock or lavapipe."
-        exit 1
-    }
-}
 #$env:GFXRECON_LOG_LEVEL=""
 #$env:VK_LOADER_DEBUG=""
 
 $ctest = "@CMAKE_CTEST_COMMAND@"
 $test_build_dir = "@GFXRECON_TEST_BUILD_DIR@"
+$lavapipe_icd_json = "@GFXRECON_TEST_LAVAPIPE_ICD_JSON@"
 
 # A multi-config generator needs the configuration. A single-config generator ignores it.
 $ctest_config = "$<CONFIG>"
@@ -62,12 +45,70 @@ if ($ctest_config) {
     $config_args = @("-C", $ctest_config)
 }
 
+# True when the machine has the driver. The mock is built with the tests, so it is always there.
+function Have-Driver($driver) {
+    switch ($driver) {
+        "mock" { return $true }
+        "lavapipe" { return ($lavapipe_icd_json -and (Test-Path $lavapipe_icd_json)) }
+        default { return $false }
+    }
+}
+
+# Set the environment for one driver. ctest reads GFXRECON_TEST_DRIVER, which is in each list,
+# through test_environment.cmake. The single app mode needs the variables themselves.
+function Select-Driver($driver) {
+    switch ($driver) {
+        "mock" {
+@GFXRECON_TEST_ENVIRONMENT_MOCK_EXPORTS@
+            $script:junit_file = "ctest-results.xml"
+        }
+        "lavapipe" {
+@GFXRECON_TEST_ENVIRONMENT_LAVAPIPE_EXPORTS@
+            $script:junit_file = "ctest-results-lavapipe.xml"
+        }
+    }
+}
+
+# Run ctest on one driver. ctest also writes a JUnit file next to the captures, for CI reports.
+# The name carries the driver, so a run on the mock and a run on lavapipe do not overwrite each
+# other.
+function Run-Ctest($driver, $ctest_args) {
+    if (-not (Have-Driver $driver)) {
+        Write-Error "No lavapipe manifest at `"$lavapipe_icd_json`". Configure with -DGFXRECON_TEST_LAVAPIPE_ICD_JSON=<path>."
+        return 1
+    }
+    Select-Driver $driver
+    Write-Host "==== Test driver: $driver ===="
+    & $ctest --test-dir $test_build_dir @config_args --output-on-failure --output-junit "$pwd\$script:junit_file" @ctest_args
+    return $LASTEXITCODE
+}
+
+$driver = if ($env:GFXRECON_TEST_DRIVER) { $env:GFXRECON_TEST_DRIVER } else { "all" }
+if ($driver -notin @("mock", "lavapipe", "all")) {
+    Write-Error "GFXRECON_TEST_DRIVER is `"$driver`". Use mock, lavapipe or all."
+    exit 1
+}
+
 if ($args.Count -eq 0 -or $args[0].StartsWith("-")) {
-    # ctest also writes a JUnit file next to the captures, for CI reports. The name carries the
-    # driver, so a run on the mock and a run on lavapipe do not overwrite each other.
-    & $ctest --test-dir $test_build_dir @config_args --output-on-failure --output-junit "$pwd\$junit_file" @args
-    exit $LASTEXITCODE
+    if ($driver -ne "all") {
+        exit (Run-Ctest $driver $args)
+    }
+    # Every driver that the machine has. A missing lavapipe is a note, not a failure.
+    $status = 0
+    if ((Run-Ctest "mock" $args) -ne 0) { $status = 1 }
+    if (Have-Driver "lavapipe") {
+        if ((Run-Ctest "lavapipe" $args) -ne 0) { $status = 1 }
+    } else {
+        Write-Host "==== Test driver: lavapipe not found at `"$lavapipe_icd_json`", skipped ===="
+    }
+    exit $status
 } else {
+    if ($driver -eq "all") { $driver = "mock" }
+    if (-not (Have-Driver $driver)) {
+        Write-Error "No lavapipe manifest at `"$lavapipe_icd_json`"."
+        exit 1
+    }
+    Select-Driver $driver
     $test_dir = "$pwd"
     Push-Location "$test_dir\res"
     & "$test_dir\test_apps\launcher\gfxrecon-test-launcher.exe" $args[0]

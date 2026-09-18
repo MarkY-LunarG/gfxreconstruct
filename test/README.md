@@ -74,24 +74,28 @@ A plain run on lavapipe runs the `any-driver` and `real-driver` cases and report
 run.
 A plain run on the mock runs the `any-driver` and `mock-only` cases.
 
-The run script in `<install>/test` does the same for the test app cases and adds one mode.
-An argument that is an app name runs that app alone, without a comparison:
+The run script in `<install>/test` runs the test app cases on every driver that the machine
+has, the mock first and then lavapipe, and adds one mode.
+An argument that is an app name runs that app alone on the mock, without a comparison:
 
 ```bash
 cd build/linux/x64/output/test
-./run-tests.sh                 # Every test app case.
+./run-tests.sh                 # Every test app case, on every driver that is present.
 ./run-tests.sh -R Triangle     # Arguments that start with "-" go to ctest.
 ./run-tests.sh triangle        # One app, no comparison.
 ```
+
+When lavapipe is not installed, the script says so and runs the mock alone.
 
 Each run script run also writes a JUnit file in the test directory.
 A run on the mock writes `ctest-results.xml` and a run on lavapipe writes
 `ctest-results-lavapipe.xml`, so the two do not overwrite each other.
 CI shows both files on the job summary page.
 
-Select the driver with `GFXRECON_TEST_DRIVER`.
-The value is `mock`, the default, or `lavapipe`.
-Both ctest and the run script read it, and a switch needs no reconfigure:
+Select one driver with `GFXRECON_TEST_DRIVER`.
+The value is `mock`, `lavapipe`, or `all`.
+A plain ctest run takes the mock by default, and the run script takes `all`.
+Both read the variable, and a switch needs no reconfigure:
 
 ```bash
 GFXRECON_TEST_DRIVER=lavapipe ctest --test-dir build/linux/x64 -L smoke
