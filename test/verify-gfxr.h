@@ -71,6 +71,14 @@ void verify_no_capture(const char* test_name);
  */
 void capture_and_replay(const char* test_name, std::vector<std::string> extra_replay_args = {});
 
+// Capture the app on one driver and replay the capture on the other, with the given extra replay
+// arguments, such as a memory translation mode. The drivers are "mock" and "lavapipe". The case
+// skips when the replay or capture driver has no manifest configured. Asserts the exit codes.
+void capture_on_replay_on(const char*              test_name,
+                          const char*              capture_driver,
+                          const char*              replay_driver,
+                          std::vector<std::string> extra_replay_args = {});
+
 /**
  * Run a test app with capture enabled, producing <test_name>_<test_suite>_<test_case>.gfxr next to the test runner for
  * a later replay.
