@@ -5,6 +5,8 @@
 #   ./run-tests.sh                Run every test case.
 #   ./run-tests.sh -L smoke       Pass every argument to ctest. Examples: -L <label>, -R <regex>, -j 4.
 #   ./run-tests.sh triangle       Run one test app without the runner and without a comparison.
+#   GFXRECON_TEST_DRIVER=lavapipe ./run-tests.sh -L smoke
+#                                 Run on lavapipe instead of the mock ICD. Works with every mode.
 #
 # A plain "ctest --test-dir <build>/test" also works, because CMake gives every test case the
 # same environment. This script adds the single app mode.
@@ -13,6 +15,24 @@
 # environment comes from GFXRECON_TEST_ENVIRONMENT in test/CMakeLists.txt.
 
 @GFXRECON_TEST_ENVIRONMENT_EXPORTS@
+# GFXRECON_TEST_DRIVER selects the driver: mock, the default, or lavapipe. ctest reads it through
+# test_environment.cmake. The single app mode reads it here.
+case "${GFXRECON_TEST_DRIVER:-mock}" in
+    mock)
+@GFXRECON_TEST_ENVIRONMENT_MOCK_EXPORTS@
+        ;;
+    lavapipe)
+@GFXRECON_TEST_ENVIRONMENT_LAVAPIPE_EXPORTS@
+        if [ -z "$VK_DRIVER_FILES" ]; then
+            echo "No lavapipe manifest is configured. Configure with -DGFXRECON_TEST_LAVAPIPE_ICD_JSON=<path>." >&2
+            exit 1
+        fi
+        ;;
+    *)
+        echo "GFXRECON_TEST_DRIVER is \"$GFXRECON_TEST_DRIVER\". Use mock or lavapipe." >&2
+        exit 1
+        ;;
+esac
 #export GFXRECON_LOG_LEVEL="info"
 #export VK_LOADER_DEBUG="all"
 

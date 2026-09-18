@@ -92,10 +92,12 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
             LABELS "smoke"
             TIMEOUT 120)
 
-    # One loader environment for every test case. Each entry is NAME=value. It selects the mock ICD
-    # and the capture layer, and it makes the test apps headless. ctest applies it through
-    # test_environment.cmake, so a plain ctest run works. The run-tests scripts export the same
-    # list, so a single app run gets the same environment.
+    # One loader environment for every test case. Each entry is NAME=value. The common list selects
+    # the capture layer and makes the test apps headless. One list per driver selects the driver.
+    # ctest applies the common list and the list for the driver that GFXRECON_TEST_DRIVER names,
+    # through test_environment.cmake, so a plain ctest run works and a switch of driver needs no
+    # reconfigure. The run-tests scripts export the same lists, so a single app run gets the same
+    # environment.
     set(GFXRECON_TEST_APPS_DIR ${GFXRECON_INSTALL_TESTDIR}/test_apps)
     if (WIN32)
         set(GFXRECON_TEST_LAYER_DIR ${GFXRECON_INSTALL_TESTDIR})
@@ -110,12 +112,9 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
     set(GFXRECON_TEST_ENVIRONMENT
         "VK_LAYER_PATH=${GFXRECON_TEST_LAYER_DIR}"
         "VK_IMPLICIT_LAYER_PATH="
-        "VK_DRIVER_FILES=${GFXRECON_TEST_APPS_DIR}/VkICD_mock_icd.json"
-        "VK_ICD_FILENAMES=${GFXRECON_TEST_APPS_DIR}/VkICD_mock_icd.json"
         "VK_INSTANCE_LAYERS=VK_LAYER_LUNARG_gfxreconstruct"
         "GFXRECON_CAPTURE_FILE_TIMESTAMP=false"
-        "GFXRECON_TESTAPP_HEADLESS=true"
-        "GFXRECON_TESTAPP_MOCK_ICD=${GFXRECON_TEST_MOCK_ICD_LIBRARY}")
+        "GFXRECON_TESTAPP_HEADLESS=true")
     if (APPLE)
         list(APPEND GFXRECON_TEST_ENVIRONMENT
             "DYLD_LIBRARY_PATH=${GFXRECON_TEST_LAYER_DIR}:${GFXRECON_TEST_APPS_DIR}"
@@ -134,23 +133,52 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
             "VK_LOADER_LAYERS_ENABLE=*gfxreconstruct*")
     endif ()
 
+    # The mock driver. GFXRECON_TESTAPP_MOCK_ICD lets a test app open the mock library and change
+    # its test configuration. A test app treats a missing variable as "no mock".
+    set(GFXRECON_TEST_ENVIRONMENT_MOCK
+        "VK_DRIVER_FILES=${GFXRECON_TEST_APPS_DIR}/VkICD_mock_icd.json"
+        "VK_ICD_FILENAMES=${GFXRECON_TEST_APPS_DIR}/VkICD_mock_icd.json"
+        "GFXRECON_TESTAPP_MOCK_ICD=${GFXRECON_TEST_MOCK_ICD_LIBRARY}")
+
+    # Lavapipe, the Mesa software rasterizer. The manifest comes from the mesa-vulkan-drivers
+    # package on Linux. Another platform, or another install location, sets the cache variable.
+    # An empty value makes the lavapipe driver unavailable, and the switch reports that.
+    if (CMAKE_SYSTEM_NAME MATCHES "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+        set(GFXRECON_TEST_LAVAPIPE_ICD_JSON_DEFAULT /usr/share/vulkan/icd.d/lvp_icd.aarch64.json)
+    elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+        set(GFXRECON_TEST_LAVAPIPE_ICD_JSON_DEFAULT /usr/share/vulkan/icd.d/lvp_icd.x86_64.json)
+    else ()
+        set(GFXRECON_TEST_LAVAPIPE_ICD_JSON_DEFAULT "")
+    endif ()
+    set(GFXRECON_TEST_LAVAPIPE_ICD_JSON ${GFXRECON_TEST_LAVAPIPE_ICD_JSON_DEFAULT} CACHE FILEPATH
+        "The lavapipe ICD manifest that GFXRECON_TEST_DRIVER=lavapipe selects")
+    set(GFXRECON_TEST_ENVIRONMENT_LAVAPIPE
+        "VK_DRIVER_FILES=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}"
+        "VK_ICD_FILENAMES=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}")
+
     # ctest reads this file after the discovery file, so it sees GFXRECON_TESTAPP_TESTS.
     configure_file(test_environment.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_environment.cmake @ONLY)
     set_property(DIRECTORY APPEND PROPERTY TEST_INCLUDE_FILES ${CMAKE_CURRENT_BINARY_DIR}/test_environment.cmake)
 
-    # The same list as export lines for the run-tests script.
-    set(GFXRECON_TEST_ENVIRONMENT_EXPORTS "")
-    foreach (entry IN LISTS GFXRECON_TEST_ENVIRONMENT)
-        string(FIND "${entry}" "=" separator)
-        string(SUBSTRING "${entry}" 0 ${separator} name)
-        math(EXPR value_start "${separator} + 1")
-        string(SUBSTRING "${entry}" ${value_start} -1 value)
-        if (WIN32)
-            string(APPEND GFXRECON_TEST_ENVIRONMENT_EXPORTS "$env:${name}=\"${value}\"\n")
-        else ()
-            string(APPEND GFXRECON_TEST_ENVIRONMENT_EXPORTS "export ${name}=\"${value}\"\n")
-        endif ()
-    endforeach ()
+    # The same lists as export lines for the run-tests scripts.
+    function(gfxrecon_test_environment_exports out_var)
+        set(exports "")
+        foreach (entry IN LISTS ARGN)
+            string(FIND "${entry}" "=" separator)
+            string(SUBSTRING "${entry}" 0 ${separator} name)
+            math(EXPR value_start "${separator} + 1")
+            string(SUBSTRING "${entry}" ${value_start} -1 value)
+            if (WIN32)
+                string(APPEND exports "$env:${name}=\"${value}\"\n")
+            else ()
+                string(APPEND exports "export ${name}=\"${value}\"\n")
+            endif ()
+        endforeach ()
+        set(${out_var} "${exports}" PARENT_SCOPE)
+    endfunction()
+    gfxrecon_test_environment_exports(GFXRECON_TEST_ENVIRONMENT_EXPORTS ${GFXRECON_TEST_ENVIRONMENT})
+    gfxrecon_test_environment_exports(GFXRECON_TEST_ENVIRONMENT_MOCK_EXPORTS ${GFXRECON_TEST_ENVIRONMENT_MOCK})
+    gfxrecon_test_environment_exports(GFXRECON_TEST_ENVIRONMENT_LAVAPIPE_EXPORTS ${GFXRECON_TEST_ENVIRONMENT_LAVAPIPE})
 
     # The run-tests script exports the environment and then calls ctest. It needs this build
     # directory and, for a multi-config generator, the configuration. configure_file fills the

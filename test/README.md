@@ -15,14 +15,19 @@ This file explains how the tests fit together, how to run them, and how to keep 
 | `known_good/` | One reference capture per app. A case compares a new capture against it. |
 | `verify-gfxr.{h,cpp}` | The harness functions that the cases call. |
 | `run-tests.sh.in`, `run-tests.ps1.in`, `run-tests_macos.sh.in` | Templates for the run scripts. CMake fills in the paths. |
-| `test_environment.cmake.in` | The loader environment that ctest gives every case. |
+| `test_environment.cmake.in` | The loader environment that ctest gives every case, for the driver that `GFXRECON_TEST_DRIVER` names. |
 
 ## The tiers
 
-Every case in this directory runs on the mock ICD.
+By default every case in this directory runs on the mock ICD.
 That proves what the capture layer wrote and what the replayer read.
 It does not prove that a draw put the correct pixels in an image, because the mock draws nothing.
-A later tier runs the same cases on a software rasterizer for that.
+
+The second tier runs the same apps on lavapipe, the Mesa software rasterizer.
+Lavapipe executes shaders and has memory properties that differ from the mock.
+`GFXRECON_TEST_DRIVER=lavapipe` in the shell selects it, as the next section shows.
+The known-good files are captures on the mock, so a case that compares against one holds only on
+the mock.
 
 ## Build and run
 
@@ -63,12 +68,28 @@ cd build/linux/x64/output/test
 Each ctest run also writes `ctest-results.xml` in the test directory.
 CI shows that file on the job summary page.
 
+Select the driver with `GFXRECON_TEST_DRIVER`.
+The value is `mock`, the default, or `lavapipe`.
+Both ctest and the run script read it, and a switch needs no reconfigure:
+
+```bash
+GFXRECON_TEST_DRIVER=lavapipe ctest --test-dir build/linux/x64 -L smoke
+GFXRECON_TEST_DRIVER=lavapipe ./run-tests.sh triangle
+```
+
+On Linux the lavapipe manifest comes from the `mesa-vulkan-drivers` package, at
+`/usr/share/vulkan/icd.d/lvp_icd.x86_64.json`.
+Another location, or another platform, sets `GFXRECON_TEST_LAVAPIPE_ICD_JSON` at configure time.
+
 ## The environment
 
-`GFXRECON_TEST_ENVIRONMENT` in `CMakeLists.txt` is the one list of environment variables.
-It selects the mock ICD and the capture layer, and it makes the apps headless.
-ctest applies it to every case, and the run scripts export it.
-A variable that you export in your shell does not override it.
+`GFXRECON_TEST_ENVIRONMENT` in `CMakeLists.txt` is the common list of environment variables.
+It selects the capture layer and makes the apps headless.
+`GFXRECON_TEST_ENVIRONMENT_MOCK` and `GFXRECON_TEST_ENVIRONMENT_LAVAPIPE` each select one driver.
+ctest applies the common list and one driver list to every case, and the run scripts export the
+same lists.
+`test_environment.cmake` picks the driver list at ctest time from `GFXRECON_TEST_DRIVER`.
+A variable that you export in your shell does not override an entry in these lists.
 
 ## What a case does
 
