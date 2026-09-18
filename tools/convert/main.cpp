@@ -446,6 +446,13 @@ int main(int argc, const char** argv)
             }
         }
     }
+    else
+    {
+        // The file processor has logged the cause. A script that runs this tool must see the
+        // failure in the exit code too.
+        GFXRECON_LOG_ERROR("Failed to open %s for conversion.", input_filename.c_str());
+        ret_code = 1;
+    }
 
 exit:
     gfxrecon::util::Log::Release();
