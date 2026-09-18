@@ -14,7 +14,7 @@ This file explains how the tests fit together, how to run them, and how to keep 
 | `test_cases/` | The gtest cases. Each file holds the cases for one app or one topic. |
 | `known_good/` | One reference capture per app. A case compares a new capture against it. `known_good/<driver>/` holds the reference images for the pixel cases on that driver. |
 | `verify-gfxr.{h,cpp}` | The harness functions that the cases call. |
-| `capture_mutations.{h,cpp}` | Makes a damaged capture from a good one, for the bad-file cases. |
+| `capture_mutations.{h,cpp}` | Makes a damaged capture from a good one, for the bad-file and malformed-content cases. `gfxrecon-capture-mutate` in the install test directory is a command-line front for it. |
 | `run-tests.sh.in`, `run-tests.ps1.in`, `run-tests_macos.sh.in` | Templates for the run scripts. CMake fills in the paths. |
 | `test_environment.cmake.in` | The loader environment and the driver label that ctest gives every case, for the driver that `GFXRECON_TEST_DRIVER` names. |
 
@@ -157,6 +157,14 @@ A tool that dies from a signal fails both, so a crash never passes as a refusal.
 When the pattern is not empty, the log must match it.
 `test_cases/bad-files.cpp` uses them on six kinds of damaged capture, made at test time from
 `known_good/triangle.gfxr`, so nothing damaged is committed.
+`test_cases/malformed-content.cpp` uses them on ten captures whose structure is valid and whose
+content is wrong: a handle that no call created, a parameter buffer cut short, an array length
+of 0x7fffffff, an unknown call id, an unknown `sType`, a draw before its command buffer began,
+a trimmed capture with no state setup, an annotation label past its block, and a compressed bit
+on a block that is not compressed.
+A tool that the harness runs has a cap of 4 GiB on its address space on Linux and macOS, so a
+tool that trusts a count from a damaged file fails in the tool and not in the runner.
+To make one of these files by hand, run `gfxrecon-capture-mutate` with no arguments for the list.
 `test_cases/replay-command-line.cpp` uses them on command lines that are wrong.
 A fatal problem is a message and a non-zero exit.
 A value outside the fixed set of an option is a warning, and the tool takes the default.
