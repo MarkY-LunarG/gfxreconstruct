@@ -20,9 +20,11 @@
 case "${GFXRECON_TEST_DRIVER:-mock}" in
     mock)
 @GFXRECON_TEST_ENVIRONMENT_MOCK_EXPORTS@
+        JUNIT_FILE="ctest-results.xml"
         ;;
     lavapipe)
 @GFXRECON_TEST_ENVIRONMENT_LAVAPIPE_EXPORTS@
+        JUNIT_FILE="ctest-results-lavapipe.xml"
         if [ -z "$VK_DRIVER_FILES" ]; then
             echo "No lavapipe manifest is configured. Configure with -DGFXRECON_TEST_LAVAPIPE_ICD_JSON=<path>." >&2
             exit 1
@@ -48,9 +50,10 @@ fi
 
 case "$1" in
     "" | -*)
-        # ctest also writes a JUnit file next to the captures, for CI reports.
+        # ctest also writes a JUnit file next to the captures, for CI reports. The name carries
+        # the driver, so a run on the mock and a run on lavapipe do not overwrite each other.
         exec "$CTEST" --test-dir "$TEST_BUILD_DIR" $CONFIG_ARGS --output-on-failure \
-            --output-junit "$PWD/ctest-results.xml" "$@"
+            --output-junit "$PWD/$JUNIT_FILE" "$@"
         ;;
     *)
         TEST_DIR="$PWD"
