@@ -38,6 +38,7 @@
 
 #include "decode/custom_vulkan_struct_decoders.h"
 #include "decode/decode_allocator.h"
+#include "decode/parameter_decode_error.h"
 #include "decode/vulkan_pnext_node.h"
 #include "decode/vulkan_pnext_typed_node.h"
 #include "generated/generated_vulkan_struct_decoders.h"
@@ -54,6 +55,12 @@ size_t DecodePNextStruct(const uint8_t* parameter_buffer, size_t buffer_size, PN
     assert(pNext != nullptr);
 
     size_t bytes_read = 0;
+
+    if (ParameterDecodeError::Pending())
+    {
+        // An earlier parameter of this call was corrupt. Decode nothing more.
+        return 0;
+    }
     uint32_t attrib = 0;
 
     if ((parameter_buffer != nullptr) && (buffer_size >= sizeof(attrib)))
@@ -81,8 +88,9 @@ size_t DecodePNextStruct(const uint8_t* parameter_buffer, size_t buffer_size, PN
             switch (*sType)
             {
             default:
-                // TODO: This may need to be a fatal error
-                GFXRECON_LOG_ERROR("Failed to decode pNext value with unrecognized VkStructureType = %s", (util::ToString(*sType).c_str()));
+                // The encoding has no size for a struct this build does not know, so the decoder
+                // cannot skip it. The block stops here.
+                ParameterDecodeError::AddPendingMessage("a pNext value has an unrecognized VkStructureType of " + util::ToString(*sType));
                 break;
             case VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR:
                 (*pNext) = DecodeAllocator::Allocate<PNextTypedNode<Decoded_VkAccelerationStructureBuildGeometryInfoKHR>>();

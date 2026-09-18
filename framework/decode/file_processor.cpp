@@ -196,6 +196,15 @@ bool FileProcessor::ProcessNextFrameSync()
 
     // In sync mode, process-side state is directly usable as the dispatch-side snapshot.
     ProcessBlocksResult result = block_processor_->MakeResult(process_result);
+
+    // A decoder that refused a block reported it through the dispatch visitor, which the block
+    // processor does not see. Without this the tool stops and still exits 0.
+    const ProcessBlocksResult& dispatch_result = dispatch_visitor.GetReplayResult();
+    if (IsErrorCode(dispatch_result.error) && !IsErrorCode(result.error))
+    {
+        result.error = dispatch_result.error;
+        result.state = ProcessBlockState::kError;
+    }
     HandleReplayResult(result);
 
     return ContinueProcessing(process_result);

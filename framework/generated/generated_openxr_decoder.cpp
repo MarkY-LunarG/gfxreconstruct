@@ -61,6 +61,12 @@ size_t OpenXrDecoder::Decode_xrDestroyInstance(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &instance);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrDestroyInstance(call_info, return_value, instance);
@@ -80,6 +86,12 @@ size_t OpenXrDecoder::Decode_xrGetInstanceProperties(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &instance);
     bytes_read += instanceProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -108,6 +120,12 @@ size_t OpenXrDecoder::Decode_xrResultToString(const ApiCallInfo& call_info, cons
     }
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -141,6 +159,12 @@ size_t OpenXrDecoder::Decode_xrStructureTypeToString(const ApiCallInfo& call_inf
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrStructureTypeToString(call_info, return_value, instance, value, &buffer);
@@ -167,6 +191,12 @@ size_t OpenXrDecoder::Decode_xrGetSystem(const ApiCallInfo& call_info, const uin
     bytes_read += systemId.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSystem(call_info, return_value, instance, &getInfo, &systemId);
@@ -188,6 +218,12 @@ size_t OpenXrDecoder::Decode_xrGetSystemProperties(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &systemId);
     bytes_read += properties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -217,6 +253,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateEnvironmentBlendModes(const ApiCallInfo&
     bytes_read += environmentBlendModes.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateEnvironmentBlendModes(call_info, return_value, instance, systemId, viewConfigurationType, environmentBlendModeCapacityInput, &environmentBlendModeCountOutput, &environmentBlendModes);
@@ -239,6 +281,12 @@ size_t OpenXrDecoder::Decode_xrCreateSession(const ApiCallInfo& call_info, const
     bytes_read += session.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSession(call_info, return_value, instance, &createInfo, &session);
@@ -256,6 +304,12 @@ size_t OpenXrDecoder::Decode_xrDestroySession(const ApiCallInfo& call_info, cons
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -281,6 +335,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateReferenceSpaces(const ApiCallInfo& call_
     bytes_read += spaces.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateReferenceSpaces(call_info, return_value, session, spaceCapacityInput, &spaceCountOutput, &spaces);
@@ -302,6 +362,12 @@ size_t OpenXrDecoder::Decode_xrCreateReferenceSpace(const ApiCallInfo& call_info
     bytes_read += createInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += space.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -325,6 +391,12 @@ size_t OpenXrDecoder::Decode_xrGetReferenceSpaceBoundsRect(const ApiCallInfo& ca
     bytes_read += bounds.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetReferenceSpaceBoundsRect(call_info, return_value, session, referenceSpaceType, &bounds);
@@ -346,6 +418,12 @@ size_t OpenXrDecoder::Decode_xrCreateActionSpace(const ApiCallInfo& call_info, c
     bytes_read += createInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += space.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -371,6 +449,12 @@ size_t OpenXrDecoder::Decode_xrLocateSpace(const ApiCallInfo& call_info, const u
     bytes_read += location.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrLocateSpace(call_info, return_value, space, baseSpace, time, &location);
@@ -388,6 +472,12 @@ size_t OpenXrDecoder::Decode_xrDestroySpace(const ApiCallInfo& call_info, const 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &space);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -415,6 +505,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateViewConfigurations(const ApiCallInfo& ca
     bytes_read += viewConfigurationTypes.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateViewConfigurations(call_info, return_value, instance, systemId, viewConfigurationTypeCapacityInput, &viewConfigurationTypeCountOutput, &viewConfigurationTypes);
@@ -438,6 +534,12 @@ size_t OpenXrDecoder::Decode_xrGetViewConfigurationProperties(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &viewConfigurationType);
     bytes_read += configurationProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -467,6 +569,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateViewConfigurationViews(const ApiCallInfo
     bytes_read += views.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateViewConfigurationViews(call_info, return_value, instance, systemId, viewConfigurationType, viewCapacityInput, &viewCountOutput, &views);
@@ -491,6 +599,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateSwapchainFormats(const ApiCallInfo& call
     bytes_read += formats.DecodeInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateSwapchainFormats(call_info, return_value, session, formatCapacityInput, &formatCountOutput, &formats);
@@ -513,6 +627,12 @@ size_t OpenXrDecoder::Decode_xrCreateSwapchain(const ApiCallInfo& call_info, con
     bytes_read += swapchain.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSwapchain(call_info, return_value, session, &createInfo, &swapchain);
@@ -530,6 +650,12 @@ size_t OpenXrDecoder::Decode_xrDestroySwapchain(const ApiCallInfo& call_info, co
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &swapchain);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -553,6 +679,12 @@ size_t OpenXrDecoder::Decode_xrAcquireSwapchainImage(const ApiCallInfo& call_inf
     bytes_read += index.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrAcquireSwapchainImage(call_info, return_value, swapchain, &acquireInfo, &index);
@@ -572,6 +704,12 @@ size_t OpenXrDecoder::Decode_xrWaitSwapchainImage(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &swapchain);
     bytes_read += waitInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -593,6 +731,12 @@ size_t OpenXrDecoder::Decode_xrReleaseSwapchainImage(const ApiCallInfo& call_inf
     bytes_read += releaseInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrReleaseSwapchainImage(call_info, return_value, swapchain, &releaseInfo);
@@ -613,6 +757,12 @@ size_t OpenXrDecoder::Decode_xrBeginSession(const ApiCallInfo& call_info, const 
     bytes_read += beginInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrBeginSession(call_info, return_value, session, &beginInfo);
@@ -631,6 +781,12 @@ size_t OpenXrDecoder::Decode_xrEndSession(const ApiCallInfo& call_info, const ui
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEndSession(call_info, return_value, session);
@@ -648,6 +804,12 @@ size_t OpenXrDecoder::Decode_xrRequestExitSession(const ApiCallInfo& call_info, 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -671,6 +833,12 @@ size_t OpenXrDecoder::Decode_xrWaitFrame(const ApiCallInfo& call_info, const uin
     bytes_read += frameState.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrWaitFrame(call_info, return_value, session, &frameWaitInfo, &frameState);
@@ -691,6 +859,12 @@ size_t OpenXrDecoder::Decode_xrBeginFrame(const ApiCallInfo& call_info, const ui
     bytes_read += frameBeginInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrBeginFrame(call_info, return_value, session, &frameBeginInfo);
@@ -710,6 +884,12 @@ size_t OpenXrDecoder::Decode_xrEndFrame(const ApiCallInfo& call_info, const uint
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += frameEndInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -739,6 +919,12 @@ size_t OpenXrDecoder::Decode_xrLocateViews(const ApiCallInfo& call_info, const u
     bytes_read += views.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrLocateViews(call_info, return_value, session, &viewLocateInfo, &viewState, viewCapacityInput, &viewCountOutput, &views);
@@ -760,6 +946,12 @@ size_t OpenXrDecoder::Decode_xrStringToPath(const ApiCallInfo& call_info, const 
     bytes_read += pathString.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += path.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -793,6 +985,12 @@ size_t OpenXrDecoder::Decode_xrPathToString(const ApiCallInfo& call_info, const 
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrPathToString(call_info, return_value, instance, path, bufferCapacityInput, &bufferCountOutput, &buffer);
@@ -819,6 +1017,12 @@ size_t OpenXrDecoder::Decode_xrCreateActionSet(const ApiCallInfo& call_info, con
     bytes_read += actionSet.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateActionSet(call_info, return_value, instance, &createInfo, &actionSet);
@@ -836,6 +1040,12 @@ size_t OpenXrDecoder::Decode_xrDestroyActionSet(const ApiCallInfo& call_info, co
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &actionSet);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -859,6 +1069,12 @@ size_t OpenXrDecoder::Decode_xrCreateAction(const ApiCallInfo& call_info, const 
     bytes_read += action.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateAction(call_info, return_value, actionSet, &createInfo, &action);
@@ -876,6 +1092,12 @@ size_t OpenXrDecoder::Decode_xrDestroyAction(const ApiCallInfo& call_info, const
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &action);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -897,6 +1119,12 @@ size_t OpenXrDecoder::Decode_xrSuggestInteractionProfileBindings(const ApiCallIn
     bytes_read += suggestedBindings.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSuggestInteractionProfileBindings(call_info, return_value, instance, &suggestedBindings);
@@ -916,6 +1144,12 @@ size_t OpenXrDecoder::Decode_xrAttachSessionActionSets(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += attachInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -939,6 +1173,12 @@ size_t OpenXrDecoder::Decode_xrGetCurrentInteractionProfile(const ApiCallInfo& c
     bytes_read += interactionProfile.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetCurrentInteractionProfile(call_info, return_value, session, topLevelUserPath, &interactionProfile);
@@ -960,6 +1200,12 @@ size_t OpenXrDecoder::Decode_xrGetActionStateBoolean(const ApiCallInfo& call_inf
     bytes_read += getInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += state.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -983,6 +1229,12 @@ size_t OpenXrDecoder::Decode_xrGetActionStateFloat(const ApiCallInfo& call_info,
     bytes_read += state.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetActionStateFloat(call_info, return_value, session, &getInfo, &state);
@@ -1004,6 +1256,12 @@ size_t OpenXrDecoder::Decode_xrGetActionStateVector2f(const ApiCallInfo& call_in
     bytes_read += getInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += state.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1027,6 +1285,12 @@ size_t OpenXrDecoder::Decode_xrGetActionStatePose(const ApiCallInfo& call_info, 
     bytes_read += state.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetActionStatePose(call_info, return_value, session, &getInfo, &state);
@@ -1046,6 +1310,12 @@ size_t OpenXrDecoder::Decode_xrSyncActions(const ApiCallInfo& call_info, const u
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += syncInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1072,6 +1342,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateBoundSourcesForAction(const ApiCallInfo&
     bytes_read += sourceCountOutput.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += sources.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1104,6 +1380,12 @@ size_t OpenXrDecoder::Decode_xrGetInputSourceLocalizedName(const ApiCallInfo& ca
     }
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1168,6 +1450,12 @@ size_t OpenXrDecoder::Decode_xrApplyHapticFeedback(const ApiCallInfo& call_info,
      }
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrApplyHapticFeedback(call_info, return_value, session, &hapticActionInfo, hapticFeedback);
@@ -1187,6 +1475,12 @@ size_t OpenXrDecoder::Decode_xrStopHapticFeedback(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += hapticActionInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1210,6 +1504,12 @@ size_t OpenXrDecoder::Decode_xrCreateApiLayerInstance(const ApiCallInfo& call_in
     bytes_read += instance.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateApiLayerInstance(call_info, return_value, &info, &layerInfo, &instance);
@@ -1232,6 +1532,12 @@ size_t OpenXrDecoder::Decode_xrLocateSpaces(const ApiCallInfo& call_info, const 
     bytes_read += spaceLocations.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrLocateSpaces(call_info, return_value, session, &locateInfo, &spaceLocations);
@@ -1253,6 +1559,12 @@ size_t OpenXrDecoder::Decode_xrSetAndroidApplicationThreadKHR(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &threadType);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &threadId);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1278,6 +1590,12 @@ size_t OpenXrDecoder::Decode_xrCreateSwapchainAndroidSurfaceKHR(const ApiCallInf
     bytes_read += ValueDecoder::DecodeAddress((parameter_buffer + bytes_read), (buffer_size - bytes_read), &surface);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSwapchainAndroidSurfaceKHR(call_info, return_value, session, &info, &swapchain, surface);
@@ -1300,6 +1618,12 @@ size_t OpenXrDecoder::Decode_xrGetOpenGLGraphicsRequirementsKHR(const ApiCallInf
     bytes_read += graphicsRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetOpenGLGraphicsRequirementsKHR(call_info, return_value, instance, systemId, &graphicsRequirements);
@@ -1321,6 +1645,12 @@ size_t OpenXrDecoder::Decode_xrGetOpenGLESGraphicsRequirementsKHR(const ApiCallI
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &systemId);
     bytes_read += graphicsRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1353,6 +1683,12 @@ size_t OpenXrDecoder::Decode_xrGetVulkanInstanceExtensionsKHR(const ApiCallInfo&
     }
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1390,6 +1726,12 @@ size_t OpenXrDecoder::Decode_xrGetVulkanDeviceExtensionsKHR(const ApiCallInfo& c
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetVulkanDeviceExtensionsKHR(call_info, return_value, instance, systemId, bufferCapacityInput, &bufferCountOutput, &buffer);
@@ -1418,6 +1760,12 @@ size_t OpenXrDecoder::Decode_xrGetVulkanGraphicsDeviceKHR(const ApiCallInfo& cal
     bytes_read += vkPhysicalDevice.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetVulkanGraphicsDeviceKHR(call_info, return_value, instance, systemId, vkInstance, &vkPhysicalDevice);
@@ -1439,6 +1787,12 @@ size_t OpenXrDecoder::Decode_xrGetVulkanGraphicsRequirementsKHR(const ApiCallInf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &systemId);
     bytes_read += graphicsRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1462,6 +1816,12 @@ size_t OpenXrDecoder::Decode_xrGetD3D11GraphicsRequirementsKHR(const ApiCallInfo
     bytes_read += graphicsRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetD3D11GraphicsRequirementsKHR(call_info, return_value, instance, systemId, &graphicsRequirements);
@@ -1484,6 +1844,12 @@ size_t OpenXrDecoder::Decode_xrGetD3D12GraphicsRequirementsKHR(const ApiCallInfo
     bytes_read += graphicsRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetD3D12GraphicsRequirementsKHR(call_info, return_value, instance, systemId, &graphicsRequirements);
@@ -1505,6 +1871,12 @@ size_t OpenXrDecoder::Decode_xrGetMetalGraphicsRequirementsKHR(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &systemId);
     bytes_read += graphicsRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1532,6 +1904,12 @@ size_t OpenXrDecoder::Decode_xrGetVisibilityMaskKHR(const ApiCallInfo& call_info
     bytes_read += visibilityMask.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetVisibilityMaskKHR(call_info, return_value, session, viewConfigurationType, viewIndex, visibilityMaskType, &visibilityMask);
@@ -1553,6 +1931,12 @@ size_t OpenXrDecoder::Decode_xrConvertWin32PerformanceCounterToTimeKHR(const Api
     bytes_read += performanceCounter.DecodeLARGE_INTEGER((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += time.DecodeXrTime((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1576,6 +1960,12 @@ size_t OpenXrDecoder::Decode_xrConvertTimeToWin32PerformanceCounterKHR(const Api
     bytes_read += performanceCounter.DecodeLARGE_INTEGER((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrConvertTimeToWin32PerformanceCounterKHR(call_info, return_value, instance, time, &performanceCounter);
@@ -1598,6 +1988,12 @@ size_t OpenXrDecoder::Decode_xrConvertTimespecTimeToTimeKHR(const ApiCallInfo& c
     bytes_read += time.DecodeXrTime((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrConvertTimespecTimeToTimeKHR(call_info, return_value, instance, &timespecTime, &time);
@@ -1619,6 +2015,12 @@ size_t OpenXrDecoder::Decode_xrConvertTimeToTimespecTimeKHR(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeXrTimeValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &time);
     bytes_read += timespecTime.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1665,6 +2067,12 @@ size_t OpenXrDecoder::Decode_xrInitializeLoaderKHR(const ApiCallInfo& call_info,
      }
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrInitializeLoaderKHR(call_info, return_value, loaderInitInfo);
@@ -1688,6 +2096,12 @@ size_t OpenXrDecoder::Decode_xrCreateVulkanInstanceKHR(const ApiCallInfo& call_i
     bytes_read += vulkanInstance.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += vulkanResult.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1713,6 +2127,12 @@ size_t OpenXrDecoder::Decode_xrCreateVulkanDeviceKHR(const ApiCallInfo& call_inf
     bytes_read += vulkanResult.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateVulkanDeviceKHR(call_info, return_value, instance, &createInfo, &vulkanDevice, &vulkanResult);
@@ -1734,6 +2154,12 @@ size_t OpenXrDecoder::Decode_xrGetVulkanGraphicsDevice2KHR(const ApiCallInfo& ca
     bytes_read += getInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += vulkanPhysicalDevice.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1757,6 +2183,12 @@ size_t OpenXrDecoder::Decode_xrGetVulkanGraphicsRequirements2KHR(const ApiCallIn
     bytes_read += graphicsRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetVulkanGraphicsRequirements2KHR(call_info, return_value, instance, systemId, &graphicsRequirements);
@@ -1779,6 +2211,12 @@ size_t OpenXrDecoder::Decode_xrLocateSpacesKHR(const ApiCallInfo& call_info, con
     bytes_read += spaceLocations.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrLocateSpacesKHR(call_info, return_value, session, &locateInfo, &spaceLocations);
@@ -1800,6 +2238,12 @@ size_t OpenXrDecoder::Decode_xrPerfSettingsSetPerformanceLevelEXT(const ApiCallI
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &domain);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &level);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1827,6 +2271,12 @@ size_t OpenXrDecoder::Decode_xrThermalGetTemperatureTrendEXT(const ApiCallInfo& 
     bytes_read += tempSlope.DecodeFloat((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrThermalGetTemperatureTrendEXT(call_info, return_value, session, domain, &notificationLevel, &tempHeadroom, &tempSlope);
@@ -1846,6 +2296,12 @@ size_t OpenXrDecoder::Decode_xrSetDebugUtilsObjectNameEXT(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &instance);
     bytes_read += nameInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1869,6 +2325,12 @@ size_t OpenXrDecoder::Decode_xrCreateDebugUtilsMessengerEXT(const ApiCallInfo& c
     bytes_read += messenger.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateDebugUtilsMessengerEXT(call_info, return_value, instance, &createInfo, &messenger);
@@ -1886,6 +2348,12 @@ size_t OpenXrDecoder::Decode_xrDestroyDebugUtilsMessengerEXT(const ApiCallInfo& 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &messenger);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1911,6 +2379,12 @@ size_t OpenXrDecoder::Decode_xrSubmitDebugUtilsMessageEXT(const ApiCallInfo& cal
     bytes_read += callbackData.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSubmitDebugUtilsMessageEXT(call_info, return_value, instance, messageSeverity, messageTypes, &callbackData);
@@ -1931,6 +2405,12 @@ size_t OpenXrDecoder::Decode_xrSessionBeginDebugUtilsLabelRegionEXT(const ApiCal
     bytes_read += labelInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSessionBeginDebugUtilsLabelRegionEXT(call_info, return_value, session, &labelInfo);
@@ -1948,6 +2428,12 @@ size_t OpenXrDecoder::Decode_xrSessionEndDebugUtilsLabelRegionEXT(const ApiCallI
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1968,6 +2454,12 @@ size_t OpenXrDecoder::Decode_xrSessionInsertDebugUtilsLabelEXT(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += labelInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1991,6 +2483,12 @@ size_t OpenXrDecoder::Decode_xrCreateSpatialAnchorMSFT(const ApiCallInfo& call_i
     bytes_read += anchor.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSpatialAnchorMSFT(call_info, return_value, session, &createInfo, &anchor);
@@ -2013,6 +2511,12 @@ size_t OpenXrDecoder::Decode_xrCreateSpatialAnchorSpaceMSFT(const ApiCallInfo& c
     bytes_read += space.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSpatialAnchorSpaceMSFT(call_info, return_value, session, &createInfo, &space);
@@ -2030,6 +2534,12 @@ size_t OpenXrDecoder::Decode_xrDestroySpatialAnchorMSFT(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &anchor);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2055,6 +2565,12 @@ size_t OpenXrDecoder::Decode_xrSetInputDeviceActiveEXT(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &isActive);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSetInputDeviceActiveEXT(call_info, return_value, session, interactionProfile, topLevelPath, isActive);
@@ -2079,6 +2595,12 @@ size_t OpenXrDecoder::Decode_xrSetInputDeviceStateBoolEXT(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &state);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSetInputDeviceStateBoolEXT(call_info, return_value, session, topLevelPath, inputSourcePath, state);
@@ -2102,6 +2624,12 @@ size_t OpenXrDecoder::Decode_xrSetInputDeviceStateFloatEXT(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &inputSourcePath);
     bytes_read += ValueDecoder::DecodeFloatValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &state);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2128,6 +2656,12 @@ size_t OpenXrDecoder::Decode_xrSetInputDeviceStateVector2fEXT(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &inputSourcePath);
     bytes_read += DecodeStruct((parameter_buffer + bytes_read), (buffer_size - bytes_read), &state);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2157,6 +2691,12 @@ size_t OpenXrDecoder::Decode_xrSetInputDeviceLocationEXT(const ApiCallInfo& call
     bytes_read += DecodeStruct((parameter_buffer + bytes_read), (buffer_size - bytes_read), &pose);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSetInputDeviceLocationEXT(call_info, return_value, session, topLevelPath, inputSourcePath, space, pose);
@@ -2178,6 +2718,12 @@ size_t OpenXrDecoder::Decode_xrCreateSpatialGraphNodeSpaceMSFT(const ApiCallInfo
     bytes_read += createInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += space.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2201,6 +2747,12 @@ size_t OpenXrDecoder::Decode_xrTryCreateSpatialGraphStaticNodeBindingMSFT(const 
     bytes_read += nodeBinding.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrTryCreateSpatialGraphStaticNodeBindingMSFT(call_info, return_value, session, &createInfo, &nodeBinding);
@@ -2218,6 +2770,12 @@ size_t OpenXrDecoder::Decode_xrDestroySpatialGraphNodeBindingMSFT(const ApiCallI
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &nodeBinding);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2241,6 +2799,12 @@ size_t OpenXrDecoder::Decode_xrGetSpatialGraphNodeBindingPropertiesMSFT(const Ap
     bytes_read += properties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSpatialGraphNodeBindingPropertiesMSFT(call_info, return_value, nodeBinding, &getInfo, &properties);
@@ -2263,6 +2827,12 @@ size_t OpenXrDecoder::Decode_xrCreateHandTrackerEXT(const ApiCallInfo& call_info
     bytes_read += handTracker.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateHandTrackerEXT(call_info, return_value, session, &createInfo, &handTracker);
@@ -2280,6 +2850,12 @@ size_t OpenXrDecoder::Decode_xrDestroyHandTrackerEXT(const ApiCallInfo& call_inf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &handTracker);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2303,6 +2879,12 @@ size_t OpenXrDecoder::Decode_xrLocateHandJointsEXT(const ApiCallInfo& call_info,
     bytes_read += locations.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrLocateHandJointsEXT(call_info, return_value, handTracker, &locateInfo, &locations);
@@ -2324,6 +2906,12 @@ size_t OpenXrDecoder::Decode_xrCreateHandMeshSpaceMSFT(const ApiCallInfo& call_i
     bytes_read += createInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += space.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2347,6 +2935,12 @@ size_t OpenXrDecoder::Decode_xrUpdateHandMeshMSFT(const ApiCallInfo& call_info, 
     bytes_read += handMesh.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrUpdateHandMeshMSFT(call_info, return_value, handTracker, &updateInfo, &handMesh);
@@ -2368,6 +2962,12 @@ size_t OpenXrDecoder::Decode_xrGetControllerModelKeyMSFT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &topLevelUserPath);
     bytes_read += controllerModelKeyState.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2395,6 +2995,12 @@ size_t OpenXrDecoder::Decode_xrLoadControllerModelMSFT(const ApiCallInfo& call_i
     bytes_read += buffer.DecodeUInt8((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrLoadControllerModelMSFT(call_info, return_value, session, modelKey, bufferCapacityInput, &bufferCountOutput, &buffer);
@@ -2416,6 +3022,12 @@ size_t OpenXrDecoder::Decode_xrGetControllerModelPropertiesMSFT(const ApiCallInf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &modelKey);
     bytes_read += properties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2439,6 +3051,12 @@ size_t OpenXrDecoder::Decode_xrGetControllerModelStateMSFT(const ApiCallInfo& ca
     bytes_read += state.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetControllerModelStateMSFT(call_info, return_value, session, modelKey, &state);
@@ -2461,6 +3079,12 @@ size_t OpenXrDecoder::Decode_xrCreateSpatialAnchorFromPerceptionAnchorMSFT(const
     bytes_read += anchor.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSpatialAnchorFromPerceptionAnchorMSFT(call_info, return_value, session, perceptionAnchor, &anchor);
@@ -2482,6 +3106,12 @@ size_t OpenXrDecoder::Decode_xrTryGetPerceptionAnchorFromSpatialAnchorMSFT(const
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &anchor);
     bytes_read += perceptionAnchor.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2510,6 +3140,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateReprojectionModesMSFT(const ApiCallInfo&
     bytes_read += modeCountOutput.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += modes.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2573,6 +3209,12 @@ size_t OpenXrDecoder::Decode_xrUpdateSwapchainFB(const ApiCallInfo& call_info, c
      }
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrUpdateSwapchainFB(call_info, return_value, swapchain, state);
@@ -2635,6 +3277,12 @@ size_t OpenXrDecoder::Decode_xrGetSwapchainStateFB(const ApiCallInfo& call_info,
      }
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSwapchainStateFB(call_info, return_value, swapchain, state);
@@ -2657,6 +3305,12 @@ size_t OpenXrDecoder::Decode_xrCreateBodyTrackerFB(const ApiCallInfo& call_info,
     bytes_read += bodyTracker.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateBodyTrackerFB(call_info, return_value, session, &createInfo, &bodyTracker);
@@ -2674,6 +3328,12 @@ size_t OpenXrDecoder::Decode_xrDestroyBodyTrackerFB(const ApiCallInfo& call_info
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &bodyTracker);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2697,6 +3357,12 @@ size_t OpenXrDecoder::Decode_xrLocateBodyJointsFB(const ApiCallInfo& call_info, 
     bytes_read += locations.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrLocateBodyJointsFB(call_info, return_value, bodyTracker, &locateInfo, &locations);
@@ -2716,6 +3382,12 @@ size_t OpenXrDecoder::Decode_xrGetBodySkeletonFB(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &bodyTracker);
     bytes_read += skeleton.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2743,6 +3415,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateSceneComputeFeaturesMSFT(const ApiCallIn
     bytes_read += features.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateSceneComputeFeaturesMSFT(call_info, return_value, instance, systemId, featureCapacityInput, &featureCountOutput, &features);
@@ -2765,6 +3443,12 @@ size_t OpenXrDecoder::Decode_xrCreateSceneObserverMSFT(const ApiCallInfo& call_i
     bytes_read += sceneObserver.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSceneObserverMSFT(call_info, return_value, session, &createInfo, &sceneObserver);
@@ -2782,6 +3466,12 @@ size_t OpenXrDecoder::Decode_xrDestroySceneObserverMSFT(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &sceneObserver);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2805,6 +3495,12 @@ size_t OpenXrDecoder::Decode_xrCreateSceneMSFT(const ApiCallInfo& call_info, con
     bytes_read += scene.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSceneMSFT(call_info, return_value, sceneObserver, &createInfo, &scene);
@@ -2822,6 +3518,12 @@ size_t OpenXrDecoder::Decode_xrDestroySceneMSFT(const ApiCallInfo& call_info, co
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &scene);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2843,6 +3545,12 @@ size_t OpenXrDecoder::Decode_xrComputeNewSceneMSFT(const ApiCallInfo& call_info,
     bytes_read += computeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrComputeNewSceneMSFT(call_info, return_value, sceneObserver, &computeInfo);
@@ -2862,6 +3570,12 @@ size_t OpenXrDecoder::Decode_xrGetSceneComputeStateMSFT(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &sceneObserver);
     bytes_read += state.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2885,6 +3599,12 @@ size_t OpenXrDecoder::Decode_xrGetSceneComponentsMSFT(const ApiCallInfo& call_in
     bytes_read += components.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSceneComponentsMSFT(call_info, return_value, scene, &getInfo, &components);
@@ -2906,6 +3626,12 @@ size_t OpenXrDecoder::Decode_xrLocateSceneComponentsMSFT(const ApiCallInfo& call
     bytes_read += locateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += locations.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2929,6 +3655,12 @@ size_t OpenXrDecoder::Decode_xrGetSceneMeshBuffersMSFT(const ApiCallInfo& call_i
     bytes_read += buffers.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSceneMeshBuffersMSFT(call_info, return_value, scene, &getInfo, &buffers);
@@ -2948,6 +3680,12 @@ size_t OpenXrDecoder::Decode_xrDeserializeSceneMSFT(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &sceneObserver);
     bytes_read += deserializeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2975,6 +3713,12 @@ size_t OpenXrDecoder::Decode_xrGetSerializedSceneFragmentDataMSFT(const ApiCallI
     bytes_read += buffer.DecodeUInt8((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSerializedSceneFragmentDataMSFT(call_info, return_value, scene, &getInfo, countInput, &readOutput, &buffer);
@@ -2999,6 +3743,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateDisplayRefreshRatesFB(const ApiCallInfo&
     bytes_read += displayRefreshRates.DecodeFloat((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateDisplayRefreshRatesFB(call_info, return_value, session, displayRefreshRateCapacityInput, &displayRefreshRateCountOutput, &displayRefreshRates);
@@ -3019,6 +3769,12 @@ size_t OpenXrDecoder::Decode_xrGetDisplayRefreshRateFB(const ApiCallInfo& call_i
     bytes_read += displayRefreshRate.DecodeFloat((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetDisplayRefreshRateFB(call_info, return_value, session, &displayRefreshRate);
@@ -3038,6 +3794,12 @@ size_t OpenXrDecoder::Decode_xrRequestDisplayRefreshRateFB(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += ValueDecoder::DecodeFloatValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &displayRefreshRate);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3063,6 +3825,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateViveTrackerPathsHTCX(const ApiCallInfo& 
     bytes_read += paths.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateViveTrackerPathsHTCX(call_info, return_value, instance, pathCapacityInput, &pathCountOutput, &paths);
@@ -3085,6 +3853,12 @@ size_t OpenXrDecoder::Decode_xrCreateFacialTrackerHTC(const ApiCallInfo& call_in
     bytes_read += facialTracker.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateFacialTrackerHTC(call_info, return_value, session, &createInfo, &facialTracker);
@@ -3102,6 +3876,12 @@ size_t OpenXrDecoder::Decode_xrDestroyFacialTrackerHTC(const ApiCallInfo& call_i
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &facialTracker);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3122,6 +3902,12 @@ size_t OpenXrDecoder::Decode_xrGetFacialExpressionsHTC(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &facialTracker);
     bytes_read += facialExpressions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3147,6 +3933,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateColorSpacesFB(const ApiCallInfo& call_in
     bytes_read += colorSpaces.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateColorSpacesFB(call_info, return_value, session, colorSpaceCapacityInput, &colorSpaceCountOutput, &colorSpaces);
@@ -3167,6 +3959,12 @@ size_t OpenXrDecoder::Decode_xrSetColorSpaceFB(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &colorSpace);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSetColorSpaceFB(call_info, return_value, session, colorSpace);
@@ -3186,6 +3984,12 @@ size_t OpenXrDecoder::Decode_xrGetHandMeshFB(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &handTracker);
     bytes_read += mesh.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3209,6 +4013,12 @@ size_t OpenXrDecoder::Decode_xrCreateSpatialAnchorFB(const ApiCallInfo& call_inf
     bytes_read += requestId.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSpatialAnchorFB(call_info, return_value, session, &info, &requestId);
@@ -3228,6 +4038,12 @@ size_t OpenXrDecoder::Decode_xrGetSpaceUuidFB(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &space);
     bytes_read += uuid.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3253,6 +4069,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateSpaceSupportedComponentsFB(const ApiCall
     bytes_read += componentTypes.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateSpaceSupportedComponentsFB(call_info, return_value, space, componentTypeCapacityInput, &componentTypeCountOutput, &componentTypes);
@@ -3274,6 +4096,12 @@ size_t OpenXrDecoder::Decode_xrSetSpaceComponentStatusFB(const ApiCallInfo& call
     bytes_read += info.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += requestId.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3297,6 +4125,12 @@ size_t OpenXrDecoder::Decode_xrGetSpaceComponentStatusFB(const ApiCallInfo& call
     bytes_read += status.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSpaceComponentStatusFB(call_info, return_value, space, componentType, &status);
@@ -3319,6 +4153,12 @@ size_t OpenXrDecoder::Decode_xrCreateFoveationProfileFB(const ApiCallInfo& call_
     bytes_read += profile.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateFoveationProfileFB(call_info, return_value, session, &createInfo, &profile);
@@ -3336,6 +4176,12 @@ size_t OpenXrDecoder::Decode_xrDestroyFoveationProfileFB(const ApiCallInfo& call
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &profile);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3359,6 +4205,12 @@ size_t OpenXrDecoder::Decode_xrQuerySystemTrackedKeyboardFB(const ApiCallInfo& c
     bytes_read += keyboard.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrQuerySystemTrackedKeyboardFB(call_info, return_value, session, &queryInfo, &keyboard);
@@ -3381,6 +4233,12 @@ size_t OpenXrDecoder::Decode_xrCreateKeyboardSpaceFB(const ApiCallInfo& call_inf
     bytes_read += keyboardSpace.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateKeyboardSpaceFB(call_info, return_value, session, &createInfo, &keyboardSpace);
@@ -3398,6 +4256,12 @@ size_t OpenXrDecoder::Decode_xrTriangleMeshBeginUpdateFB(const ApiCallInfo& call
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &mesh);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3421,6 +4285,12 @@ size_t OpenXrDecoder::Decode_xrTriangleMeshEndUpdateFB(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &triangleCount);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrTriangleMeshEndUpdateFB(call_info, return_value, mesh, vertexCount, triangleCount);
@@ -3441,6 +4311,12 @@ size_t OpenXrDecoder::Decode_xrTriangleMeshBeginVertexBufferUpdateFB(const ApiCa
     bytes_read += outVertexCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrTriangleMeshBeginVertexBufferUpdateFB(call_info, return_value, mesh, &outVertexCount);
@@ -3458,6 +4334,12 @@ size_t OpenXrDecoder::Decode_xrTriangleMeshEndVertexBufferUpdateFB(const ApiCall
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &mesh);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3481,6 +4363,12 @@ size_t OpenXrDecoder::Decode_xrCreatePassthroughFB(const ApiCallInfo& call_info,
     bytes_read += outPassthrough.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreatePassthroughFB(call_info, return_value, session, &createInfo, &outPassthrough);
@@ -3498,6 +4386,12 @@ size_t OpenXrDecoder::Decode_xrDestroyPassthroughFB(const ApiCallInfo& call_info
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &passthrough);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3517,6 +4411,12 @@ size_t OpenXrDecoder::Decode_xrPassthroughStartFB(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &passthrough);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrPassthroughStartFB(call_info, return_value, passthrough);
@@ -3534,6 +4434,12 @@ size_t OpenXrDecoder::Decode_xrPassthroughPauseFB(const ApiCallInfo& call_info, 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &passthrough);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3557,6 +4463,12 @@ size_t OpenXrDecoder::Decode_xrCreatePassthroughLayerFB(const ApiCallInfo& call_
     bytes_read += outLayer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreatePassthroughLayerFB(call_info, return_value, session, &createInfo, &outLayer);
@@ -3574,6 +4486,12 @@ size_t OpenXrDecoder::Decode_xrDestroyPassthroughLayerFB(const ApiCallInfo& call
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &layer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3593,6 +4511,12 @@ size_t OpenXrDecoder::Decode_xrPassthroughLayerPauseFB(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &layer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrPassthroughLayerPauseFB(call_info, return_value, layer);
@@ -3610,6 +4534,12 @@ size_t OpenXrDecoder::Decode_xrPassthroughLayerResumeFB(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &layer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3630,6 +4560,12 @@ size_t OpenXrDecoder::Decode_xrPassthroughLayerSetStyleFB(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &layer);
     bytes_read += style.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3653,6 +4589,12 @@ size_t OpenXrDecoder::Decode_xrCreateGeometryInstanceFB(const ApiCallInfo& call_
     bytes_read += outGeometryInstance.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateGeometryInstanceFB(call_info, return_value, session, &createInfo, &outGeometryInstance);
@@ -3670,6 +4612,12 @@ size_t OpenXrDecoder::Decode_xrDestroyGeometryInstanceFB(const ApiCallInfo& call
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &instance);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3690,6 +4638,12 @@ size_t OpenXrDecoder::Decode_xrGeometryInstanceSetTransformFB(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &instance);
     bytes_read += transformation.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3715,6 +4669,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateRenderModelPathsFB(const ApiCallInfo& ca
     bytes_read += paths.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateRenderModelPathsFB(call_info, return_value, session, pathCapacityInput, &pathCountOutput, &paths);
@@ -3736,6 +4696,12 @@ size_t OpenXrDecoder::Decode_xrGetRenderModelPropertiesFB(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &path);
     bytes_read += properties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3759,6 +4725,12 @@ size_t OpenXrDecoder::Decode_xrLoadRenderModelFB(const ApiCallInfo& call_info, c
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrLoadRenderModelFB(call_info, return_value, session, &info, &buffer);
@@ -3779,6 +4751,12 @@ size_t OpenXrDecoder::Decode_xrSetEnvironmentDepthEstimationVARJO(const ApiCallI
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &enabled);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSetEnvironmentDepthEstimationVARJO(call_info, return_value, session, enabled);
@@ -3798,6 +4776,12 @@ size_t OpenXrDecoder::Decode_xrSetMarkerTrackingVARJO(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &enabled);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3821,6 +4805,12 @@ size_t OpenXrDecoder::Decode_xrSetMarkerTrackingTimeoutVARJO(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &timeout);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSetMarkerTrackingTimeoutVARJO(call_info, return_value, session, markerId, timeout);
@@ -3842,6 +4832,12 @@ size_t OpenXrDecoder::Decode_xrSetMarkerTrackingPredictionVARJO(const ApiCallInf
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &markerId);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &enable);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3865,6 +4861,12 @@ size_t OpenXrDecoder::Decode_xrGetMarkerSizeVARJO(const ApiCallInfo& call_info, 
     bytes_read += size.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetMarkerSizeVARJO(call_info, return_value, session, markerId, &size);
@@ -3887,6 +4889,12 @@ size_t OpenXrDecoder::Decode_xrCreateMarkerSpaceVARJO(const ApiCallInfo& call_in
     bytes_read += space.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateMarkerSpaceVARJO(call_info, return_value, session, &createInfo, &space);
@@ -3906,6 +4914,12 @@ size_t OpenXrDecoder::Decode_xrSetViewOffsetVARJO(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += ValueDecoder::DecodeFloatValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &offset);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3929,6 +4943,12 @@ size_t OpenXrDecoder::Decode_xrCreateSpaceFromCoordinateFrameUIDML(const ApiCall
     bytes_read += space.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSpaceFromCoordinateFrameUIDML(call_info, return_value, session, &createInfo, &space);
@@ -3951,6 +4971,12 @@ size_t OpenXrDecoder::Decode_xrCreateMarkerDetectorML(const ApiCallInfo& call_in
     bytes_read += markerDetector.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateMarkerDetectorML(call_info, return_value, session, &createInfo, &markerDetector);
@@ -3968,6 +4994,12 @@ size_t OpenXrDecoder::Decode_xrDestroyMarkerDetectorML(const ApiCallInfo& call_i
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &markerDetector);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3989,6 +5021,12 @@ size_t OpenXrDecoder::Decode_xrSnapshotMarkerDetectorML(const ApiCallInfo& call_
     bytes_read += snapshotInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSnapshotMarkerDetectorML(call_info, return_value, markerDetector, &snapshotInfo);
@@ -4008,6 +5046,12 @@ size_t OpenXrDecoder::Decode_xrGetMarkerDetectorStateML(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &markerDetector);
     bytes_read += state.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4033,6 +5077,12 @@ size_t OpenXrDecoder::Decode_xrGetMarkersML(const ApiCallInfo& call_info, const 
     bytes_read += markers.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetMarkersML(call_info, return_value, markerDetector, markerCapacityInput, &markerCountOutput, &markers);
@@ -4054,6 +5104,12 @@ size_t OpenXrDecoder::Decode_xrGetMarkerReprojectionErrorML(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &marker);
     bytes_read += reprojectionErrorMeters.DecodeFloat((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4077,6 +5133,12 @@ size_t OpenXrDecoder::Decode_xrGetMarkerLengthML(const ApiCallInfo& call_info, c
     bytes_read += meters.DecodeFloat((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetMarkerLengthML(call_info, return_value, markerDetector, marker, &meters);
@@ -4098,6 +5160,12 @@ size_t OpenXrDecoder::Decode_xrGetMarkerNumberML(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &marker);
     bytes_read += number.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4131,6 +5199,12 @@ size_t OpenXrDecoder::Decode_xrGetMarkerStringML(const ApiCallInfo& call_info, c
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetMarkerStringML(call_info, return_value, markerDetector, marker, bufferCapacityInput, &bufferCountOutput, &buffer);
@@ -4157,6 +5231,12 @@ size_t OpenXrDecoder::Decode_xrCreateMarkerSpaceML(const ApiCallInfo& call_info,
     bytes_read += space.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateMarkerSpaceML(call_info, return_value, session, &createInfo, &space);
@@ -4176,6 +5256,12 @@ size_t OpenXrDecoder::Decode_xrEnableLocalizationEventsML(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += info.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4203,6 +5289,12 @@ size_t OpenXrDecoder::Decode_xrQueryLocalizationMapsML(const ApiCallInfo& call_i
     bytes_read += maps.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrQueryLocalizationMapsML(call_info, return_value, session, &queryInfo, mapCapacityInput, &mapCountOutput, &maps);
@@ -4222,6 +5314,12 @@ size_t OpenXrDecoder::Decode_xrRequestMapLocalizationML(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += requestInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4245,6 +5343,12 @@ size_t OpenXrDecoder::Decode_xrImportLocalizationMapML(const ApiCallInfo& call_i
     bytes_read += mapUuid.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrImportLocalizationMapML(call_info, return_value, session, &importInfo, &mapUuid);
@@ -4267,6 +5371,12 @@ size_t OpenXrDecoder::Decode_xrCreateExportedLocalizationMapML(const ApiCallInfo
     bytes_read += map.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateExportedLocalizationMapML(call_info, return_value, session, &mapUuid, &map);
@@ -4284,6 +5394,12 @@ size_t OpenXrDecoder::Decode_xrDestroyExportedLocalizationMapML(const ApiCallInf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &map);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4315,6 +5431,12 @@ size_t OpenXrDecoder::Decode_xrGetExportedLocalizationMapDataML(const ApiCallInf
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetExportedLocalizationMapDataML(call_info, return_value, map, bufferCapacityInput, &bufferCountOutput, &buffer);
@@ -4339,6 +5461,12 @@ size_t OpenXrDecoder::Decode_xrCreateSpatialAnchorStoreConnectionMSFT(const ApiC
     bytes_read += spatialAnchorStore.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSpatialAnchorStoreConnectionMSFT(call_info, return_value, session, &spatialAnchorStore);
@@ -4356,6 +5484,12 @@ size_t OpenXrDecoder::Decode_xrDestroySpatialAnchorStoreConnectionMSFT(const Api
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &spatialAnchorStore);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4376,6 +5510,12 @@ size_t OpenXrDecoder::Decode_xrPersistSpatialAnchorMSFT(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &spatialAnchorStore);
     bytes_read += spatialAnchorPersistenceInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4401,6 +5541,12 @@ size_t OpenXrDecoder::Decode_xrEnumeratePersistedSpatialAnchorNamesMSFT(const Ap
     bytes_read += spatialAnchorNames.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumeratePersistedSpatialAnchorNamesMSFT(call_info, return_value, spatialAnchorStore, spatialAnchorNameCapacityInput, &spatialAnchorNameCountOutput, &spatialAnchorNames);
@@ -4423,6 +5569,12 @@ size_t OpenXrDecoder::Decode_xrCreateSpatialAnchorFromPersistedNameMSFT(const Ap
     bytes_read += spatialAnchor.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSpatialAnchorFromPersistedNameMSFT(call_info, return_value, session, &spatialAnchorCreateInfo, &spatialAnchor);
@@ -4443,6 +5595,12 @@ size_t OpenXrDecoder::Decode_xrUnpersistSpatialAnchorMSFT(const ApiCallInfo& cal
     bytes_read += spatialAnchorPersistenceName.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrUnpersistSpatialAnchorMSFT(call_info, return_value, spatialAnchorStore, &spatialAnchorPersistenceName);
@@ -4460,6 +5618,12 @@ size_t OpenXrDecoder::Decode_xrClearSpatialAnchorStoreMSFT(const ApiCallInfo& ca
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &spatialAnchorStore);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4486,6 +5650,12 @@ size_t OpenXrDecoder::Decode_xrGetSceneMarkerRawDataMSFT(const ApiCallInfo& call
     bytes_read += bufferCountOutput.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += buffer.DecodeUInt8((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4518,6 +5688,12 @@ size_t OpenXrDecoder::Decode_xrGetSceneMarkerDecodedStringMSFT(const ApiCallInfo
     }
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4572,6 +5748,12 @@ size_t OpenXrDecoder::Decode_xrQuerySpacesFB(const ApiCallInfo& call_info, const
     bytes_read += requestId.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrQuerySpacesFB(call_info, return_value, session, info, &requestId);
@@ -4593,6 +5775,12 @@ size_t OpenXrDecoder::Decode_xrRetrieveSpaceQueryResultsFB(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &requestId);
     bytes_read += results.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4616,6 +5804,12 @@ size_t OpenXrDecoder::Decode_xrSaveSpaceFB(const ApiCallInfo& call_info, const u
     bytes_read += requestId.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSaveSpaceFB(call_info, return_value, session, &info, &requestId);
@@ -4637,6 +5831,12 @@ size_t OpenXrDecoder::Decode_xrEraseSpaceFB(const ApiCallInfo& call_info, const 
     bytes_read += info.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += requestId.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4663,6 +5863,12 @@ size_t OpenXrDecoder::Decode_xrGetAudioOutputDeviceGuidOculus(const ApiCallInfo&
     }
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4694,6 +5900,12 @@ size_t OpenXrDecoder::Decode_xrGetAudioInputDeviceGuidOculus(const ApiCallInfo& 
     bytes_read += buffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetAudioInputDeviceGuidOculus(call_info, return_value, instance, &buffer);
@@ -4720,6 +5932,12 @@ size_t OpenXrDecoder::Decode_xrShareSpacesFB(const ApiCallInfo& call_info, const
     bytes_read += requestId.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrShareSpacesFB(call_info, return_value, session, &info, &requestId);
@@ -4741,6 +5959,12 @@ size_t OpenXrDecoder::Decode_xrGetSpaceBoundingBox2DFB(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &space);
     bytes_read += boundingBox2DOutput.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4764,6 +5988,12 @@ size_t OpenXrDecoder::Decode_xrGetSpaceBoundingBox3DFB(const ApiCallInfo& call_i
     bytes_read += boundingBox3DOutput.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSpaceBoundingBox3DFB(call_info, return_value, session, space, &boundingBox3DOutput);
@@ -4785,6 +6015,12 @@ size_t OpenXrDecoder::Decode_xrGetSpaceSemanticLabelsFB(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &space);
     bytes_read += semanticLabelsOutput.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4808,6 +6044,12 @@ size_t OpenXrDecoder::Decode_xrGetSpaceBoundary2DFB(const ApiCallInfo& call_info
     bytes_read += boundary2DOutput.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSpaceBoundary2DFB(call_info, return_value, session, space, &boundary2DOutput);
@@ -4830,6 +6072,12 @@ size_t OpenXrDecoder::Decode_xrGetSpaceRoomLayoutFB(const ApiCallInfo& call_info
     bytes_read += roomLayoutOutput.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSpaceRoomLayoutFB(call_info, return_value, session, space, &roomLayoutOutput);
@@ -4849,6 +6097,12 @@ size_t OpenXrDecoder::Decode_xrSetDigitalLensControlALMALENCE(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += digitalLensControl.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4872,6 +6126,12 @@ size_t OpenXrDecoder::Decode_xrRequestSceneCaptureFB(const ApiCallInfo& call_inf
     bytes_read += requestId.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrRequestSceneCaptureFB(call_info, return_value, session, &info, &requestId);
@@ -4894,6 +6154,12 @@ size_t OpenXrDecoder::Decode_xrGetSpaceContainerFB(const ApiCallInfo& call_info,
     bytes_read += spaceContainerOutput.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSpaceContainerFB(call_info, return_value, session, space, &spaceContainerOutput);
@@ -4913,6 +6179,12 @@ size_t OpenXrDecoder::Decode_xrGetFoveationEyeTrackedStateMETA(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += foveationState.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4936,6 +6208,12 @@ size_t OpenXrDecoder::Decode_xrCreateFaceTrackerFB(const ApiCallInfo& call_info,
     bytes_read += faceTracker.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateFaceTrackerFB(call_info, return_value, session, &createInfo, &faceTracker);
@@ -4953,6 +6231,12 @@ size_t OpenXrDecoder::Decode_xrDestroyFaceTrackerFB(const ApiCallInfo& call_info
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &faceTracker);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4976,6 +6260,12 @@ size_t OpenXrDecoder::Decode_xrGetFaceExpressionWeightsFB(const ApiCallInfo& cal
     bytes_read += expressionWeights.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetFaceExpressionWeightsFB(call_info, return_value, faceTracker, &expressionInfo, &expressionWeights);
@@ -4998,6 +6288,12 @@ size_t OpenXrDecoder::Decode_xrCreateEyeTrackerFB(const ApiCallInfo& call_info, 
     bytes_read += eyeTracker.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateEyeTrackerFB(call_info, return_value, session, &createInfo, &eyeTracker);
@@ -5015,6 +6311,12 @@ size_t OpenXrDecoder::Decode_xrDestroyEyeTrackerFB(const ApiCallInfo& call_info,
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &eyeTracker);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5038,6 +6340,12 @@ size_t OpenXrDecoder::Decode_xrGetEyeGazesFB(const ApiCallInfo& call_info, const
     bytes_read += eyeGazes.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetEyeGazesFB(call_info, return_value, eyeTracker, &gazeInfo, &eyeGazes);
@@ -5057,6 +6365,12 @@ size_t OpenXrDecoder::Decode_xrPassthroughLayerSetKeyboardHandsIntensityFB(const
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &layer);
     bytes_read += intensity.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5080,6 +6394,12 @@ size_t OpenXrDecoder::Decode_xrGetDeviceSampleRateFB(const ApiCallInfo& call_inf
     bytes_read += deviceSampleRate.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetDeviceSampleRateFB(call_info, return_value, session, &hapticActionInfo, &deviceSampleRate);
@@ -5099,6 +6419,12 @@ size_t OpenXrDecoder::Decode_xrGetPassthroughPreferencesMETA(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += preferences.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5122,6 +6448,12 @@ size_t OpenXrDecoder::Decode_xrCreateVirtualKeyboardMETA(const ApiCallInfo& call
     bytes_read += keyboard.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateVirtualKeyboardMETA(call_info, return_value, session, &createInfo, &keyboard);
@@ -5139,6 +6471,12 @@ size_t OpenXrDecoder::Decode_xrDestroyVirtualKeyboardMETA(const ApiCallInfo& cal
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &keyboard);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5164,6 +6502,12 @@ size_t OpenXrDecoder::Decode_xrCreateVirtualKeyboardSpaceMETA(const ApiCallInfo&
     bytes_read += keyboardSpace.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateVirtualKeyboardSpaceMETA(call_info, return_value, session, keyboard, &createInfo, &keyboardSpace);
@@ -5183,6 +6527,12 @@ size_t OpenXrDecoder::Decode_xrSuggestVirtualKeyboardLocationMETA(const ApiCallI
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &keyboard);
     bytes_read += locationInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5204,6 +6554,12 @@ size_t OpenXrDecoder::Decode_xrGetVirtualKeyboardScaleMETA(const ApiCallInfo& ca
     bytes_read += scale.DecodeFloat((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetVirtualKeyboardScaleMETA(call_info, return_value, keyboard, &scale);
@@ -5224,6 +6580,12 @@ size_t OpenXrDecoder::Decode_xrSetVirtualKeyboardModelVisibilityMETA(const ApiCa
     bytes_read += modelVisibility.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSetVirtualKeyboardModelVisibilityMETA(call_info, return_value, keyboard, &modelVisibility);
@@ -5243,6 +6605,12 @@ size_t OpenXrDecoder::Decode_xrGetVirtualKeyboardModelAnimationStatesMETA(const 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &keyboard);
     bytes_read += animationStates.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5268,6 +6636,12 @@ size_t OpenXrDecoder::Decode_xrGetVirtualKeyboardDirtyTexturesMETA(const ApiCall
     bytes_read += textureIds.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetVirtualKeyboardDirtyTexturesMETA(call_info, return_value, keyboard, textureIdCapacityInput, &textureIdCountOutput, &textureIds);
@@ -5289,6 +6663,12 @@ size_t OpenXrDecoder::Decode_xrGetVirtualKeyboardTextureDataMETA(const ApiCallIn
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &textureId);
     bytes_read += textureData.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5312,6 +6692,12 @@ size_t OpenXrDecoder::Decode_xrSendVirtualKeyboardInputMETA(const ApiCallInfo& c
     bytes_read += interactorRootPose.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSendVirtualKeyboardInputMETA(call_info, return_value, keyboard, &info, &interactorRootPose);
@@ -5331,6 +6717,12 @@ size_t OpenXrDecoder::Decode_xrChangeVirtualKeyboardTextContextMETA(const ApiCal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &keyboard);
     bytes_read += changeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5356,6 +6748,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateExternalCamerasOCULUS(const ApiCallInfo&
     bytes_read += cameras.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateExternalCamerasOCULUS(call_info, return_value, session, cameraCapacityInput, &cameraCountOutput, &cameras);
@@ -5380,6 +6778,12 @@ size_t OpenXrDecoder::Decode_xrEnumeratePerformanceMetricsCounterPathsMETA(const
     bytes_read += counterPaths.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumeratePerformanceMetricsCounterPathsMETA(call_info, return_value, instance, counterPathCapacityInput, &counterPathCountOutput, &counterPaths);
@@ -5400,6 +6804,12 @@ size_t OpenXrDecoder::Decode_xrSetPerformanceMetricsStateMETA(const ApiCallInfo&
     bytes_read += state.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSetPerformanceMetricsStateMETA(call_info, return_value, session, &state);
@@ -5419,6 +6829,12 @@ size_t OpenXrDecoder::Decode_xrGetPerformanceMetricsStateMETA(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += state.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5442,6 +6858,12 @@ size_t OpenXrDecoder::Decode_xrQueryPerformanceMetricsCounterMETA(const ApiCallI
     bytes_read += counter.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrQueryPerformanceMetricsCounterMETA(call_info, return_value, session, counterPath, &counter);
@@ -5463,6 +6885,12 @@ size_t OpenXrDecoder::Decode_xrSaveSpaceListFB(const ApiCallInfo& call_info, con
     bytes_read += info.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += requestId.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5486,6 +6914,12 @@ size_t OpenXrDecoder::Decode_xrCreateSpaceUserFB(const ApiCallInfo& call_info, c
     bytes_read += user.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSpaceUserFB(call_info, return_value, session, &info, &user);
@@ -5506,6 +6940,12 @@ size_t OpenXrDecoder::Decode_xrGetSpaceUserIdFB(const ApiCallInfo& call_info, co
     bytes_read += userId.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSpaceUserIdFB(call_info, return_value, user, &userId);
@@ -5523,6 +6963,12 @@ size_t OpenXrDecoder::Decode_xrDestroySpaceUserFB(const ApiCallInfo& call_info, 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &user);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5546,6 +6992,12 @@ size_t OpenXrDecoder::Decode_xrGetRecommendedLayerResolutionMETA(const ApiCallIn
     bytes_read += resolution.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetRecommendedLayerResolutionMETA(call_info, return_value, session, &info, &resolution);
@@ -5568,6 +7020,12 @@ size_t OpenXrDecoder::Decode_xrCreatePassthroughColorLutMETA(const ApiCallInfo& 
     bytes_read += colorLut.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreatePassthroughColorLutMETA(call_info, return_value, passthrough, &createInfo, &colorLut);
@@ -5585,6 +7043,12 @@ size_t OpenXrDecoder::Decode_xrDestroyPassthroughColorLutMETA(const ApiCallInfo&
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &colorLut);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5605,6 +7069,12 @@ size_t OpenXrDecoder::Decode_xrUpdatePassthroughColorLutMETA(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &colorLut);
     bytes_read += updateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5628,6 +7098,12 @@ size_t OpenXrDecoder::Decode_xrGetSpaceTriangleMeshMETA(const ApiCallInfo& call_
     bytes_read += triangleMeshOutput.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSpaceTriangleMeshMETA(call_info, return_value, space, &getInfo, &triangleMeshOutput);
@@ -5650,6 +7126,12 @@ size_t OpenXrDecoder::Decode_xrCreateFaceTracker2FB(const ApiCallInfo& call_info
     bytes_read += faceTracker.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateFaceTracker2FB(call_info, return_value, session, &createInfo, &faceTracker);
@@ -5667,6 +7149,12 @@ size_t OpenXrDecoder::Decode_xrDestroyFaceTracker2FB(const ApiCallInfo& call_inf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &faceTracker);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5690,6 +7178,12 @@ size_t OpenXrDecoder::Decode_xrGetFaceExpressionWeights2FB(const ApiCallInfo& ca
     bytes_read += expressionWeights.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetFaceExpressionWeights2FB(call_info, return_value, faceTracker, &expressionInfo, &expressionWeights);
@@ -5712,6 +7206,12 @@ size_t OpenXrDecoder::Decode_xrCreateEnvironmentDepthProviderMETA(const ApiCallI
     bytes_read += environmentDepthProvider.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateEnvironmentDepthProviderMETA(call_info, return_value, session, &createInfo, &environmentDepthProvider);
@@ -5729,6 +7229,12 @@ size_t OpenXrDecoder::Decode_xrDestroyEnvironmentDepthProviderMETA(const ApiCall
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &environmentDepthProvider);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5748,6 +7254,12 @@ size_t OpenXrDecoder::Decode_xrStartEnvironmentDepthProviderMETA(const ApiCallIn
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &environmentDepthProvider);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrStartEnvironmentDepthProviderMETA(call_info, return_value, environmentDepthProvider);
@@ -5765,6 +7277,12 @@ size_t OpenXrDecoder::Decode_xrStopEnvironmentDepthProviderMETA(const ApiCallInf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &environmentDepthProvider);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5788,6 +7306,12 @@ size_t OpenXrDecoder::Decode_xrCreateEnvironmentDepthSwapchainMETA(const ApiCall
     bytes_read += swapchain.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateEnvironmentDepthSwapchainMETA(call_info, return_value, environmentDepthProvider, &createInfo, &swapchain);
@@ -5805,6 +7329,12 @@ size_t OpenXrDecoder::Decode_xrDestroyEnvironmentDepthSwapchainMETA(const ApiCal
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &swapchain);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5877,6 +7407,12 @@ size_t OpenXrDecoder::Decode_xrEnumerateEnvironmentDepthSwapchainImagesMETA(cons
      }
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateEnvironmentDepthSwapchainImagesMETA(call_info, return_value, swapchain, imageCapacityInput, &imageCountOutput, images);
@@ -5896,6 +7432,12 @@ size_t OpenXrDecoder::Decode_xrGetEnvironmentDepthSwapchainStateMETA(const ApiCa
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &swapchain);
     bytes_read += state.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5919,6 +7461,12 @@ size_t OpenXrDecoder::Decode_xrAcquireEnvironmentDepthImageMETA(const ApiCallInf
     bytes_read += environmentDepthImage.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrAcquireEnvironmentDepthImageMETA(call_info, return_value, environmentDepthProvider, &acquireInfo, &environmentDepthImage);
@@ -5938,6 +7486,12 @@ size_t OpenXrDecoder::Decode_xrSetEnvironmentDepthHandRemovalMETA(const ApiCallI
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &environmentDepthProvider);
     bytes_read += setInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5961,6 +7515,12 @@ size_t OpenXrDecoder::Decode_xrSetTrackingOptimizationSettingsHintQCOM(const Api
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &hint);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrSetTrackingOptimizationSettingsHintQCOM(call_info, return_value, session, domain, hint);
@@ -5983,6 +7543,12 @@ size_t OpenXrDecoder::Decode_xrCreatePassthroughHTC(const ApiCallInfo& call_info
     bytes_read += passthrough.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreatePassthroughHTC(call_info, return_value, session, &createInfo, &passthrough);
@@ -6000,6 +7566,12 @@ size_t OpenXrDecoder::Decode_xrDestroyPassthroughHTC(const ApiCallInfo& call_inf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &passthrough);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6020,6 +7592,12 @@ size_t OpenXrDecoder::Decode_xrApplyFoveationHTC(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &session);
     bytes_read += applyInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6043,6 +7621,12 @@ size_t OpenXrDecoder::Decode_xrCreateSpatialAnchorHTC(const ApiCallInfo& call_in
     bytes_read += anchor.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreateSpatialAnchorHTC(call_info, return_value, session, &createInfo, &anchor);
@@ -6063,6 +7647,12 @@ size_t OpenXrDecoder::Decode_xrGetSpatialAnchorNameHTC(const ApiCallInfo& call_i
     bytes_read += name.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetSpatialAnchorNameHTC(call_info, return_value, anchor, &name);
@@ -6082,6 +7672,12 @@ size_t OpenXrDecoder::Decode_xrApplyForceFeedbackCurlMNDX(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &handTracker);
     bytes_read += locations.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6105,6 +7701,12 @@ size_t OpenXrDecoder::Decode_xrCreatePlaneDetectorEXT(const ApiCallInfo& call_in
     bytes_read += planeDetector.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCreatePlaneDetectorEXT(call_info, return_value, session, &createInfo, &planeDetector);
@@ -6122,6 +7724,12 @@ size_t OpenXrDecoder::Decode_xrDestroyPlaneDetectorEXT(const ApiCallInfo& call_i
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &planeDetector);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6143,6 +7751,12 @@ size_t OpenXrDecoder::Decode_xrBeginPlaneDetectionEXT(const ApiCallInfo& call_in
     bytes_read += beginInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrBeginPlaneDetectionEXT(call_info, return_value, planeDetector, &beginInfo);
@@ -6162,6 +7776,12 @@ size_t OpenXrDecoder::Decode_xrGetPlaneDetectionStateEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &planeDetector);
     bytes_read += state.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6184,6 +7804,12 @@ size_t OpenXrDecoder::Decode_xrGetPlaneDetectionsEXT(const ApiCallInfo& call_inf
     bytes_read += info.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += locations.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6209,6 +7835,12 @@ size_t OpenXrDecoder::Decode_xrGetPlanePolygonBufferEXT(const ApiCallInfo& call_
     bytes_read += polygonBuffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrGetPlanePolygonBufferEXT(call_info, return_value, planeDetector, planeId, polygonBufferIndex, &polygonBuffer);
@@ -6231,6 +7863,12 @@ size_t OpenXrDecoder::Decode_xrPollFutureEXT(const ApiCallInfo& call_info, const
     bytes_read += pollResult.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrPollFutureEXT(call_info, return_value, instance, &pollInfo, &pollResult);
@@ -6251,6 +7889,12 @@ size_t OpenXrDecoder::Decode_xrCancelFutureEXT(const ApiCallInfo& call_info, con
     bytes_read += cancelInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrCancelFutureEXT(call_info, return_value, instance, &cancelInfo);
@@ -6270,6 +7914,12 @@ size_t OpenXrDecoder::Decode_xrEnableUserCalibrationEventsML(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &instance);
     bytes_read += enableInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {

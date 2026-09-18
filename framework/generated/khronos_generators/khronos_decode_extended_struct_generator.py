@@ -41,6 +41,7 @@ class KhronosDecodeExtendedStructGenerator():
             file=self.outFile
         )
         write('#include "decode/decode_allocator.h"', file=self.outFile)
+        write('#include "decode/parameter_decode_error.h"', file=self.outFile)
         write(
             '#include "decode/{}_{}_node.h"'.format(
                 lower_api_name,
@@ -90,6 +91,12 @@ class KhronosDecodeExtendedStructGenerator():
         )
         self.newline()
         write('    size_t bytes_read = 0;', file=self.outFile)
+        self.newline()
+        write('    if (ParameterDecodeError::Pending())', file=self.outFile)
+        write('    {', file=self.outFile)
+        write('        // An earlier parameter of this call was corrupt. Decode nothing more.', file=self.outFile)
+        write('        return 0;', file=self.outFile)
+        write('    }', file=self.outFile)
         write('    uint32_t attrib = 0;', file=self.outFile)
         self.newline()
 
@@ -163,11 +170,15 @@ class KhronosDecodeExtendedStructGenerator():
         write('            {', file=self.outFile)
         write('            default:', file=self.outFile)
         write(
-            '                // TODO: This may need to be a fatal error',
+            '                // The encoding has no size for a struct this build does not know, so the decoder',
             file=self.outFile
         )
         write(
-            '                GFXRECON_LOG_ERROR("Failed to decode {} value with unrecognized {} = %s", (util::ToString(*{}).c_str()));'
+            '                // cannot skip it. The block stops here.',
+            file=self.outFile
+        )
+        write(
+            '                ParameterDecodeError::AddPendingMessage("a {} value has an unrecognized {} of " + util::ToString(*{}));'
             .format(
                 current_api_data.extended_struct_variable,
                 current_api_data.struct_type_enum,

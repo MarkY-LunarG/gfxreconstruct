@@ -65,6 +65,12 @@ size_t VulkanDecoder::Decode_vkCreateInstance(const ApiCallInfo& call_info, cons
     bytes_read += args.pInstance.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateInstance(call_info, args);
@@ -81,6 +87,12 @@ size_t VulkanDecoder::Decode_vkDestroyInstance(const ApiCallInfo& call_info, con
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.instance);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -101,6 +113,12 @@ size_t VulkanDecoder::Decode_vkEnumeratePhysicalDevices(const ApiCallInfo& call_
     bytes_read += args.pPhysicalDevices.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkEnumeratePhysicalDevices(call_info, args);
@@ -117,6 +135,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceFeatures(const ApiCallInfo& call
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pFeatures.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -135,6 +159,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceFormatProperties(const ApiCallIn
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.format);
     bytes_read += args.pFormatProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -159,6 +189,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceImageFormatProperties(const ApiC
     bytes_read += args.pImageFormatProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceImageFormatProperties(call_info, args);
@@ -175,6 +211,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceProperties(const ApiCallInfo& ca
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -194,6 +236,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceQueueFamilyProperties(const ApiC
     bytes_read += args.pQueueFamilyPropertyCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pQueueFamilyProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceQueueFamilyProperties(call_info, args);
@@ -210,6 +258,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceMemoryProperties(const ApiCallIn
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pMemoryProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -231,6 +285,12 @@ size_t VulkanDecoder::Decode_vkCreateDevice(const ApiCallInfo& call_info, const 
     bytes_read += args.pDevice.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDevice(call_info, args);
@@ -247,6 +307,12 @@ size_t VulkanDecoder::Decode_vkDestroyDevice(const ApiCallInfo& call_info, const
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -266,6 +332,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceQueue(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queueFamilyIndex);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queueIndex);
     bytes_read += args.pQueue.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -287,6 +359,12 @@ size_t VulkanDecoder::Decode_vkQueueSubmit(const ApiCallInfo& call_info, const u
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.fence);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkQueueSubmit(call_info, args);
@@ -304,6 +382,12 @@ size_t VulkanDecoder::Decode_vkQueueWaitIdle(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queue);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkQueueWaitIdle(call_info, args);
@@ -320,6 +404,12 @@ size_t VulkanDecoder::Decode_vkDeviceWaitIdle(const ApiCallInfo& call_info, cons
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -341,6 +431,12 @@ size_t VulkanDecoder::Decode_vkAllocateMemory(const ApiCallInfo& call_info, cons
     bytes_read += args.pMemory.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkAllocateMemory(call_info, args);
@@ -358,6 +454,12 @@ size_t VulkanDecoder::Decode_vkFreeMemory(const ApiCallInfo& call_info, const ui
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.memory);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -381,6 +483,12 @@ size_t VulkanDecoder::Decode_vkMapMemory(const ApiCallInfo& call_info, const uin
     bytes_read += args.ppData.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkMapMemory(call_info, args);
@@ -397,6 +505,12 @@ size_t VulkanDecoder::Decode_vkUnmapMemory(const ApiCallInfo& call_info, const u
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.memory);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -417,6 +531,12 @@ size_t VulkanDecoder::Decode_vkFlushMappedMemoryRanges(const ApiCallInfo& call_i
     bytes_read += args.pMemoryRanges.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkFlushMappedMemoryRanges(call_info, args);
@@ -436,6 +556,12 @@ size_t VulkanDecoder::Decode_vkInvalidateMappedMemoryRanges(const ApiCallInfo& c
     bytes_read += args.pMemoryRanges.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkInvalidateMappedMemoryRanges(call_info, args);
@@ -453,6 +579,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceMemoryCommitment(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.memory);
     bytes_read += args.pCommittedMemoryInBytes.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -474,6 +606,12 @@ size_t VulkanDecoder::Decode_vkBindBufferMemory(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.memoryOffset);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkBindBufferMemory(call_info, args);
@@ -494,6 +632,12 @@ size_t VulkanDecoder::Decode_vkBindImageMemory(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.memoryOffset);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkBindImageMemory(call_info, args);
@@ -511,6 +655,12 @@ size_t VulkanDecoder::Decode_vkGetBufferMemoryRequirements(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.buffer);
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -530,6 +680,12 @@ size_t VulkanDecoder::Decode_vkGetImageMemoryRequirements(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.image);
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetImageMemoryRequirements(call_info, args);
@@ -548,6 +704,12 @@ size_t VulkanDecoder::Decode_vkGetImageSparseMemoryRequirements(const ApiCallInf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.image);
     bytes_read += args.pSparseMemoryRequirementCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSparseMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -572,6 +734,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSparseImageFormatProperties(cons
     bytes_read += args.pPropertyCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceSparseImageFormatProperties(call_info, args);
@@ -591,6 +759,12 @@ size_t VulkanDecoder::Decode_vkQueueBindSparse(const ApiCallInfo& call_info, con
     bytes_read += args.pBindInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.fence);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -612,6 +786,12 @@ size_t VulkanDecoder::Decode_vkCreateFence(const ApiCallInfo& call_info, const u
     bytes_read += args.pFence.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateFence(call_info, args);
@@ -629,6 +809,12 @@ size_t VulkanDecoder::Decode_vkDestroyFence(const ApiCallInfo& call_info, const 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.fence);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -649,6 +835,12 @@ size_t VulkanDecoder::Decode_vkResetFences(const ApiCallInfo& call_info, const u
     bytes_read += args.pFences.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkResetFences(call_info, args);
@@ -666,6 +858,12 @@ size_t VulkanDecoder::Decode_vkGetFenceStatus(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.fence);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -688,6 +886,12 @@ size_t VulkanDecoder::Decode_vkWaitForFences(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.timeout);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkWaitForFences(call_info, args);
@@ -708,6 +912,12 @@ size_t VulkanDecoder::Decode_vkCreateSemaphore(const ApiCallInfo& call_info, con
     bytes_read += args.pSemaphore.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateSemaphore(call_info, args);
@@ -725,6 +935,12 @@ size_t VulkanDecoder::Decode_vkDestroySemaphore(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.semaphore);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -746,6 +962,12 @@ size_t VulkanDecoder::Decode_vkCreateQueryPool(const ApiCallInfo& call_info, con
     bytes_read += args.pQueryPool.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateQueryPool(call_info, args);
@@ -763,6 +985,12 @@ size_t VulkanDecoder::Decode_vkDestroyQueryPool(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryPool);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -788,6 +1016,12 @@ size_t VulkanDecoder::Decode_vkGetQueryPoolResults(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.flags);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetQueryPoolResults(call_info, args);
@@ -808,6 +1042,12 @@ size_t VulkanDecoder::Decode_vkCreateBuffer(const ApiCallInfo& call_info, const 
     bytes_read += args.pBuffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateBuffer(call_info, args);
@@ -825,6 +1065,12 @@ size_t VulkanDecoder::Decode_vkDestroyBuffer(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.buffer);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -846,6 +1092,12 @@ size_t VulkanDecoder::Decode_vkCreateImage(const ApiCallInfo& call_info, const u
     bytes_read += args.pImage.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateImage(call_info, args);
@@ -863,6 +1115,12 @@ size_t VulkanDecoder::Decode_vkDestroyImage(const ApiCallInfo& call_info, const 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.image);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -882,6 +1140,12 @@ size_t VulkanDecoder::Decode_vkGetImageSubresourceLayout(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.image);
     bytes_read += args.pSubresource.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pLayout.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -903,6 +1167,12 @@ size_t VulkanDecoder::Decode_vkCreateImageView(const ApiCallInfo& call_info, con
     bytes_read += args.pView.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateImageView(call_info, args);
@@ -920,6 +1190,12 @@ size_t VulkanDecoder::Decode_vkDestroyImageView(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.imageView);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -941,6 +1217,12 @@ size_t VulkanDecoder::Decode_vkCreateCommandPool(const ApiCallInfo& call_info, c
     bytes_read += args.pCommandPool.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateCommandPool(call_info, args);
@@ -958,6 +1240,12 @@ size_t VulkanDecoder::Decode_vkDestroyCommandPool(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandPool);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -978,6 +1266,12 @@ size_t VulkanDecoder::Decode_vkResetCommandPool(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.flags);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkResetCommandPool(call_info, args);
@@ -996,6 +1290,12 @@ size_t VulkanDecoder::Decode_vkAllocateCommandBuffers(const ApiCallInfo& call_in
     bytes_read += args.pAllocateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pCommandBuffers.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1016,6 +1316,12 @@ size_t VulkanDecoder::Decode_vkFreeCommandBuffers(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBufferCount);
     bytes_read += args.pCommandBuffers.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkFreeCommandBuffers(call_info, args);
@@ -1034,6 +1340,12 @@ size_t VulkanDecoder::Decode_vkBeginCommandBuffer(const ApiCallInfo& call_info, 
     bytes_read += args.pBeginInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkBeginCommandBuffer(call_info, args);
@@ -1050,6 +1362,12 @@ size_t VulkanDecoder::Decode_vkEndCommandBuffer(const ApiCallInfo& call_info, co
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1068,6 +1386,12 @@ size_t VulkanDecoder::Decode_vkResetCommandBuffer(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.flags);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1088,6 +1412,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyBuffer(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dstBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.regionCount);
     bytes_read += args.pRegions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1111,6 +1441,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyImage(const ApiCallInfo& call_info, const 
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.regionCount);
     bytes_read += args.pRegions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyImage(call_info, args);
@@ -1131,6 +1467,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyBufferToImage(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dstImageLayout);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.regionCount);
     bytes_read += args.pRegions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1153,6 +1495,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyImageToBuffer(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.regionCount);
     bytes_read += args.pRegions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyImageToBuffer(call_info, args);
@@ -1173,6 +1521,12 @@ size_t VulkanDecoder::Decode_vkCmdUpdateBuffer(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dataSize);
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdUpdateBuffer(call_info, args);
@@ -1192,6 +1546,12 @@ size_t VulkanDecoder::Decode_vkCmdFillBuffer(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dstOffset);
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.size);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.data);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1218,6 +1578,12 @@ size_t VulkanDecoder::Decode_vkCmdPipelineBarrier(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.imageMemoryBarrierCount);
     bytes_read += args.pImageMemoryBarriers.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdPipelineBarrier(call_info, args);
@@ -1237,6 +1603,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginQuery(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.query);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.flags);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginQuery(call_info, args);
@@ -1254,6 +1626,12 @@ size_t VulkanDecoder::Decode_vkCmdEndQuery(const ApiCallInfo& call_info, const u
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryPool);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.query);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1274,6 +1652,12 @@ size_t VulkanDecoder::Decode_vkCmdResetQueryPool(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstQuery);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryCount);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdResetQueryPool(call_info, args);
@@ -1292,6 +1676,12 @@ size_t VulkanDecoder::Decode_vkCmdWriteTimestamp(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipelineStage);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryPool);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.query);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1316,6 +1706,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyQueryPoolResults(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.flags);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyQueryPoolResults(call_info, args);
@@ -1333,6 +1729,12 @@ size_t VulkanDecoder::Decode_vkCmdExecuteCommands(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBufferCount);
     bytes_read += args.pCommandBuffers.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1354,6 +1756,12 @@ size_t VulkanDecoder::Decode_vkCreateEvent(const ApiCallInfo& call_info, const u
     bytes_read += args.pEvent.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateEvent(call_info, args);
@@ -1371,6 +1779,12 @@ size_t VulkanDecoder::Decode_vkDestroyEvent(const ApiCallInfo& call_info, const 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.event);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1390,6 +1804,12 @@ size_t VulkanDecoder::Decode_vkGetEventStatus(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.event);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetEventStatus(call_info, args);
@@ -1408,6 +1828,12 @@ size_t VulkanDecoder::Decode_vkSetEvent(const ApiCallInfo& call_info, const uint
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.event);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkSetEvent(call_info, args);
@@ -1425,6 +1851,12 @@ size_t VulkanDecoder::Decode_vkResetEvent(const ApiCallInfo& call_info, const ui
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.event);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1446,6 +1878,12 @@ size_t VulkanDecoder::Decode_vkCreateBufferView(const ApiCallInfo& call_info, co
     bytes_read += args.pView.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateBufferView(call_info, args);
@@ -1463,6 +1901,12 @@ size_t VulkanDecoder::Decode_vkDestroyBufferView(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.bufferView);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1484,6 +1928,12 @@ size_t VulkanDecoder::Decode_vkCreateShaderModule(const ApiCallInfo& call_info, 
     bytes_read += args.pShaderModule.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateShaderModule(call_info, args);
@@ -1501,6 +1951,12 @@ size_t VulkanDecoder::Decode_vkDestroyShaderModule(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.shaderModule);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1522,6 +1978,12 @@ size_t VulkanDecoder::Decode_vkCreatePipelineCache(const ApiCallInfo& call_info,
     bytes_read += args.pPipelineCache.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreatePipelineCache(call_info, args);
@@ -1539,6 +2001,12 @@ size_t VulkanDecoder::Decode_vkDestroyPipelineCache(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipelineCache);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1560,6 +2028,12 @@ size_t VulkanDecoder::Decode_vkGetPipelineCacheData(const ApiCallInfo& call_info
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPipelineCacheData(call_info, args);
@@ -1579,6 +2053,12 @@ size_t VulkanDecoder::Decode_vkMergePipelineCaches(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.srcCacheCount);
     bytes_read += args.pSrcCaches.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1602,6 +2082,12 @@ size_t VulkanDecoder::Decode_vkCreateComputePipelines(const ApiCallInfo& call_in
     bytes_read += args.pPipelines.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateComputePipelines(call_info, args);
@@ -1619,6 +2105,12 @@ size_t VulkanDecoder::Decode_vkDestroyPipeline(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipeline);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1640,6 +2132,12 @@ size_t VulkanDecoder::Decode_vkCreatePipelineLayout(const ApiCallInfo& call_info
     bytes_read += args.pPipelineLayout.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreatePipelineLayout(call_info, args);
@@ -1657,6 +2155,12 @@ size_t VulkanDecoder::Decode_vkDestroyPipelineLayout(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipelineLayout);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1678,6 +2182,12 @@ size_t VulkanDecoder::Decode_vkCreateSampler(const ApiCallInfo& call_info, const
     bytes_read += args.pSampler.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateSampler(call_info, args);
@@ -1695,6 +2205,12 @@ size_t VulkanDecoder::Decode_vkDestroySampler(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.sampler);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1716,6 +2232,12 @@ size_t VulkanDecoder::Decode_vkCreateDescriptorSetLayout(const ApiCallInfo& call
     bytes_read += args.pSetLayout.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDescriptorSetLayout(call_info, args);
@@ -1733,6 +2255,12 @@ size_t VulkanDecoder::Decode_vkDestroyDescriptorSetLayout(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.descriptorSetLayout);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1754,6 +2282,12 @@ size_t VulkanDecoder::Decode_vkCreateDescriptorPool(const ApiCallInfo& call_info
     bytes_read += args.pDescriptorPool.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDescriptorPool(call_info, args);
@@ -1771,6 +2305,12 @@ size_t VulkanDecoder::Decode_vkDestroyDescriptorPool(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.descriptorPool);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1791,6 +2331,12 @@ size_t VulkanDecoder::Decode_vkResetDescriptorPool(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.flags);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkResetDescriptorPool(call_info, args);
@@ -1809,6 +2355,12 @@ size_t VulkanDecoder::Decode_vkAllocateDescriptorSets(const ApiCallInfo& call_in
     bytes_read += args.pAllocateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pDescriptorSets.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1830,6 +2382,12 @@ size_t VulkanDecoder::Decode_vkFreeDescriptorSets(const ApiCallInfo& call_info, 
     bytes_read += args.pDescriptorSets.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkFreeDescriptorSets(call_info, args);
@@ -1850,6 +2408,12 @@ size_t VulkanDecoder::Decode_vkUpdateDescriptorSets(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.descriptorCopyCount);
     bytes_read += args.pDescriptorCopies.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkUpdateDescriptorSets(call_info, args);
@@ -1867,6 +2431,12 @@ size_t VulkanDecoder::Decode_vkCmdBindPipeline(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipelineBindPoint);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipeline);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1891,6 +2461,12 @@ size_t VulkanDecoder::Decode_vkCmdBindDescriptorSets(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dynamicOffsetCount);
     bytes_read += args.pDynamicOffsets.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindDescriptorSets(call_info, args);
@@ -1912,6 +2488,12 @@ size_t VulkanDecoder::Decode_vkCmdClearColorImage(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.rangeCount);
     bytes_read += args.pRanges.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdClearColorImage(call_info, args);
@@ -1931,6 +2513,12 @@ size_t VulkanDecoder::Decode_vkCmdDispatch(const ApiCallInfo& call_info, const u
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupCountY);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupCountZ);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDispatch(call_info, args);
@@ -1948,6 +2536,12 @@ size_t VulkanDecoder::Decode_vkCmdDispatchIndirect(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.buffer);
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.offset);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -1967,6 +2561,12 @@ size_t VulkanDecoder::Decode_vkCmdSetEvent(const ApiCallInfo& call_info, const u
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.event);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stageMask);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetEvent(call_info, args);
@@ -1984,6 +2584,12 @@ size_t VulkanDecoder::Decode_vkCmdResetEvent(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.event);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stageMask);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2011,6 +2617,12 @@ size_t VulkanDecoder::Decode_vkCmdWaitEvents(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.imageMemoryBarrierCount);
     bytes_read += args.pImageMemoryBarriers.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdWaitEvents(call_info, args);
@@ -2031,6 +2643,12 @@ size_t VulkanDecoder::Decode_vkCmdPushConstants(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.offset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.size);
     bytes_read += args.pValues.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2054,6 +2672,12 @@ size_t VulkanDecoder::Decode_vkCreateGraphicsPipelines(const ApiCallInfo& call_i
     bytes_read += args.pPipelines.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateGraphicsPipelines(call_info, args);
@@ -2074,6 +2698,12 @@ size_t VulkanDecoder::Decode_vkCreateFramebuffer(const ApiCallInfo& call_info, c
     bytes_read += args.pFramebuffer.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateFramebuffer(call_info, args);
@@ -2091,6 +2721,12 @@ size_t VulkanDecoder::Decode_vkDestroyFramebuffer(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.framebuffer);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2112,6 +2748,12 @@ size_t VulkanDecoder::Decode_vkCreateRenderPass(const ApiCallInfo& call_info, co
     bytes_read += args.pRenderPass.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateRenderPass(call_info, args);
@@ -2130,6 +2772,12 @@ size_t VulkanDecoder::Decode_vkDestroyRenderPass(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.renderPass);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkDestroyRenderPass(call_info, args);
@@ -2147,6 +2795,12 @@ size_t VulkanDecoder::Decode_vkGetRenderAreaGranularity(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.renderPass);
     bytes_read += args.pGranularity.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2167,6 +2821,12 @@ size_t VulkanDecoder::Decode_vkCmdSetViewport(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.viewportCount);
     bytes_read += args.pViewports.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetViewport(call_info, args);
@@ -2186,6 +2846,12 @@ size_t VulkanDecoder::Decode_vkCmdSetScissor(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.scissorCount);
     bytes_read += args.pScissors.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetScissor(call_info, args);
@@ -2202,6 +2868,12 @@ size_t VulkanDecoder::Decode_vkCmdSetLineWidth(const ApiCallInfo& call_info, con
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeFloatValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.lineWidth);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2222,6 +2894,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthBias(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeFloatValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthBiasClamp);
     bytes_read += ValueDecoder::DecodeFloatValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthBiasSlopeFactor);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDepthBias(call_info, args);
@@ -2238,6 +2916,12 @@ size_t VulkanDecoder::Decode_vkCmdSetBlendConstants(const ApiCallInfo& call_info
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.blendConstants.DecodeFloat((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2257,6 +2941,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthBounds(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeFloatValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.minDepthBounds);
     bytes_read += ValueDecoder::DecodeFloatValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.maxDepthBounds);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDepthBounds(call_info, args);
@@ -2274,6 +2964,12 @@ size_t VulkanDecoder::Decode_vkCmdSetStencilCompareMask(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.faceMask);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.compareMask);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2293,6 +2989,12 @@ size_t VulkanDecoder::Decode_vkCmdSetStencilWriteMask(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.faceMask);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.writeMask);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetStencilWriteMask(call_info, args);
@@ -2310,6 +3012,12 @@ size_t VulkanDecoder::Decode_vkCmdSetStencilReference(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.faceMask);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.reference);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2329,6 +3037,12 @@ size_t VulkanDecoder::Decode_vkCmdBindIndexBuffer(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.buffer);
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.offset);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.indexType);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2350,6 +3064,12 @@ size_t VulkanDecoder::Decode_vkCmdBindVertexBuffers(const ApiCallInfo& call_info
     bytes_read += args.pBuffers.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pOffsets.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindVertexBuffers(call_info, args);
@@ -2369,6 +3089,12 @@ size_t VulkanDecoder::Decode_vkCmdDraw(const ApiCallInfo& call_info, const uint8
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.instanceCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstVertex);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstInstance);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2391,6 +3117,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndexed(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.vertexOffset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstInstance);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndexed(call_info, args);
@@ -2411,6 +3143,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndirect(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.drawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndirect(call_info, args);
@@ -2430,6 +3168,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndexedIndirect(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.offset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.drawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2454,6 +3198,12 @@ size_t VulkanDecoder::Decode_vkCmdBlitImage(const ApiCallInfo& call_info, const 
     bytes_read += args.pRegions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.filter);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBlitImage(call_info, args);
@@ -2475,6 +3225,12 @@ size_t VulkanDecoder::Decode_vkCmdClearDepthStencilImage(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.rangeCount);
     bytes_read += args.pRanges.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdClearDepthStencilImage(call_info, args);
@@ -2494,6 +3250,12 @@ size_t VulkanDecoder::Decode_vkCmdClearAttachments(const ApiCallInfo& call_info,
     bytes_read += args.pAttachments.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.rectCount);
     bytes_read += args.pRects.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2517,6 +3279,12 @@ size_t VulkanDecoder::Decode_vkCmdResolveImage(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.regionCount);
     bytes_read += args.pRegions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdResolveImage(call_info, args);
@@ -2535,6 +3303,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginRenderPass(const ApiCallInfo& call_info, 
     bytes_read += args.pRenderPassBegin.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.contents);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginRenderPass(call_info, args);
@@ -2552,6 +3326,12 @@ size_t VulkanDecoder::Decode_vkCmdNextSubpass(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.contents);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdNextSubpass(call_info, args);
@@ -2567,6 +3347,12 @@ size_t VulkanDecoder::Decode_vkCmdEndRenderPass(const ApiCallInfo& call_info, co
     args::CmdEndRenderPass args;
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2587,6 +3373,12 @@ size_t VulkanDecoder::Decode_vkBindBufferMemory2(const ApiCallInfo& call_info, c
     bytes_read += args.pBindInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkBindBufferMemory2(call_info, args);
@@ -2605,6 +3397,12 @@ size_t VulkanDecoder::Decode_vkBindImageMemory2(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.bindInfoCount);
     bytes_read += args.pBindInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2626,6 +3424,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceGroupPeerMemoryFeatures(const ApiCallInf
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.remoteDeviceIndex);
     bytes_read += args.pPeerMemoryFeatures.DecodeFlags((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceGroupPeerMemoryFeatures(call_info, args);
@@ -2642,6 +3446,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDeviceMask(const ApiCallInfo& call_info, co
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.deviceMask);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2662,6 +3472,12 @@ size_t VulkanDecoder::Decode_vkEnumeratePhysicalDeviceGroups(const ApiCallInfo& 
     bytes_read += args.pPhysicalDeviceGroupProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkEnumeratePhysicalDeviceGroups(call_info, args);
@@ -2680,6 +3496,12 @@ size_t VulkanDecoder::Decode_vkGetImageMemoryRequirements2(const ApiCallInfo& ca
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetImageMemoryRequirements2(call_info, args);
@@ -2697,6 +3519,12 @@ size_t VulkanDecoder::Decode_vkGetBufferMemoryRequirements2(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2717,6 +3545,12 @@ size_t VulkanDecoder::Decode_vkGetImageSparseMemoryRequirements2(const ApiCallIn
     bytes_read += args.pSparseMemoryRequirementCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSparseMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetImageSparseMemoryRequirements2(call_info, args);
@@ -2733,6 +3567,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceFeatures2(const ApiCallInfo& cal
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pFeatures.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2751,6 +3591,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceProperties2(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceProperties2(call_info, args);
@@ -2768,6 +3614,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceFormatProperties2(const ApiCallI
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.format);
     bytes_read += args.pFormatProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2788,6 +3640,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceImageFormatProperties2(const Api
     bytes_read += args.pImageFormatProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceImageFormatProperties2(call_info, args);
@@ -2806,6 +3664,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceQueueFamilyProperties2(const Api
     bytes_read += args.pQueueFamilyPropertyCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pQueueFamilyProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceQueueFamilyProperties2(call_info, args);
@@ -2822,6 +3686,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceMemoryProperties2(const ApiCallI
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pMemoryProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2842,6 +3712,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSparseImageFormatProperties2(con
     bytes_read += args.pPropertyCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceSparseImageFormatProperties2(call_info, args);
@@ -2859,6 +3735,12 @@ size_t VulkanDecoder::Decode_vkTrimCommandPool(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandPool);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.flags);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2878,6 +3760,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceQueue2(const ApiCallInfo& call_info, con
     bytes_read += args.pQueueInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pQueue.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceQueue2(call_info, args);
@@ -2895,6 +3783,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceExternalBufferProperties(const A
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pExternalBufferInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pExternalBufferProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2914,6 +3808,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceExternalFenceProperties(const Ap
     bytes_read += args.pExternalFenceInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pExternalFenceProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceExternalFenceProperties(call_info, args);
@@ -2931,6 +3831,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceExternalSemaphoreProperties(cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pExternalSemaphoreInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pExternalSemaphoreProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -2954,6 +3860,12 @@ size_t VulkanDecoder::Decode_vkCmdDispatchBase(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupCountY);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupCountZ);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDispatchBase(call_info, args);
@@ -2974,6 +3886,12 @@ size_t VulkanDecoder::Decode_vkCreateDescriptorUpdateTemplate(const ApiCallInfo&
     bytes_read += args.pDescriptorUpdateTemplate.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDescriptorUpdateTemplate(call_info, args);
@@ -2992,6 +3910,12 @@ size_t VulkanDecoder::Decode_vkDestroyDescriptorUpdateTemplate(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.descriptorUpdateTemplate);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkDestroyDescriptorUpdateTemplate(call_info, args);
@@ -3009,6 +3933,12 @@ size_t VulkanDecoder::Decode_vkGetDescriptorSetLayoutSupport(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pCreateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSupport.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3030,6 +3960,12 @@ size_t VulkanDecoder::Decode_vkCreateSamplerYcbcrConversion(const ApiCallInfo& c
     bytes_read += args.pYcbcrConversion.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateSamplerYcbcrConversion(call_info, args);
@@ -3047,6 +3983,12 @@ size_t VulkanDecoder::Decode_vkDestroySamplerYcbcrConversion(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.ycbcrConversion);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3067,6 +4009,12 @@ size_t VulkanDecoder::Decode_vkResetQueryPool(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstQuery);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryCount);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkResetQueryPool(call_info, args);
@@ -3085,6 +4033,12 @@ size_t VulkanDecoder::Decode_vkGetSemaphoreCounterValue(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.semaphore);
     bytes_read += args.pValue.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3105,6 +4059,12 @@ size_t VulkanDecoder::Decode_vkWaitSemaphores(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.timeout);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkWaitSemaphores(call_info, args);
@@ -3122,6 +4082,12 @@ size_t VulkanDecoder::Decode_vkSignalSemaphore(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pSignalInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3141,6 +4107,12 @@ size_t VulkanDecoder::Decode_vkGetBufferDeviceAddress(const ApiCallInfo& call_in
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetBufferDeviceAddress(call_info, args);
@@ -3159,6 +4131,12 @@ size_t VulkanDecoder::Decode_vkGetBufferOpaqueCaptureAddress(const ApiCallInfo& 
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetBufferOpaqueCaptureAddress(call_info, args);
@@ -3176,6 +4154,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceMemoryOpaqueCaptureAddress(const ApiCall
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3199,6 +4183,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndirectCount(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.maxDrawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndirectCount(call_info, args);
@@ -3221,6 +4211,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndexedIndirectCount(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.maxDrawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndexedIndirectCount(call_info, args);
@@ -3241,6 +4237,12 @@ size_t VulkanDecoder::Decode_vkCreateRenderPass2(const ApiCallInfo& call_info, c
     bytes_read += args.pRenderPass.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateRenderPass2(call_info, args);
@@ -3258,6 +4260,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginRenderPass2(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pRenderPassBegin.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSubpassBeginInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3277,6 +4285,12 @@ size_t VulkanDecoder::Decode_vkCmdNextSubpass2(const ApiCallInfo& call_info, con
     bytes_read += args.pSubpassBeginInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSubpassEndInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdNextSubpass2(call_info, args);
@@ -3293,6 +4307,12 @@ size_t VulkanDecoder::Decode_vkCmdEndRenderPass2(const ApiCallInfo& call_info, c
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pSubpassEndInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3312,6 +4332,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceToolProperties(const ApiCallInfo
     bytes_read += args.pToolCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pToolProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3333,6 +4359,12 @@ size_t VulkanDecoder::Decode_vkCreatePrivateDataSlot(const ApiCallInfo& call_inf
     bytes_read += args.pPrivateDataSlot.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreatePrivateDataSlot(call_info, args);
@@ -3350,6 +4382,12 @@ size_t VulkanDecoder::Decode_vkDestroyPrivateDataSlot(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.privateDataSlot);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3372,6 +4410,12 @@ size_t VulkanDecoder::Decode_vkSetPrivateData(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.data);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkSetPrivateData(call_info, args);
@@ -3392,6 +4436,12 @@ size_t VulkanDecoder::Decode_vkGetPrivateData(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.privateDataSlot);
     bytes_read += args.pData.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPrivateData(call_info, args);
@@ -3408,6 +4458,12 @@ size_t VulkanDecoder::Decode_vkCmdPipelineBarrier2(const ApiCallInfo& call_info,
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pDependencyInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3427,6 +4483,12 @@ size_t VulkanDecoder::Decode_vkCmdWriteTimestamp2(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeFlags64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stage);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryPool);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.query);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3448,6 +4510,12 @@ size_t VulkanDecoder::Decode_vkQueueSubmit2(const ApiCallInfo& call_info, const 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.fence);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkQueueSubmit2(call_info, args);
@@ -3464,6 +4532,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyBuffer2(const ApiCallInfo& call_info, cons
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyBufferInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3482,6 +4556,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyImage2(const ApiCallInfo& call_info, const
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyImage2(call_info, args);
@@ -3499,6 +4579,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyBufferToImage2(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyBufferToImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyBufferToImage2(call_info, args);
@@ -3515,6 +4601,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyImageToBuffer2(const ApiCallInfo& call_inf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyImageToBufferInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3534,6 +4626,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceBufferMemoryRequirements(const ApiCallIn
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceBufferMemoryRequirements(call_info, args);
@@ -3551,6 +4649,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceImageMemoryRequirements(const ApiCallInf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3571,6 +4675,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceImageSparseMemoryRequirements(const ApiC
     bytes_read += args.pSparseMemoryRequirementCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSparseMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceImageSparseMemoryRequirements(call_info, args);
@@ -3589,6 +4699,12 @@ size_t VulkanDecoder::Decode_vkCmdSetEvent2(const ApiCallInfo& call_info, const 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.event);
     bytes_read += args.pDependencyInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetEvent2(call_info, args);
@@ -3606,6 +4722,12 @@ size_t VulkanDecoder::Decode_vkCmdResetEvent2(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.event);
     bytes_read += ValueDecoder::DecodeFlags64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stageMask);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3626,6 +4748,12 @@ size_t VulkanDecoder::Decode_vkCmdWaitEvents2(const ApiCallInfo& call_info, cons
     bytes_read += args.pEvents.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pDependencyInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdWaitEvents2(call_info, args);
@@ -3642,6 +4770,12 @@ size_t VulkanDecoder::Decode_vkCmdBlitImage2(const ApiCallInfo& call_info, const
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pBlitImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3660,6 +4794,12 @@ size_t VulkanDecoder::Decode_vkCmdResolveImage2(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pResolveImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdResolveImage2(call_info, args);
@@ -3677,6 +4817,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginRendering(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pRenderingInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginRendering(call_info, args);
@@ -3692,6 +4838,12 @@ size_t VulkanDecoder::Decode_vkCmdEndRendering(const ApiCallInfo& call_info, con
     args::CmdEndRendering args;
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3710,6 +4862,12 @@ size_t VulkanDecoder::Decode_vkCmdSetCullMode(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.cullMode);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetCullMode(call_info, args);
@@ -3727,6 +4885,12 @@ size_t VulkanDecoder::Decode_vkCmdSetFrontFace(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.frontFace);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetFrontFace(call_info, args);
@@ -3743,6 +4907,12 @@ size_t VulkanDecoder::Decode_vkCmdSetPrimitiveTopology(const ApiCallInfo& call_i
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.primitiveTopology);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3762,6 +4932,12 @@ size_t VulkanDecoder::Decode_vkCmdSetViewportWithCount(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.viewportCount);
     bytes_read += args.pViewports.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetViewportWithCount(call_info, args);
@@ -3779,6 +4955,12 @@ size_t VulkanDecoder::Decode_vkCmdSetScissorWithCount(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.scissorCount);
     bytes_read += args.pScissors.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3802,6 +4984,12 @@ size_t VulkanDecoder::Decode_vkCmdBindVertexBuffers2(const ApiCallInfo& call_inf
     bytes_read += args.pSizes.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pStrides.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindVertexBuffers2(call_info, args);
@@ -3818,6 +5006,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthTestEnable(const ApiCallInfo& call_inf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthTestEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3836,6 +5030,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthWriteEnable(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthWriteEnable);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDepthWriteEnable(call_info, args);
@@ -3852,6 +5052,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthCompareOp(const ApiCallInfo& call_info
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthCompareOp);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3870,6 +5076,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthBoundsTestEnable(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthBoundsTestEnable);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDepthBoundsTestEnable(call_info, args);
@@ -3886,6 +5098,12 @@ size_t VulkanDecoder::Decode_vkCmdSetStencilTestEnable(const ApiCallInfo& call_i
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stencilTestEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3908,6 +5126,12 @@ size_t VulkanDecoder::Decode_vkCmdSetStencilOp(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthFailOp);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.compareOp);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetStencilOp(call_info, args);
@@ -3924,6 +5148,12 @@ size_t VulkanDecoder::Decode_vkCmdSetRasterizerDiscardEnable(const ApiCallInfo& 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.rasterizerDiscardEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3942,6 +5172,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthBiasEnable(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthBiasEnable);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDepthBiasEnable(call_info, args);
@@ -3958,6 +5194,12 @@ size_t VulkanDecoder::Decode_vkCmdSetPrimitiveRestartEnable(const ApiCallInfo& c
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.primitiveRestartEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -3978,6 +5220,12 @@ size_t VulkanDecoder::Decode_vkMapMemory2(const ApiCallInfo& call_info, const ui
     bytes_read += args.ppData.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkMapMemory2(call_info, args);
@@ -3996,6 +5244,12 @@ size_t VulkanDecoder::Decode_vkUnmapMemory2(const ApiCallInfo& call_info, const 
     bytes_read += args.pMemoryUnmapInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkUnmapMemory2(call_info, args);
@@ -4013,6 +5267,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceImageSubresourceLayout(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pLayout.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4033,6 +5293,12 @@ size_t VulkanDecoder::Decode_vkGetImageSubresourceLayout2(const ApiCallInfo& cal
     bytes_read += args.pSubresource.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pLayout.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetImageSubresourceLayout2(call_info, args);
@@ -4050,6 +5316,12 @@ size_t VulkanDecoder::Decode_vkCopyMemoryToImage(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pCopyMemoryToImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4069,6 +5341,12 @@ size_t VulkanDecoder::Decode_vkCopyImageToMemory(const ApiCallInfo& call_info, c
     bytes_read += args.pCopyImageToMemoryInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCopyImageToMemory(call_info, args);
@@ -4086,6 +5364,12 @@ size_t VulkanDecoder::Decode_vkCopyImageToImage(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pCopyImageToImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4105,6 +5389,12 @@ size_t VulkanDecoder::Decode_vkTransitionImageLayout(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.transitionCount);
     bytes_read += args.pTransitions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4127,6 +5417,12 @@ size_t VulkanDecoder::Decode_vkCmdPushDescriptorSet(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.descriptorWriteCount);
     bytes_read += args.pDescriptorWrites.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdPushDescriptorSet(call_info, args);
@@ -4143,6 +5439,12 @@ size_t VulkanDecoder::Decode_vkCmdBindDescriptorSets2(const ApiCallInfo& call_in
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pBindDescriptorSetsInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4161,6 +5463,12 @@ size_t VulkanDecoder::Decode_vkCmdPushConstants2(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pPushConstantsInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdPushConstants2(call_info, args);
@@ -4177,6 +5485,12 @@ size_t VulkanDecoder::Decode_vkCmdPushDescriptorSet2(const ApiCallInfo& call_inf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pPushDescriptorSetInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4195,6 +5509,12 @@ size_t VulkanDecoder::Decode_vkCmdSetLineStipple(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.lineStippleFactor);
     bytes_read += ValueDecoder::DecodeUInt16Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.lineStipplePattern);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4216,6 +5536,12 @@ size_t VulkanDecoder::Decode_vkCmdBindIndexBuffer2(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.size);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.indexType);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindIndexBuffer2(call_info, args);
@@ -4234,6 +5560,12 @@ size_t VulkanDecoder::Decode_vkGetRenderingAreaGranularity(const ApiCallInfo& ca
     bytes_read += args.pRenderingAreaInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pGranularity.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetRenderingAreaGranularity(call_info, args);
@@ -4250,6 +5582,12 @@ size_t VulkanDecoder::Decode_vkCmdSetRenderingAttachmentLocations(const ApiCallI
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pLocationInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4268,6 +5606,12 @@ size_t VulkanDecoder::Decode_vkCmdSetRenderingInputAttachmentIndices(const ApiCa
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInputAttachmentIndexInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetRenderingInputAttachmentIndices(call_info, args);
@@ -4285,6 +5629,12 @@ size_t VulkanDecoder::Decode_vkDestroySurfaceKHR(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.instance);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.surface);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4306,6 +5656,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSurfaceSupportKHR(const ApiCallI
     bytes_read += args.pSupported.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceSurfaceSupportKHR(call_info, args);
@@ -4324,6 +5680,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSurfaceCapabilitiesKHR(const Api
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.surface);
     bytes_read += args.pSurfaceCapabilities.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4345,6 +5707,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSurfaceFormatsKHR(const ApiCallI
     bytes_read += args.pSurfaceFormats.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceSurfaceFormatsKHR(call_info, args);
@@ -4364,6 +5732,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSurfacePresentModesKHR(const Api
     bytes_read += args.pPresentModeCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pPresentModes.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4385,6 +5759,12 @@ size_t VulkanDecoder::Decode_vkCreateSwapchainKHR(const ApiCallInfo& call_info, 
     bytes_read += args.pSwapchain.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateSwapchainKHR(call_info, args);
@@ -4402,6 +5782,12 @@ size_t VulkanDecoder::Decode_vkDestroySwapchainKHR(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapchain);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4422,6 +5808,12 @@ size_t VulkanDecoder::Decode_vkGetSwapchainImagesKHR(const ApiCallInfo& call_inf
     bytes_read += args.pSwapchainImageCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSwapchainImages.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4445,6 +5837,12 @@ size_t VulkanDecoder::Decode_vkAcquireNextImageKHR(const ApiCallInfo& call_info,
     bytes_read += args.pImageIndex.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkAcquireNextImageKHR(call_info, args);
@@ -4462,6 +5860,12 @@ size_t VulkanDecoder::Decode_vkQueuePresentKHR(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queue);
     bytes_read += args.pPresentInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4481,6 +5885,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceGroupPresentCapabilitiesKHR(const ApiCal
     bytes_read += args.pDeviceGroupPresentCapabilities.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceGroupPresentCapabilitiesKHR(call_info, args);
@@ -4499,6 +5909,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceGroupSurfacePresentModesKHR(const ApiCal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.surface);
     bytes_read += args.pModes.DecodeFlags((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4520,6 +5936,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDevicePresentRectanglesKHR(const ApiCa
     bytes_read += args.pRects.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDevicePresentRectanglesKHR(call_info, args);
@@ -4538,6 +5960,12 @@ size_t VulkanDecoder::Decode_vkAcquireNextImage2KHR(const ApiCallInfo& call_info
     bytes_read += args.pAcquireInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pImageIndex.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4558,6 +5986,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceDisplayPropertiesKHR(const ApiCa
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceDisplayPropertiesKHR(call_info, args);
@@ -4576,6 +6010,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceDisplayPlanePropertiesKHR(const 
     bytes_read += args.pPropertyCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4597,6 +6037,12 @@ size_t VulkanDecoder::Decode_vkGetDisplayPlaneSupportedDisplaysKHR(const ApiCall
     bytes_read += args.pDisplays.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDisplayPlaneSupportedDisplaysKHR(call_info, args);
@@ -4616,6 +6062,12 @@ size_t VulkanDecoder::Decode_vkGetDisplayModePropertiesKHR(const ApiCallInfo& ca
     bytes_read += args.pPropertyCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4638,6 +6090,12 @@ size_t VulkanDecoder::Decode_vkCreateDisplayModeKHR(const ApiCallInfo& call_info
     bytes_read += args.pMode.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDisplayModeKHR(call_info, args);
@@ -4658,6 +6116,12 @@ size_t VulkanDecoder::Decode_vkGetDisplayPlaneCapabilitiesKHR(const ApiCallInfo&
     bytes_read += args.pCapabilities.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDisplayPlaneCapabilitiesKHR(call_info, args);
@@ -4677,6 +6141,12 @@ size_t VulkanDecoder::Decode_vkCreateDisplayPlaneSurfaceKHR(const ApiCallInfo& c
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4699,6 +6169,12 @@ size_t VulkanDecoder::Decode_vkCreateSharedSwapchainsKHR(const ApiCallInfo& call
     bytes_read += args.pSwapchains.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateSharedSwapchainsKHR(call_info, args);
@@ -4718,6 +6194,12 @@ size_t VulkanDecoder::Decode_vkCreateXlibSurfaceKHR(const ApiCallInfo& call_info
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4739,6 +6221,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceXlibPresentationSupportKHR(const
     bytes_read += ValueDecoder::DecodeSizeTValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.visualID);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceXlibPresentationSupportKHR(call_info, args);
@@ -4758,6 +6246,12 @@ size_t VulkanDecoder::Decode_vkCreateXcbSurfaceKHR(const ApiCallInfo& call_info,
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4779,6 +6273,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceXcbPresentationSupportKHR(const 
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.visual_id);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceXcbPresentationSupportKHR(call_info, args);
@@ -4799,6 +6299,12 @@ size_t VulkanDecoder::Decode_vkCreateWaylandSurfaceKHR(const ApiCallInfo& call_i
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateWaylandSurfaceKHR(call_info, args);
@@ -4817,6 +6323,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceWaylandPresentationSupportKHR(co
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queueFamilyIndex);
     bytes_read += ValueDecoder::DecodeAddress((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.display);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4838,6 +6350,12 @@ size_t VulkanDecoder::Decode_vkCreateAndroidSurfaceKHR(const ApiCallInfo& call_i
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateAndroidSurfaceKHR(call_info, args);
@@ -4858,6 +6376,12 @@ size_t VulkanDecoder::Decode_vkCreateWin32SurfaceKHR(const ApiCallInfo& call_inf
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateWin32SurfaceKHR(call_info, args);
@@ -4875,6 +6399,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceWin32PresentationSupportKHR(cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queueFamilyIndex);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4894,6 +6424,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceVideoCapabilitiesKHR(const ApiCa
     bytes_read += args.pVideoProfile.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pCapabilities.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4915,6 +6451,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceVideoFormatPropertiesKHR(const A
     bytes_read += args.pVideoFormatProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceVideoFormatPropertiesKHR(call_info, args);
@@ -4935,6 +6477,12 @@ size_t VulkanDecoder::Decode_vkCreateVideoSessionKHR(const ApiCallInfo& call_inf
     bytes_read += args.pVideoSession.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateVideoSessionKHR(call_info, args);
@@ -4952,6 +6500,12 @@ size_t VulkanDecoder::Decode_vkDestroyVideoSessionKHR(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.videoSession);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -4973,6 +6527,12 @@ size_t VulkanDecoder::Decode_vkGetVideoSessionMemoryRequirementsKHR(const ApiCal
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetVideoSessionMemoryRequirementsKHR(call_info, args);
@@ -4992,6 +6552,12 @@ size_t VulkanDecoder::Decode_vkBindVideoSessionMemoryKHR(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.bindSessionMemoryInfoCount);
     bytes_read += args.pBindSessionMemoryInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5013,6 +6579,12 @@ size_t VulkanDecoder::Decode_vkCreateVideoSessionParametersKHR(const ApiCallInfo
     bytes_read += args.pVideoSessionParameters.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateVideoSessionParametersKHR(call_info, args);
@@ -5032,6 +6604,12 @@ size_t VulkanDecoder::Decode_vkUpdateVideoSessionParametersKHR(const ApiCallInfo
     bytes_read += args.pUpdateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkUpdateVideoSessionParametersKHR(call_info, args);
@@ -5050,6 +6628,12 @@ size_t VulkanDecoder::Decode_vkDestroyVideoSessionParametersKHR(const ApiCallInf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.videoSessionParameters);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkDestroyVideoSessionParametersKHR(call_info, args);
@@ -5066,6 +6650,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginVideoCodingKHR(const ApiCallInfo& call_in
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pBeginInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5084,6 +6674,12 @@ size_t VulkanDecoder::Decode_vkCmdEndVideoCodingKHR(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pEndCodingInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdEndVideoCodingKHR(call_info, args);
@@ -5100,6 +6696,12 @@ size_t VulkanDecoder::Decode_vkCmdControlVideoCodingKHR(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCodingControlInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5118,6 +6720,12 @@ size_t VulkanDecoder::Decode_vkCmdDecodeVideoKHR(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pDecodeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDecodeVideoKHR(call_info, args);
@@ -5135,6 +6743,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginRenderingKHR(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pRenderingInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginRenderingKHR(call_info, args);
@@ -5150,6 +6764,12 @@ size_t VulkanDecoder::Decode_vkCmdEndRenderingKHR(const ApiCallInfo& call_info, 
     args::CmdEndRenderingKHR args;
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5168,6 +6788,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceFeatures2KHR(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pFeatures.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceFeatures2KHR(call_info, args);
@@ -5184,6 +6810,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceProperties2KHR(const ApiCallInfo
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5202,6 +6834,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceFormatProperties2KHR(const ApiCa
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.format);
     bytes_read += args.pFormatProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5222,6 +6860,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceImageFormatProperties2KHR(const 
     bytes_read += args.pImageFormatProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceImageFormatProperties2KHR(call_info, args);
@@ -5240,6 +6884,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceQueueFamilyProperties2KHR(const 
     bytes_read += args.pQueueFamilyPropertyCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pQueueFamilyProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceQueueFamilyProperties2KHR(call_info, args);
@@ -5256,6 +6906,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceMemoryProperties2KHR(const ApiCa
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pMemoryProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5275,6 +6931,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
     bytes_read += args.pFormatInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pPropertyCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5296,6 +6958,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceGroupPeerMemoryFeaturesKHR(const ApiCall
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.remoteDeviceIndex);
     bytes_read += args.pPeerMemoryFeatures.DecodeFlags((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceGroupPeerMemoryFeaturesKHR(call_info, args);
@@ -5312,6 +6980,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDeviceMaskKHR(const ApiCallInfo& call_info,
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.deviceMask);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5335,6 +7009,12 @@ size_t VulkanDecoder::Decode_vkCmdDispatchBaseKHR(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupCountY);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupCountZ);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDispatchBaseKHR(call_info, args);
@@ -5352,6 +7032,12 @@ size_t VulkanDecoder::Decode_vkTrimCommandPoolKHR(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandPool);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.flags);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5372,6 +7058,12 @@ size_t VulkanDecoder::Decode_vkEnumeratePhysicalDeviceGroupsKHR(const ApiCallInf
     bytes_read += args.pPhysicalDeviceGroupProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkEnumeratePhysicalDeviceGroupsKHR(call_info, args);
@@ -5389,6 +7081,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceExternalBufferPropertiesKHR(cons
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pExternalBufferInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pExternalBufferProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5408,6 +7106,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryWin32HandleKHR(const ApiCallInfo& call_i
     bytes_read += args.pGetWin32HandleInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pHandle.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5429,6 +7133,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryWin32HandlePropertiesKHR(const ApiCallIn
     bytes_read += args.pMemoryWin32HandleProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetMemoryWin32HandlePropertiesKHR(call_info, args);
@@ -5447,6 +7157,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryFdKHR(const ApiCallInfo& call_info, cons
     bytes_read += args.pGetFdInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pFd.DecodeInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5468,6 +7184,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryFdPropertiesKHR(const ApiCallInfo& call_
     bytes_read += args.pMemoryFdProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetMemoryFdPropertiesKHR(call_info, args);
@@ -5486,6 +7208,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(c
     bytes_read += args.pExternalSemaphoreInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pExternalSemaphoreProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(call_info, args);
@@ -5503,6 +7231,12 @@ size_t VulkanDecoder::Decode_vkImportSemaphoreWin32HandleKHR(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pImportSemaphoreWin32HandleInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5523,6 +7257,12 @@ size_t VulkanDecoder::Decode_vkGetSemaphoreWin32HandleKHR(const ApiCallInfo& cal
     bytes_read += args.pHandle.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetSemaphoreWin32HandleKHR(call_info, args);
@@ -5540,6 +7280,12 @@ size_t VulkanDecoder::Decode_vkImportSemaphoreFdKHR(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pImportSemaphoreFdInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5559,6 +7305,12 @@ size_t VulkanDecoder::Decode_vkGetSemaphoreFdKHR(const ApiCallInfo& call_info, c
     bytes_read += args.pGetFdInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pFd.DecodeInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5581,6 +7333,12 @@ size_t VulkanDecoder::Decode_vkCmdPushDescriptorSetKHR(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.descriptorWriteCount);
     bytes_read += args.pDescriptorWrites.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdPushDescriptorSetKHR(call_info, args);
@@ -5601,6 +7359,12 @@ size_t VulkanDecoder::Decode_vkCreateDescriptorUpdateTemplateKHR(const ApiCallIn
     bytes_read += args.pDescriptorUpdateTemplate.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDescriptorUpdateTemplateKHR(call_info, args);
@@ -5618,6 +7382,12 @@ size_t VulkanDecoder::Decode_vkDestroyDescriptorUpdateTemplateKHR(const ApiCallI
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.descriptorUpdateTemplate);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5639,6 +7409,12 @@ size_t VulkanDecoder::Decode_vkCreateRenderPass2KHR(const ApiCallInfo& call_info
     bytes_read += args.pRenderPass.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateRenderPass2KHR(call_info, args);
@@ -5656,6 +7432,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginRenderPass2KHR(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pRenderPassBegin.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSubpassBeginInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5675,6 +7457,12 @@ size_t VulkanDecoder::Decode_vkCmdNextSubpass2KHR(const ApiCallInfo& call_info, 
     bytes_read += args.pSubpassBeginInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSubpassEndInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdNextSubpass2KHR(call_info, args);
@@ -5691,6 +7479,12 @@ size_t VulkanDecoder::Decode_vkCmdEndRenderPass2KHR(const ApiCallInfo& call_info
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pSubpassEndInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5710,6 +7504,12 @@ size_t VulkanDecoder::Decode_vkGetSwapchainStatusKHR(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapchain);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetSwapchainStatusKHR(call_info, args);
@@ -5728,6 +7528,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceExternalFencePropertiesKHR(const
     bytes_read += args.pExternalFenceInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pExternalFenceProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceExternalFencePropertiesKHR(call_info, args);
@@ -5745,6 +7551,12 @@ size_t VulkanDecoder::Decode_vkImportFenceWin32HandleKHR(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pImportFenceWin32HandleInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5765,6 +7577,12 @@ size_t VulkanDecoder::Decode_vkGetFenceWin32HandleKHR(const ApiCallInfo& call_in
     bytes_read += args.pHandle.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetFenceWin32HandleKHR(call_info, args);
@@ -5782,6 +7600,12 @@ size_t VulkanDecoder::Decode_vkImportFenceFdKHR(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pImportFenceFdInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5801,6 +7625,12 @@ size_t VulkanDecoder::Decode_vkGetFenceFdKHR(const ApiCallInfo& call_info, const
     bytes_read += args.pGetFdInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pFd.DecodeInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5823,6 +7653,12 @@ size_t VulkanDecoder::Decode_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQuer
     bytes_read += args.pCounterDescriptions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(call_info, args);
@@ -5840,6 +7676,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPasse
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += args.pPerformanceQueryCreateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pNumPasses.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5859,6 +7701,12 @@ size_t VulkanDecoder::Decode_vkAcquireProfilingLockKHR(const ApiCallInfo& call_i
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkAcquireProfilingLockKHR(call_info, args);
@@ -5874,6 +7722,12 @@ size_t VulkanDecoder::Decode_vkReleaseProfilingLockKHR(const ApiCallInfo& call_i
     args::ReleaseProfilingLockKHR args;
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5893,6 +7747,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSurfaceCapabilities2KHR(const Ap
     bytes_read += args.pSurfaceInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSurfaceCapabilities.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5914,6 +7774,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSurfaceFormats2KHR(const ApiCall
     bytes_read += args.pSurfaceFormats.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceSurfaceFormats2KHR(call_info, args);
@@ -5933,6 +7799,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceDisplayProperties2KHR(const ApiC
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceDisplayProperties2KHR(call_info, args);
@@ -5951,6 +7823,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceDisplayPlaneProperties2KHR(const
     bytes_read += args.pPropertyCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -5972,6 +7850,12 @@ size_t VulkanDecoder::Decode_vkGetDisplayModeProperties2KHR(const ApiCallInfo& c
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDisplayModeProperties2KHR(call_info, args);
@@ -5991,6 +7875,12 @@ size_t VulkanDecoder::Decode_vkGetDisplayPlaneCapabilities2KHR(const ApiCallInfo
     bytes_read += args.pCapabilities.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDisplayPlaneCapabilities2KHR(call_info, args);
@@ -6008,6 +7898,12 @@ size_t VulkanDecoder::Decode_vkGetImageMemoryRequirements2KHR(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6027,6 +7923,12 @@ size_t VulkanDecoder::Decode_vkGetBufferMemoryRequirements2KHR(const ApiCallInfo
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetBufferMemoryRequirements2KHR(call_info, args);
@@ -6045,6 +7947,12 @@ size_t VulkanDecoder::Decode_vkGetImageSparseMemoryRequirements2KHR(const ApiCal
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSparseMemoryRequirementCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSparseMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6066,6 +7974,12 @@ size_t VulkanDecoder::Decode_vkCreateSamplerYcbcrConversionKHR(const ApiCallInfo
     bytes_read += args.pYcbcrConversion.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateSamplerYcbcrConversionKHR(call_info, args);
@@ -6083,6 +7997,12 @@ size_t VulkanDecoder::Decode_vkDestroySamplerYcbcrConversionKHR(const ApiCallInf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.ycbcrConversion);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6103,6 +8023,12 @@ size_t VulkanDecoder::Decode_vkBindBufferMemory2KHR(const ApiCallInfo& call_info
     bytes_read += args.pBindInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkBindBufferMemory2KHR(call_info, args);
@@ -6122,6 +8048,12 @@ size_t VulkanDecoder::Decode_vkBindImageMemory2KHR(const ApiCallInfo& call_info,
     bytes_read += args.pBindInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkBindImageMemory2KHR(call_info, args);
@@ -6139,6 +8071,12 @@ size_t VulkanDecoder::Decode_vkGetDescriptorSetLayoutSupportKHR(const ApiCallInf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pCreateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSupport.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6162,6 +8100,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndirectCountKHR(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.maxDrawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndirectCountKHR(call_info, args);
@@ -6184,6 +8128,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndexedIndirectCountKHR(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.maxDrawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndexedIndirectCountKHR(call_info, args);
@@ -6202,6 +8152,12 @@ size_t VulkanDecoder::Decode_vkGetSemaphoreCounterValueKHR(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.semaphore);
     bytes_read += args.pValue.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6222,6 +8178,12 @@ size_t VulkanDecoder::Decode_vkWaitSemaphoresKHR(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.timeout);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkWaitSemaphoresKHR(call_info, args);
@@ -6239,6 +8201,12 @@ size_t VulkanDecoder::Decode_vkSignalSemaphoreKHR(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pSignalInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6259,6 +8227,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceFragmentShadingRatesKHR(const Ap
     bytes_read += args.pFragmentShadingRates.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceFragmentShadingRatesKHR(call_info, args);
@@ -6277,6 +8251,12 @@ size_t VulkanDecoder::Decode_vkCmdSetFragmentShadingRateKHR(const ApiCallInfo& c
     bytes_read += args.pFragmentSize.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.combinerOps.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetFragmentShadingRateKHR(call_info, args);
@@ -6294,6 +8274,12 @@ size_t VulkanDecoder::Decode_vkCmdSetRenderingAttachmentLocationsKHR(const ApiCa
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pLocationInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetRenderingAttachmentLocationsKHR(call_info, args);
@@ -6310,6 +8296,12 @@ size_t VulkanDecoder::Decode_vkCmdSetRenderingInputAttachmentIndicesKHR(const Ap
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInputAttachmentIndexInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6331,6 +8323,12 @@ size_t VulkanDecoder::Decode_vkWaitForPresentKHR(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.timeout);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkWaitForPresentKHR(call_info, args);
@@ -6348,6 +8346,12 @@ size_t VulkanDecoder::Decode_vkGetBufferDeviceAddressKHR(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6367,6 +8371,12 @@ size_t VulkanDecoder::Decode_vkGetBufferOpaqueCaptureAddressKHR(const ApiCallInf
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetBufferOpaqueCaptureAddressKHR(call_info, args);
@@ -6384,6 +8394,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceMemoryOpaqueCaptureAddressKHR(const ApiC
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6404,6 +8420,12 @@ size_t VulkanDecoder::Decode_vkCreateDeferredOperationKHR(const ApiCallInfo& cal
     bytes_read += args.pDeferredOperation.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDeferredOperationKHR(call_info, args);
@@ -6421,6 +8443,12 @@ size_t VulkanDecoder::Decode_vkDestroyDeferredOperationKHR(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.operation);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6440,6 +8468,12 @@ size_t VulkanDecoder::Decode_vkGetDeferredOperationMaxConcurrencyKHR(const ApiCa
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.operation);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeferredOperationMaxConcurrencyKHR(call_info, args);
@@ -6457,6 +8491,12 @@ size_t VulkanDecoder::Decode_vkGetDeferredOperationResultKHR(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.operation);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6478,6 +8518,12 @@ size_t VulkanDecoder::Decode_vkGetPipelineExecutablePropertiesKHR(const ApiCallI
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPipelineExecutablePropertiesKHR(call_info, args);
@@ -6497,6 +8543,12 @@ size_t VulkanDecoder::Decode_vkGetPipelineExecutableStatisticsKHR(const ApiCallI
     bytes_read += args.pStatisticCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pStatistics.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6518,6 +8570,12 @@ size_t VulkanDecoder::Decode_vkGetPipelineExecutableInternalRepresentationsKHR(c
     bytes_read += args.pInternalRepresentations.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPipelineExecutableInternalRepresentationsKHR(call_info, args);
@@ -6537,6 +8595,12 @@ size_t VulkanDecoder::Decode_vkMapMemory2KHR(const ApiCallInfo& call_info, const
     bytes_read += args.ppData.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkMapMemory2KHR(call_info, args);
@@ -6554,6 +8618,12 @@ size_t VulkanDecoder::Decode_vkUnmapMemory2KHR(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pMemoryUnmapInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6573,6 +8643,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertie
     bytes_read += args.pQualityLevelInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pQualityLevelProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6595,6 +8671,12 @@ size_t VulkanDecoder::Decode_vkGetEncodedVideoSessionParametersKHR(const ApiCall
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetEncodedVideoSessionParametersKHR(call_info, args);
@@ -6611,6 +8693,12 @@ size_t VulkanDecoder::Decode_vkCmdEncodeVideoKHR(const ApiCallInfo& call_info, c
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pEncodeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6630,6 +8718,12 @@ size_t VulkanDecoder::Decode_vkCmdSetEvent2KHR(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.event);
     bytes_read += args.pDependencyInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetEvent2KHR(call_info, args);
@@ -6647,6 +8741,12 @@ size_t VulkanDecoder::Decode_vkCmdResetEvent2KHR(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.event);
     bytes_read += ValueDecoder::DecodeFlags64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stageMask);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6667,6 +8767,12 @@ size_t VulkanDecoder::Decode_vkCmdWaitEvents2KHR(const ApiCallInfo& call_info, c
     bytes_read += args.pEvents.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pDependencyInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdWaitEvents2KHR(call_info, args);
@@ -6683,6 +8789,12 @@ size_t VulkanDecoder::Decode_vkCmdPipelineBarrier2KHR(const ApiCallInfo& call_in
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pDependencyInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6702,6 +8814,12 @@ size_t VulkanDecoder::Decode_vkCmdWriteTimestamp2KHR(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeFlags64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stage);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryPool);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.query);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6723,6 +8841,12 @@ size_t VulkanDecoder::Decode_vkQueueSubmit2KHR(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.fence);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkQueueSubmit2KHR(call_info, args);
@@ -6739,6 +8863,12 @@ size_t VulkanDecoder::Decode_vkCmdBindIndexBuffer3KHR(const ApiCallInfo& call_in
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6759,6 +8889,12 @@ size_t VulkanDecoder::Decode_vkCmdBindVertexBuffers3KHR(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.bindingCount);
     bytes_read += args.pBindingInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindVertexBuffers3KHR(call_info, args);
@@ -6775,6 +8911,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndirect2KHR(const ApiCallInfo& call_info,
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6793,6 +8935,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndexedIndirect2KHR(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndexedIndirect2KHR(call_info, args);
@@ -6809,6 +8957,12 @@ size_t VulkanDecoder::Decode_vkCmdDispatchIndirect2KHR(const ApiCallInfo& call_i
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6827,6 +8981,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyMemoryKHR(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyMemoryInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyMemoryKHR(call_info, args);
@@ -6844,6 +9004,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyMemoryToImageKHR(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyMemoryInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyMemoryToImageKHR(call_info, args);
@@ -6860,6 +9026,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyImageToMemoryKHR(const ApiCallInfo& call_i
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyMemoryInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6881,6 +9053,12 @@ size_t VulkanDecoder::Decode_vkCmdUpdateMemoryKHR(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dataSize);
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdUpdateMemoryKHR(call_info, args);
@@ -6899,6 +9077,12 @@ size_t VulkanDecoder::Decode_vkCmdFillMemoryKHR(const ApiCallInfo& call_info, co
     bytes_read += args.pDstRange.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dstFlags);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.data);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6922,6 +9106,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyQueryPoolResultsToMemoryKHR(const ApiCallI
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dstFlags);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryResultFlags);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyQueryPoolResultsToMemoryKHR(call_info, args);
@@ -6938,6 +9128,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndirectCount2KHR(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6956,6 +9152,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndexedIndirectCount2KHR(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndexedIndirectCount2KHR(call_info, args);
@@ -6972,6 +9174,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginConditionalRendering2EXT(const ApiCallInf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pConditionalRenderingBegin.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -6992,6 +9200,12 @@ size_t VulkanDecoder::Decode_vkCmdBindTransformFeedbackBuffers2EXT(const ApiCall
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.bindingCount);
     bytes_read += args.pBindingInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindTransformFeedbackBuffers2EXT(call_info, args);
@@ -7011,6 +9225,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginTransformFeedback2EXT(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.counterRangeCount);
     bytes_read += args.pCounterInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginTransformFeedback2EXT(call_info, args);
@@ -7029,6 +9249,12 @@ size_t VulkanDecoder::Decode_vkCmdEndTransformFeedback2EXT(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstCounterRange);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.counterRangeCount);
     bytes_read += args.pCounterInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7051,6 +9277,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndirectByteCount2EXT(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.counterOffset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.vertexStride);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndirectByteCount2EXT(call_info, args);
@@ -7067,6 +9299,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawMeshTasksIndirect2EXT(const ApiCallInfo& c
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7085,6 +9323,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawMeshTasksIndirectCount2EXT(const ApiCallIn
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawMeshTasksIndirectCount2EXT(call_info, args);
@@ -7101,6 +9345,12 @@ size_t VulkanDecoder::Decode_vkCmdWriteMarkerToMemoryAMD(const ApiCallInfo& call
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7122,6 +9372,12 @@ size_t VulkanDecoder::Decode_vkCreateAccelerationStructure2KHR(const ApiCallInfo
     bytes_read += args.pAccelerationStructure.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateAccelerationStructure2KHR(call_info, args);
@@ -7138,6 +9394,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyBuffer2KHR(const ApiCallInfo& call_info, c
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyBufferInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7156,6 +9418,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyImage2KHR(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyImage2KHR(call_info, args);
@@ -7172,6 +9440,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyBufferToImage2KHR(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyBufferToImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7190,6 +9464,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyImageToBuffer2KHR(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyImageToBufferInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyImageToBuffer2KHR(call_info, args);
@@ -7206,6 +9486,12 @@ size_t VulkanDecoder::Decode_vkCmdBlitImage2KHR(const ApiCallInfo& call_info, co
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pBlitImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7224,6 +9510,12 @@ size_t VulkanDecoder::Decode_vkCmdResolveImage2KHR(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pResolveImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdResolveImage2KHR(call_info, args);
@@ -7240,6 +9532,12 @@ size_t VulkanDecoder::Decode_vkCmdTraceRaysIndirect2KHR(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.indirectDeviceAddress);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7259,6 +9557,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceBufferMemoryRequirementsKHR(const ApiCal
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceBufferMemoryRequirementsKHR(call_info, args);
@@ -7276,6 +9580,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceImageMemoryRequirementsKHR(const ApiCall
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7295,6 +9605,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceImageSparseMemoryRequirementsKHR(const A
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSparseMemoryRequirementCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSparseMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7316,6 +9632,12 @@ size_t VulkanDecoder::Decode_vkCmdBindIndexBuffer2KHR(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.size);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.indexType);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindIndexBuffer2KHR(call_info, args);
@@ -7334,6 +9656,12 @@ size_t VulkanDecoder::Decode_vkGetRenderingAreaGranularityKHR(const ApiCallInfo&
     bytes_read += args.pRenderingAreaInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pGranularity.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetRenderingAreaGranularityKHR(call_info, args);
@@ -7351,6 +9679,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceImageSubresourceLayoutKHR(const ApiCallI
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pLayout.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7371,6 +9705,12 @@ size_t VulkanDecoder::Decode_vkGetImageSubresourceLayout2KHR(const ApiCallInfo& 
     bytes_read += args.pSubresource.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pLayout.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetImageSubresourceLayout2KHR(call_info, args);
@@ -7389,6 +9729,12 @@ size_t VulkanDecoder::Decode_vkWaitForPresent2KHR(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapchain);
     bytes_read += args.pPresentWait2Info.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7410,6 +9756,12 @@ size_t VulkanDecoder::Decode_vkCreatePipelineBinariesKHR(const ApiCallInfo& call
     bytes_read += args.pBinaries.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreatePipelineBinariesKHR(call_info, args);
@@ -7427,6 +9779,12 @@ size_t VulkanDecoder::Decode_vkDestroyPipelineBinaryKHR(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipelineBinary);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7446,6 +9804,12 @@ size_t VulkanDecoder::Decode_vkGetPipelineKeyKHR(const ApiCallInfo& call_info, c
     bytes_read += args.pPipelineCreateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pPipelineKey.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7468,6 +9832,12 @@ size_t VulkanDecoder::Decode_vkGetPipelineBinaryDataKHR(const ApiCallInfo& call_
     bytes_read += args.pPipelineBinaryData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPipelineBinaryDataKHR(call_info, args);
@@ -7487,6 +9857,12 @@ size_t VulkanDecoder::Decode_vkReleaseCapturedPipelineDataKHR(const ApiCallInfo&
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkReleaseCapturedPipelineDataKHR(call_info, args);
@@ -7504,6 +9880,12 @@ size_t VulkanDecoder::Decode_vkReleaseSwapchainImagesKHR(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pReleaseInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7524,6 +9906,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(c
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(call_info, args);
@@ -7541,6 +9929,12 @@ size_t VulkanDecoder::Decode_vkCmdSetLineStippleKHR(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.lineStippleFactor);
     bytes_read += ValueDecoder::DecodeUInt16Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.lineStipplePattern);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7560,6 +9954,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR(cons
     bytes_read += args.pTimeDomainCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pTimeDomains.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7582,6 +9982,12 @@ size_t VulkanDecoder::Decode_vkGetCalibratedTimestampsKHR(const ApiCallInfo& cal
     bytes_read += args.pMaxDeviation.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetCalibratedTimestampsKHR(call_info, args);
@@ -7598,6 +10004,12 @@ size_t VulkanDecoder::Decode_vkCmdBindDescriptorSets2KHR(const ApiCallInfo& call
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pBindDescriptorSetsInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7616,6 +10028,12 @@ size_t VulkanDecoder::Decode_vkCmdPushConstants2KHR(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pPushConstantsInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdPushConstants2KHR(call_info, args);
@@ -7632,6 +10050,12 @@ size_t VulkanDecoder::Decode_vkCmdPushDescriptorSet2KHR(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pPushDescriptorSetInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7650,6 +10074,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDescriptorBufferOffsets2EXT(const ApiCallIn
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pSetDescriptorBufferOffsetsInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDescriptorBufferOffsets2EXT(call_info, args);
@@ -7666,6 +10096,12 @@ size_t VulkanDecoder::Decode_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT(const
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pBindDescriptorBufferEmbeddedSamplersInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7684,6 +10120,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyMemoryIndirectKHR(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyMemoryIndirectInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyMemoryIndirectKHR(call_info, args);
@@ -7700,6 +10142,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyMemoryToImageIndirectKHR(const ApiCallInfo
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyMemoryToImageIndirectInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7721,6 +10169,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceFaultReportsKHR(const ApiCallInfo& call_
     bytes_read += args.pFaultInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceFaultReportsKHR(call_info, args);
@@ -7739,6 +10193,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceFaultDebugInfoKHR(const ApiCallInfo& cal
     bytes_read += args.pDebugInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceFaultDebugInfoKHR(call_info, args);
@@ -7755,6 +10215,12 @@ size_t VulkanDecoder::Decode_vkCmdEndRendering2KHR(const ApiCallInfo& call_info,
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pRenderingEndInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7773,6 +10239,12 @@ size_t VulkanDecoder::Decode_vkFrameBoundaryANDROID(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.semaphore);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.image);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7794,6 +10266,12 @@ size_t VulkanDecoder::Decode_vkCreateDebugReportCallbackEXT(const ApiCallInfo& c
     bytes_read += args.pCallback.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDebugReportCallbackEXT(call_info, args);
@@ -7811,6 +10289,12 @@ size_t VulkanDecoder::Decode_vkDestroyDebugReportCallbackEXT(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.instance);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.callback);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7835,6 +10319,12 @@ size_t VulkanDecoder::Decode_vkDebugReportMessageEXT(const ApiCallInfo& call_inf
     bytes_read += args.pLayerPrefix.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMessage.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkDebugReportMessageEXT(call_info, args);
@@ -7852,6 +10342,12 @@ size_t VulkanDecoder::Decode_vkDebugMarkerSetObjectTagEXT(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pTagInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7871,6 +10367,12 @@ size_t VulkanDecoder::Decode_vkDebugMarkerSetObjectNameEXT(const ApiCallInfo& ca
     bytes_read += args.pNameInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkDebugMarkerSetObjectNameEXT(call_info, args);
@@ -7888,6 +10390,12 @@ size_t VulkanDecoder::Decode_vkCmdDebugMarkerBeginEXT(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pMarkerInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDebugMarkerBeginEXT(call_info, args);
@@ -7903,6 +10411,12 @@ size_t VulkanDecoder::Decode_vkCmdDebugMarkerEndEXT(const ApiCallInfo& call_info
     args::CmdDebugMarkerEndEXT args;
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7920,6 +10434,12 @@ size_t VulkanDecoder::Decode_vkCmdDebugMarkerInsertEXT(const ApiCallInfo& call_i
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pMarkerInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7942,6 +10462,12 @@ size_t VulkanDecoder::Decode_vkCmdBindTransformFeedbackBuffersEXT(const ApiCallI
     bytes_read += args.pOffsets.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSizes.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindTransformFeedbackBuffersEXT(call_info, args);
@@ -7961,6 +10487,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginTransformFeedbackEXT(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.counterBufferCount);
     bytes_read += args.pCounterBuffers.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pCounterBufferOffsets.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -7982,6 +10514,12 @@ size_t VulkanDecoder::Decode_vkCmdEndTransformFeedbackEXT(const ApiCallInfo& cal
     bytes_read += args.pCounterBuffers.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pCounterBufferOffsets.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdEndTransformFeedbackEXT(call_info, args);
@@ -8002,6 +10540,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginQueryIndexedEXT(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.flags);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.index);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginQueryIndexedEXT(call_info, args);
@@ -8020,6 +10564,12 @@ size_t VulkanDecoder::Decode_vkCmdEndQueryIndexedEXT(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryPool);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.query);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.index);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8043,6 +10593,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndirectByteCountEXT(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.counterOffset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.vertexStride);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndirectByteCountEXT(call_info, args);
@@ -8061,6 +10617,12 @@ size_t VulkanDecoder::Decode_vkGetImageViewHandleNVX(const ApiCallInfo& call_inf
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetImageViewHandleNVX(call_info, args);
@@ -8078,6 +10640,12 @@ size_t VulkanDecoder::Decode_vkGetImageViewHandle64NVX(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8098,6 +10666,12 @@ size_t VulkanDecoder::Decode_vkGetImageViewAddressNVX(const ApiCallInfo& call_in
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetImageViewAddressNVX(call_info, args);
@@ -8116,6 +10690,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceCombinedImageSamplerIndexNVX(const ApiCa
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.imageViewIndex);
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.samplerIndex);
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8139,6 +10719,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndirectCountAMD(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.maxDrawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawIndirectCountAMD(call_info, args);
@@ -8160,6 +10746,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawIndexedIndirectCountAMD(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.countBufferOffset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.maxDrawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8183,6 +10775,12 @@ size_t VulkanDecoder::Decode_vkGetShaderInfoAMD(const ApiCallInfo& call_info, co
     bytes_read += args.pInfo.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetShaderInfoAMD(call_info, args);
@@ -8202,6 +10800,12 @@ size_t VulkanDecoder::Decode_vkCreateStreamDescriptorSurfaceGGP(const ApiCallInf
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8227,6 +10831,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceExternalImageFormatPropertiesNV(
     bytes_read += args.pExternalImageFormatProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceExternalImageFormatPropertiesNV(call_info, args);
@@ -8246,6 +10856,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryWin32HandleNV(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.handleType);
     bytes_read += args.pHandle.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8267,6 +10883,12 @@ size_t VulkanDecoder::Decode_vkCreateViSurfaceNN(const ApiCallInfo& call_info, c
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateViSurfaceNN(call_info, args);
@@ -8284,6 +10906,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginConditionalRenderingEXT(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pConditionalRenderingBegin.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginConditionalRenderingEXT(call_info, args);
@@ -8299,6 +10927,12 @@ size_t VulkanDecoder::Decode_vkCmdEndConditionalRenderingEXT(const ApiCallInfo& 
     args::CmdEndConditionalRenderingEXT args;
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8319,6 +10953,12 @@ size_t VulkanDecoder::Decode_vkCmdSetViewportWScalingNV(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.viewportCount);
     bytes_read += args.pViewportWScalings.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetViewportWScalingNV(call_info, args);
@@ -8336,6 +10976,12 @@ size_t VulkanDecoder::Decode_vkReleaseDisplayEXT(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.display);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8355,6 +11001,12 @@ size_t VulkanDecoder::Decode_vkAcquireXlibDisplayEXT(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeAddress((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dpy);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.display);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8376,6 +11028,12 @@ size_t VulkanDecoder::Decode_vkGetRandROutputDisplayEXT(const ApiCallInfo& call_
     bytes_read += args.pDisplay.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetRandROutputDisplayEXT(call_info, args);
@@ -8394,6 +11052,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSurfaceCapabilities2EXT(const Ap
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.surface);
     bytes_read += args.pSurfaceCapabilities.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8414,6 +11078,12 @@ size_t VulkanDecoder::Decode_vkDisplayPowerControlEXT(const ApiCallInfo& call_in
     bytes_read += args.pDisplayPowerInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkDisplayPowerControlEXT(call_info, args);
@@ -8433,6 +11103,12 @@ size_t VulkanDecoder::Decode_vkRegisterDeviceEventEXT(const ApiCallInfo& call_in
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pFence.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8455,6 +11131,12 @@ size_t VulkanDecoder::Decode_vkRegisterDisplayEventEXT(const ApiCallInfo& call_i
     bytes_read += args.pFence.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkRegisterDisplayEventEXT(call_info, args);
@@ -8475,6 +11157,12 @@ size_t VulkanDecoder::Decode_vkGetSwapchainCounterEXT(const ApiCallInfo& call_in
     bytes_read += args.pCounterValue.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetSwapchainCounterEXT(call_info, args);
@@ -8493,6 +11181,12 @@ size_t VulkanDecoder::Decode_vkGetRefreshCycleDurationGOOGLE(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapchain);
     bytes_read += args.pDisplayTimingProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8514,6 +11208,12 @@ size_t VulkanDecoder::Decode_vkGetPastPresentationTimingGOOGLE(const ApiCallInfo
     bytes_read += args.pPresentationTimings.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPastPresentationTimingGOOGLE(call_info, args);
@@ -8533,6 +11233,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDiscardRectangleEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.discardRectangleCount);
     bytes_read += args.pDiscardRectangles.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDiscardRectangleEXT(call_info, args);
@@ -8550,6 +11256,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDiscardRectangleEnableEXT(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.discardRectangleEnable);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDiscardRectangleEnableEXT(call_info, args);
@@ -8566,6 +11278,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDiscardRectangleModeEXT(const ApiCallInfo& 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.discardRectangleMode);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8585,6 +11303,12 @@ size_t VulkanDecoder::Decode_vkSetHdrMetadataEXT(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapchainCount);
     bytes_read += args.pSwapchains.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMetadata.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8606,6 +11330,12 @@ size_t VulkanDecoder::Decode_vkCreateIOSSurfaceMVK(const ApiCallInfo& call_info,
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateIOSSurfaceMVK(call_info, args);
@@ -8626,6 +11356,12 @@ size_t VulkanDecoder::Decode_vkCreateMacOSSurfaceMVK(const ApiCallInfo& call_inf
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateMacOSSurfaceMVK(call_info, args);
@@ -8643,6 +11379,12 @@ size_t VulkanDecoder::Decode_vkSetDebugUtilsObjectNameEXT(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pNameInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8662,6 +11404,12 @@ size_t VulkanDecoder::Decode_vkSetDebugUtilsObjectTagEXT(const ApiCallInfo& call
     bytes_read += args.pTagInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkSetDebugUtilsObjectTagEXT(call_info, args);
@@ -8679,6 +11427,12 @@ size_t VulkanDecoder::Decode_vkQueueBeginDebugUtilsLabelEXT(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queue);
     bytes_read += args.pLabelInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkQueueBeginDebugUtilsLabelEXT(call_info, args);
@@ -8694,6 +11448,12 @@ size_t VulkanDecoder::Decode_vkQueueEndDebugUtilsLabelEXT(const ApiCallInfo& cal
     args::QueueEndDebugUtilsLabelEXT args;
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queue);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8712,6 +11472,12 @@ size_t VulkanDecoder::Decode_vkQueueInsertDebugUtilsLabelEXT(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queue);
     bytes_read += args.pLabelInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkQueueInsertDebugUtilsLabelEXT(call_info, args);
@@ -8729,6 +11495,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginDebugUtilsLabelEXT(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pLabelInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginDebugUtilsLabelEXT(call_info, args);
@@ -8744,6 +11516,12 @@ size_t VulkanDecoder::Decode_vkCmdEndDebugUtilsLabelEXT(const ApiCallInfo& call_
     args::CmdEndDebugUtilsLabelEXT args;
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8761,6 +11539,12 @@ size_t VulkanDecoder::Decode_vkCmdInsertDebugUtilsLabelEXT(const ApiCallInfo& ca
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pLabelInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8782,6 +11566,12 @@ size_t VulkanDecoder::Decode_vkCreateDebugUtilsMessengerEXT(const ApiCallInfo& c
     bytes_read += args.pMessenger.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDebugUtilsMessengerEXT(call_info, args);
@@ -8799,6 +11589,12 @@ size_t VulkanDecoder::Decode_vkDestroyDebugUtilsMessengerEXT(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.instance);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.messenger);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8819,6 +11615,12 @@ size_t VulkanDecoder::Decode_vkSubmitDebugUtilsMessageEXT(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.messageTypes);
     bytes_read += args.pCallbackData.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkSubmitDebugUtilsMessageEXT(call_info, args);
@@ -8838,6 +11640,12 @@ size_t VulkanDecoder::Decode_vkGetAndroidHardwareBufferPropertiesANDROID(const A
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetAndroidHardwareBufferPropertiesANDROID(call_info, args);
@@ -8856,6 +11664,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryAndroidHardwareBufferANDROID(const ApiCa
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pBuffer.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8877,6 +11691,12 @@ size_t VulkanDecoder::Decode_vkCreateGpaSessionAMD(const ApiCallInfo& call_info,
     bytes_read += args.pGpaSession.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateGpaSessionAMD(call_info, args);
@@ -8894,6 +11714,12 @@ size_t VulkanDecoder::Decode_vkDestroyGpaSessionAMD(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.gpaSession);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8913,6 +11739,12 @@ size_t VulkanDecoder::Decode_vkSetGpaDeviceClockModeAMD(const ApiCallInfo& call_
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkSetGpaDeviceClockModeAMD(call_info, args);
@@ -8930,6 +11762,12 @@ size_t VulkanDecoder::Decode_vkGetGpaDeviceClockInfoAMD(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8949,6 +11787,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginGpaSessionAMD(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.gpaSession);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginGpaSessionAMD(call_info, args);
@@ -8966,6 +11810,12 @@ size_t VulkanDecoder::Decode_vkCmdEndGpaSessionAMD(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.gpaSession);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -8987,6 +11837,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginGpaSampleAMD(const ApiCallInfo& call_info
     bytes_read += args.pSampleID.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginGpaSampleAMD(call_info, args);
@@ -9005,6 +11861,12 @@ size_t VulkanDecoder::Decode_vkCmdEndGpaSampleAMD(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.gpaSession);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.sampleID);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdEndGpaSampleAMD(call_info, args);
@@ -9022,6 +11884,12 @@ size_t VulkanDecoder::Decode_vkGetGpaSessionStatusAMD(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.gpaSession);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9044,6 +11912,12 @@ size_t VulkanDecoder::Decode_vkGetGpaSessionResultsAMD(const ApiCallInfo& call_i
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetGpaSessionResultsAMD(call_info, args);
@@ -9062,6 +11936,12 @@ size_t VulkanDecoder::Decode_vkResetGpaSessionAMD(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.gpaSession);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkResetGpaSessionAMD(call_info, args);
@@ -9079,6 +11959,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyGpaSessionResultsAMD(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.gpaSession);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyGpaSessionResultsAMD(call_info, args);
@@ -9095,6 +11981,12 @@ size_t VulkanDecoder::Decode_vkCmdSetSampleLocationsEXT(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pSampleLocationsInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9114,6 +12006,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceMultisamplePropertiesEXT(const A
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.samples);
     bytes_read += args.pMultisampleProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceMultisamplePropertiesEXT(call_info, args);
@@ -9132,6 +12030,12 @@ size_t VulkanDecoder::Decode_vkGetImageDrmFormatModifierPropertiesEXT(const ApiC
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.image);
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9153,6 +12057,12 @@ size_t VulkanDecoder::Decode_vkCreateValidationCacheEXT(const ApiCallInfo& call_
     bytes_read += args.pValidationCache.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateValidationCacheEXT(call_info, args);
@@ -9170,6 +12080,12 @@ size_t VulkanDecoder::Decode_vkDestroyValidationCacheEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.validationCache);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9191,6 +12107,12 @@ size_t VulkanDecoder::Decode_vkMergeValidationCachesEXT(const ApiCallInfo& call_
     bytes_read += args.pSrcCaches.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkMergeValidationCachesEXT(call_info, args);
@@ -9211,6 +12133,12 @@ size_t VulkanDecoder::Decode_vkGetValidationCacheDataEXT(const ApiCallInfo& call
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetValidationCacheDataEXT(call_info, args);
@@ -9228,6 +12156,12 @@ size_t VulkanDecoder::Decode_vkCmdBindShadingRateImageNV(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.imageView);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.imageLayout);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9248,6 +12182,12 @@ size_t VulkanDecoder::Decode_vkCmdSetViewportShadingRatePaletteNV(const ApiCallI
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.viewportCount);
     bytes_read += args.pShadingRatePalettes.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetViewportShadingRatePaletteNV(call_info, args);
@@ -9266,6 +12206,12 @@ size_t VulkanDecoder::Decode_vkCmdSetCoarseSampleOrderNV(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.sampleOrderType);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.customSampleOrderCount);
     bytes_read += args.pCustomSampleOrders.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9287,6 +12233,12 @@ size_t VulkanDecoder::Decode_vkCreateAccelerationStructureNV(const ApiCallInfo& 
     bytes_read += args.pAccelerationStructure.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateAccelerationStructureNV(call_info, args);
@@ -9304,6 +12256,12 @@ size_t VulkanDecoder::Decode_vkDestroyAccelerationStructureNV(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.accelerationStructure);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9323,6 +12281,12 @@ size_t VulkanDecoder::Decode_vkGetAccelerationStructureMemoryRequirementsNV(cons
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetAccelerationStructureMemoryRequirementsNV(call_info, args);
@@ -9341,6 +12305,12 @@ size_t VulkanDecoder::Decode_vkBindAccelerationStructureMemoryNV(const ApiCallIn
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.bindInfoCount);
     bytes_read += args.pBindInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9366,6 +12336,12 @@ size_t VulkanDecoder::Decode_vkCmdBuildAccelerationStructureNV(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.scratch);
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.scratchOffset);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBuildAccelerationStructureNV(call_info, args);
@@ -9384,6 +12360,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyAccelerationStructureNV(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dst);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.src);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.mode);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9415,6 +12397,12 @@ size_t VulkanDecoder::Decode_vkCmdTraceRaysNV(const ApiCallInfo& call_info, cons
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.height);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depth);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdTraceRaysNV(call_info, args);
@@ -9436,6 +12424,12 @@ size_t VulkanDecoder::Decode_vkCreateRayTracingPipelinesNV(const ApiCallInfo& ca
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pPipelines.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9459,6 +12453,12 @@ size_t VulkanDecoder::Decode_vkGetRayTracingShaderGroupHandlesKHR(const ApiCallI
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetRayTracingShaderGroupHandlesKHR(call_info, args);
@@ -9481,6 +12481,12 @@ size_t VulkanDecoder::Decode_vkGetRayTracingShaderGroupHandlesNV(const ApiCallIn
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetRayTracingShaderGroupHandlesNV(call_info, args);
@@ -9500,6 +12506,12 @@ size_t VulkanDecoder::Decode_vkGetAccelerationStructureHandleNV(const ApiCallInf
     bytes_read += ValueDecoder::DecodeSizeTValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dataSize);
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9522,6 +12534,12 @@ size_t VulkanDecoder::Decode_vkCmdWriteAccelerationStructuresPropertiesNV(const 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryPool);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstQuery);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdWriteAccelerationStructuresPropertiesNV(call_info, args);
@@ -9540,6 +12558,12 @@ size_t VulkanDecoder::Decode_vkCompileDeferredNV(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipeline);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.shader);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9561,6 +12585,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryHostPointerPropertiesEXT(const ApiCallIn
     bytes_read += args.pMemoryHostPointerProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetMemoryHostPointerPropertiesEXT(call_info, args);
@@ -9580,6 +12610,12 @@ size_t VulkanDecoder::Decode_vkCmdWriteBufferMarkerAMD(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dstBuffer);
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dstOffset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.marker);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9601,6 +12637,12 @@ size_t VulkanDecoder::Decode_vkCmdWriteBufferMarker2AMD(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dstOffset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.marker);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdWriteBufferMarker2AMD(call_info, args);
@@ -9619,6 +12661,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(cons
     bytes_read += args.pTimeDomainCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pTimeDomains.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9641,6 +12689,12 @@ size_t VulkanDecoder::Decode_vkGetCalibratedTimestampsEXT(const ApiCallInfo& cal
     bytes_read += args.pMaxDeviation.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetCalibratedTimestampsEXT(call_info, args);
@@ -9658,6 +12712,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawMeshTasksNV(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.taskCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstTask);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9678,6 +12738,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawMeshTasksIndirectNV(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.offset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.drawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9701,6 +12767,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawMeshTasksIndirectCountNV(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.maxDrawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawMeshTasksIndirectCountNV(call_info, args);
@@ -9719,6 +12791,12 @@ size_t VulkanDecoder::Decode_vkCmdSetExclusiveScissorEnableNV(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstExclusiveScissor);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.exclusiveScissorCount);
     bytes_read += args.pExclusiveScissorEnables.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9739,6 +12817,12 @@ size_t VulkanDecoder::Decode_vkCmdSetExclusiveScissorNV(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.exclusiveScissorCount);
     bytes_read += args.pExclusiveScissors.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetExclusiveScissorNV(call_info, args);
@@ -9755,6 +12839,12 @@ size_t VulkanDecoder::Decode_vkCmdSetCheckpointNV(const ApiCallInfo& call_info, 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeAddress((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pCheckpointMarker);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9774,6 +12864,12 @@ size_t VulkanDecoder::Decode_vkGetQueueCheckpointDataNV(const ApiCallInfo& call_
     bytes_read += args.pCheckpointDataCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pCheckpointData.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetQueueCheckpointDataNV(call_info, args);
@@ -9791,6 +12887,12 @@ size_t VulkanDecoder::Decode_vkGetQueueCheckpointData2NV(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queue);
     bytes_read += args.pCheckpointDataCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pCheckpointData.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9810,6 +12912,12 @@ size_t VulkanDecoder::Decode_vkSetSwapchainPresentTimingQueueSizeEXT(const ApiCa
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapchain);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.size);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9831,6 +12939,12 @@ size_t VulkanDecoder::Decode_vkGetSwapchainTimingPropertiesEXT(const ApiCallInfo
     bytes_read += args.pSwapchainTimingPropertiesCounter.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetSwapchainTimingPropertiesEXT(call_info, args);
@@ -9851,6 +12965,12 @@ size_t VulkanDecoder::Decode_vkGetSwapchainTimeDomainPropertiesEXT(const ApiCall
     bytes_read += args.pTimeDomainsCounter.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetSwapchainTimeDomainPropertiesEXT(call_info, args);
@@ -9870,6 +12990,12 @@ size_t VulkanDecoder::Decode_vkGetPastPresentationTimingEXT(const ApiCallInfo& c
     bytes_read += args.pPastPresentationTimingProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPastPresentationTimingEXT(call_info, args);
@@ -9888,6 +13014,12 @@ size_t VulkanDecoder::Decode_vkInitializePerformanceApiINTEL(const ApiCallInfo& 
     bytes_read += args.pInitializeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkInitializePerformanceApiINTEL(call_info, args);
@@ -9903,6 +13035,12 @@ size_t VulkanDecoder::Decode_vkUninitializePerformanceApiINTEL(const ApiCallInfo
     args::UninitializePerformanceApiINTEL args;
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9922,6 +13060,12 @@ size_t VulkanDecoder::Decode_vkCmdSetPerformanceMarkerINTEL(const ApiCallInfo& c
     bytes_read += args.pMarkerInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetPerformanceMarkerINTEL(call_info, args);
@@ -9940,6 +13084,12 @@ size_t VulkanDecoder::Decode_vkCmdSetPerformanceStreamMarkerINTEL(const ApiCallI
     bytes_read += args.pMarkerInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetPerformanceStreamMarkerINTEL(call_info, args);
@@ -9957,6 +13107,12 @@ size_t VulkanDecoder::Decode_vkCmdSetPerformanceOverrideINTEL(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pOverrideInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -9977,6 +13133,12 @@ size_t VulkanDecoder::Decode_vkAcquirePerformanceConfigurationINTEL(const ApiCal
     bytes_read += args.pConfiguration.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkAcquirePerformanceConfigurationINTEL(call_info, args);
@@ -9995,6 +13157,12 @@ size_t VulkanDecoder::Decode_vkReleasePerformanceConfigurationINTEL(const ApiCal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.configuration);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkReleasePerformanceConfigurationINTEL(call_info, args);
@@ -10012,6 +13180,12 @@ size_t VulkanDecoder::Decode_vkQueueSetPerformanceConfigurationINTEL(const ApiCa
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queue);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.configuration);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10032,6 +13206,12 @@ size_t VulkanDecoder::Decode_vkGetPerformanceParameterINTEL(const ApiCallInfo& c
     bytes_read += args.pValue.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPerformanceParameterINTEL(call_info, args);
@@ -10049,6 +13229,12 @@ size_t VulkanDecoder::Decode_vkSetLocalDimmingAMD(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapChain);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.localDimmingEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10070,6 +13256,12 @@ size_t VulkanDecoder::Decode_vkCreateImagePipeSurfaceFUCHSIA(const ApiCallInfo& 
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateImagePipeSurfaceFUCHSIA(call_info, args);
@@ -10090,6 +13282,12 @@ size_t VulkanDecoder::Decode_vkCreateMetalSurfaceEXT(const ApiCallInfo& call_inf
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateMetalSurfaceEXT(call_info, args);
@@ -10107,6 +13305,12 @@ size_t VulkanDecoder::Decode_vkGetBufferDeviceAddressEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10127,6 +13331,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceToolPropertiesEXT(const ApiCallI
     bytes_read += args.pToolProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceToolPropertiesEXT(call_info, args);
@@ -10146,6 +13356,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(co
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(call_info, args);
@@ -10164,6 +13380,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSupportedFramebufferMixedSamples
     bytes_read += args.pCombinationCount.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pCombinations.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10185,6 +13407,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceSurfacePresentModes2EXT(const Ap
     bytes_read += args.pPresentModes.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceSurfacePresentModes2EXT(call_info, args);
@@ -10202,6 +13430,12 @@ size_t VulkanDecoder::Decode_vkAcquireFullScreenExclusiveModeEXT(const ApiCallIn
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapchain);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10221,6 +13455,12 @@ size_t VulkanDecoder::Decode_vkReleaseFullScreenExclusiveModeEXT(const ApiCallIn
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapchain);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkReleaseFullScreenExclusiveModeEXT(call_info, args);
@@ -10239,6 +13479,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceGroupSurfacePresentModes2EXT(const ApiCa
     bytes_read += args.pSurfaceInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pModes.DecodeFlags((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10260,6 +13506,12 @@ size_t VulkanDecoder::Decode_vkCreateHeadlessSurfaceEXT(const ApiCallInfo& call_
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateHeadlessSurfaceEXT(call_info, args);
@@ -10277,6 +13529,12 @@ size_t VulkanDecoder::Decode_vkCmdSetLineStippleEXT(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.lineStippleFactor);
     bytes_read += ValueDecoder::DecodeUInt16Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.lineStipplePattern);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10297,6 +13555,12 @@ size_t VulkanDecoder::Decode_vkResetQueryPoolEXT(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstQuery);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryCount);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkResetQueryPoolEXT(call_info, args);
@@ -10313,6 +13577,12 @@ size_t VulkanDecoder::Decode_vkCmdSetCullModeEXT(const ApiCallInfo& call_info, c
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.cullMode);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10331,6 +13601,12 @@ size_t VulkanDecoder::Decode_vkCmdSetFrontFaceEXT(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.frontFace);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetFrontFaceEXT(call_info, args);
@@ -10347,6 +13623,12 @@ size_t VulkanDecoder::Decode_vkCmdSetPrimitiveTopologyEXT(const ApiCallInfo& cal
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.primitiveTopology);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10366,6 +13648,12 @@ size_t VulkanDecoder::Decode_vkCmdSetViewportWithCountEXT(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.viewportCount);
     bytes_read += args.pViewports.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetViewportWithCountEXT(call_info, args);
@@ -10383,6 +13671,12 @@ size_t VulkanDecoder::Decode_vkCmdSetScissorWithCountEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.scissorCount);
     bytes_read += args.pScissors.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10406,6 +13700,12 @@ size_t VulkanDecoder::Decode_vkCmdBindVertexBuffers2EXT(const ApiCallInfo& call_
     bytes_read += args.pSizes.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pStrides.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindVertexBuffers2EXT(call_info, args);
@@ -10422,6 +13722,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthTestEnableEXT(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthTestEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10440,6 +13746,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthWriteEnableEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthWriteEnable);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDepthWriteEnableEXT(call_info, args);
@@ -10456,6 +13768,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthCompareOpEXT(const ApiCallInfo& call_i
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthCompareOp);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10474,6 +13792,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthBoundsTestEnableEXT(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthBoundsTestEnable);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDepthBoundsTestEnableEXT(call_info, args);
@@ -10490,6 +13814,12 @@ size_t VulkanDecoder::Decode_vkCmdSetStencilTestEnableEXT(const ApiCallInfo& cal
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stencilTestEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10512,6 +13842,12 @@ size_t VulkanDecoder::Decode_vkCmdSetStencilOpEXT(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthFailOp);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.compareOp);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetStencilOpEXT(call_info, args);
@@ -10529,6 +13865,12 @@ size_t VulkanDecoder::Decode_vkCopyMemoryToImageEXT(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pCopyMemoryToImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10548,6 +13890,12 @@ size_t VulkanDecoder::Decode_vkCopyImageToMemoryEXT(const ApiCallInfo& call_info
     bytes_read += args.pCopyImageToMemoryInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCopyImageToMemoryEXT(call_info, args);
@@ -10565,6 +13913,12 @@ size_t VulkanDecoder::Decode_vkCopyImageToImageEXT(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pCopyImageToImageInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10585,6 +13939,12 @@ size_t VulkanDecoder::Decode_vkTransitionImageLayoutEXT(const ApiCallInfo& call_
     bytes_read += args.pTransitions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkTransitionImageLayoutEXT(call_info, args);
@@ -10604,6 +13964,12 @@ size_t VulkanDecoder::Decode_vkGetImageSubresourceLayout2EXT(const ApiCallInfo& 
     bytes_read += args.pSubresource.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pLayout.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetImageSubresourceLayout2EXT(call_info, args);
@@ -10621,6 +13987,12 @@ size_t VulkanDecoder::Decode_vkReleaseSwapchainImagesEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pReleaseInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10640,6 +14012,12 @@ size_t VulkanDecoder::Decode_vkGetGeneratedCommandsMemoryRequirementsNV(const Ap
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetGeneratedCommandsMemoryRequirementsNV(call_info, args);
@@ -10656,6 +14034,12 @@ size_t VulkanDecoder::Decode_vkCmdPreprocessGeneratedCommandsNV(const ApiCallInf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pGeneratedCommandsInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10675,6 +14059,12 @@ size_t VulkanDecoder::Decode_vkCmdExecuteGeneratedCommandsNV(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.isPreprocessed);
     bytes_read += args.pGeneratedCommandsInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdExecuteGeneratedCommandsNV(call_info, args);
@@ -10693,6 +14083,12 @@ size_t VulkanDecoder::Decode_vkCmdBindPipelineShaderGroupNV(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipelineBindPoint);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipeline);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupIndex);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10714,6 +14110,12 @@ size_t VulkanDecoder::Decode_vkCreateIndirectCommandsLayoutNV(const ApiCallInfo&
     bytes_read += args.pIndirectCommandsLayout.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateIndirectCommandsLayoutNV(call_info, args);
@@ -10732,6 +14134,12 @@ size_t VulkanDecoder::Decode_vkDestroyIndirectCommandsLayoutNV(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.indirectCommandsLayout);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkDestroyIndirectCommandsLayoutNV(call_info, args);
@@ -10748,6 +14156,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthBias2EXT(const ApiCallInfo& call_info,
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pDepthBiasInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10767,6 +14181,12 @@ size_t VulkanDecoder::Decode_vkAcquireDrmDisplayEXT(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.drmFd);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.display);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10788,6 +14208,12 @@ size_t VulkanDecoder::Decode_vkGetDrmDisplayEXT(const ApiCallInfo& call_info, co
     bytes_read += args.display.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDrmDisplayEXT(call_info, args);
@@ -10808,6 +14234,12 @@ size_t VulkanDecoder::Decode_vkCreatePrivateDataSlotEXT(const ApiCallInfo& call_
     bytes_read += args.pPrivateDataSlot.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreatePrivateDataSlotEXT(call_info, args);
@@ -10825,6 +14257,12 @@ size_t VulkanDecoder::Decode_vkDestroyPrivateDataSlotEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.privateDataSlot);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10847,6 +14285,12 @@ size_t VulkanDecoder::Decode_vkSetPrivateDataEXT(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.data);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkSetPrivateDataEXT(call_info, args);
@@ -10867,6 +14311,12 @@ size_t VulkanDecoder::Decode_vkGetPrivateDataEXT(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.privateDataSlot);
     bytes_read += args.pData.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPrivateDataEXT(call_info, args);
@@ -10885,6 +14335,12 @@ size_t VulkanDecoder::Decode_vkQueueSetPerfHintQCOM(const ApiCallInfo& call_info
     bytes_read += args.pPerfHintInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkQueueSetPerfHintQCOM(call_info, args);
@@ -10901,6 +14357,12 @@ size_t VulkanDecoder::Decode_vkCmdDispatchTileQCOM(const ApiCallInfo& call_info,
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pDispatchTileInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10919,6 +14381,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginPerTileExecutionQCOM(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pPerTileBeginInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBeginPerTileExecutionQCOM(call_info, args);
@@ -10935,6 +14403,12 @@ size_t VulkanDecoder::Decode_vkCmdEndPerTileExecutionQCOM(const ApiCallInfo& cal
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pPerTileEndInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10953,6 +14427,12 @@ size_t VulkanDecoder::Decode_vkGetDescriptorSetLayoutSizeEXT(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.layout);
     bytes_read += args.pLayoutSizeInBytes.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -10973,6 +14453,12 @@ size_t VulkanDecoder::Decode_vkGetDescriptorSetLayoutBindingOffsetEXT(const ApiC
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.binding);
     bytes_read += args.pOffset.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDescriptorSetLayoutBindingOffsetEXT(call_info, args);
@@ -10992,6 +14478,12 @@ size_t VulkanDecoder::Decode_vkGetDescriptorEXT(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeSizeTValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dataSize);
     bytes_read += args.pDescriptor.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDescriptorEXT(call_info, args);
@@ -11009,6 +14501,12 @@ size_t VulkanDecoder::Decode_vkCmdBindDescriptorBuffersEXT(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.bufferCount);
     bytes_read += args.pBindingInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11032,6 +14530,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDescriptorBufferOffsetsEXT(const ApiCallInf
     bytes_read += args.pBufferIndices.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pOffsets.DecodeUInt64((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDescriptorBufferOffsetsEXT(call_info, args);
@@ -11051,6 +14555,12 @@ size_t VulkanDecoder::Decode_vkCmdBindDescriptorBufferEmbeddedSamplersEXT(const 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.layout);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.set);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindDescriptorBufferEmbeddedSamplersEXT(call_info, args);
@@ -11068,6 +14578,12 @@ size_t VulkanDecoder::Decode_vkCmdSetFragmentShadingRateEnumNV(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.shadingRate);
     bytes_read += args.combinerOps.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11088,6 +14604,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceFaultInfoEXT(const ApiCallInfo& call_inf
     bytes_read += args.pFaultInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceFaultInfoEXT(call_info, args);
@@ -11105,6 +14627,12 @@ size_t VulkanDecoder::Decode_vkAcquireWinrtDisplayNV(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.physicalDevice);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.display);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11124,6 +14652,12 @@ size_t VulkanDecoder::Decode_vkGetWinrtDisplayNV(const ApiCallInfo& call_info, c
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.deviceRelativeId);
     bytes_read += args.pDisplay.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11145,6 +14679,12 @@ size_t VulkanDecoder::Decode_vkCreateDirectFBSurfaceEXT(const ApiCallInfo& call_
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDirectFBSurfaceEXT(call_info, args);
@@ -11163,6 +14703,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceDirectFBPresentationSupportEXT(c
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queueFamilyIndex);
     bytes_read += ValueDecoder::DecodeAddress((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.dfb);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11184,6 +14730,12 @@ size_t VulkanDecoder::Decode_vkCmdSetVertexInputEXT(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.vertexAttributeDescriptionCount);
     bytes_read += args.pVertexAttributeDescriptions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetVertexInputEXT(call_info, args);
@@ -11202,6 +14754,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryZirconHandleFUCHSIA(const ApiCallInfo& c
     bytes_read += args.pGetZirconHandleInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pZirconHandle.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11223,6 +14781,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryZirconHandlePropertiesFUCHSIA(const ApiC
     bytes_read += args.pMemoryZirconHandleProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetMemoryZirconHandlePropertiesFUCHSIA(call_info, args);
@@ -11240,6 +14804,12 @@ size_t VulkanDecoder::Decode_vkImportSemaphoreZirconHandleFUCHSIA(const ApiCallI
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pImportSemaphoreZirconHandleInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11260,6 +14830,12 @@ size_t VulkanDecoder::Decode_vkGetSemaphoreZirconHandleFUCHSIA(const ApiCallInfo
     bytes_read += args.pZirconHandle.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetSemaphoreZirconHandleFUCHSIA(call_info, args);
@@ -11277,6 +14853,12 @@ size_t VulkanDecoder::Decode_vkCmdBindInvocationMaskHUAWEI(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.imageView);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.imageLayout);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11297,6 +14879,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryRemoteAddressNV(const ApiCallInfo& call_
     bytes_read += args.pAddress.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetMemoryRemoteAddressNV(call_info, args);
@@ -11313,6 +14901,12 @@ size_t VulkanDecoder::Decode_vkCmdSetPatchControlPointsEXT(const ApiCallInfo& ca
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.patchControlPoints);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11331,6 +14925,12 @@ size_t VulkanDecoder::Decode_vkCmdSetRasterizerDiscardEnableEXT(const ApiCallInf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.rasterizerDiscardEnable);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetRasterizerDiscardEnableEXT(call_info, args);
@@ -11347,6 +14947,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthBiasEnableEXT(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthBiasEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11365,6 +14971,12 @@ size_t VulkanDecoder::Decode_vkCmdSetLogicOpEXT(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.logicOp);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetLogicOpEXT(call_info, args);
@@ -11381,6 +14993,12 @@ size_t VulkanDecoder::Decode_vkCmdSetPrimitiveRestartEnableEXT(const ApiCallInfo
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.primitiveRestartEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11402,6 +15020,12 @@ size_t VulkanDecoder::Decode_vkCreateScreenSurfaceQNX(const ApiCallInfo& call_in
     bytes_read += args.pSurface.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateScreenSurfaceQNX(call_info, args);
@@ -11421,6 +15045,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceScreenPresentationSupportQNX(con
     bytes_read += ValueDecoder::DecodeAddress((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.window);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceScreenPresentationSupportQNX(call_info, args);
@@ -11438,6 +15068,12 @@ size_t VulkanDecoder::Decode_vkCmdSetColorWriteEnableEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.attachmentCount);
     bytes_read += args.pColorWriteEnables.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11459,6 +15095,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawMultiEXT(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.instanceCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstInstance);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11482,6 +15124,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawMultiIndexedEXT(const ApiCallInfo& call_in
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
     bytes_read += args.pVertexOffset.DecodeInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawMultiIndexedEXT(call_info, args);
@@ -11502,6 +15150,12 @@ size_t VulkanDecoder::Decode_vkCreateMicromapEXT(const ApiCallInfo& call_info, c
     bytes_read += args.pMicromap.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateMicromapEXT(call_info, args);
@@ -11520,6 +15174,12 @@ size_t VulkanDecoder::Decode_vkDestroyMicromapEXT(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.micromap);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkDestroyMicromapEXT(call_info, args);
@@ -11537,6 +15197,12 @@ size_t VulkanDecoder::Decode_vkCmdBuildMicromapsEXT(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.infoCount);
     bytes_read += args.pInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11558,6 +15224,12 @@ size_t VulkanDecoder::Decode_vkBuildMicromapsEXT(const ApiCallInfo& call_info, c
     bytes_read += args.pInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkBuildMicromapsEXT(call_info, args);
@@ -11576,6 +15248,12 @@ size_t VulkanDecoder::Decode_vkCopyMicromapEXT(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.deferredOperation);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11596,6 +15274,12 @@ size_t VulkanDecoder::Decode_vkCopyMicromapToMemoryEXT(const ApiCallInfo& call_i
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCopyMicromapToMemoryEXT(call_info, args);
@@ -11614,6 +15298,12 @@ size_t VulkanDecoder::Decode_vkCopyMemoryToMicromapEXT(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.deferredOperation);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11638,6 +15328,12 @@ size_t VulkanDecoder::Decode_vkWriteMicromapsPropertiesEXT(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeSizeTValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkWriteMicromapsPropertiesEXT(call_info, args);
@@ -11654,6 +15350,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyMicromapEXT(const ApiCallInfo& call_info, 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11672,6 +15374,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyMicromapToMemoryEXT(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyMicromapToMemoryEXT(call_info, args);
@@ -11688,6 +15396,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyMemoryToMicromapEXT(const ApiCallInfo& cal
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11710,6 +15424,12 @@ size_t VulkanDecoder::Decode_vkCmdWriteMicromapsPropertiesEXT(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryPool);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstQuery);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdWriteMicromapsPropertiesEXT(call_info, args);
@@ -11727,6 +15447,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceMicromapCompatibilityEXT(const ApiCallIn
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pVersionInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pCompatibility.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11747,6 +15473,12 @@ size_t VulkanDecoder::Decode_vkGetMicromapBuildSizesEXT(const ApiCallInfo& call_
     bytes_read += args.pBuildInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSizeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetMicromapBuildSizesEXT(call_info, args);
@@ -11766,6 +15498,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawClusterHUAWEI(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupCountY);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupCountZ);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawClusterHUAWEI(call_info, args);
@@ -11783,6 +15521,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawClusterIndirectHUAWEI(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.buffer);
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.offset);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11802,6 +15546,12 @@ size_t VulkanDecoder::Decode_vkSetDeviceMemoryPriorityEXT(const ApiCallInfo& cal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.memory);
     bytes_read += ValueDecoder::DecodeFloatValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.priority);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkSetDeviceMemoryPriorityEXT(call_info, args);
@@ -11818,6 +15568,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDispatchParametersARM(const ApiCallInfo& ca
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pDispatchParameters.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11837,6 +15593,12 @@ size_t VulkanDecoder::Decode_vkGetDescriptorSetLayoutHostMappingInfoVALVE(const 
     bytes_read += args.pBindingReference.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pHostMapping.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDescriptorSetLayoutHostMappingInfoVALVE(call_info, args);
@@ -11854,6 +15616,12 @@ size_t VulkanDecoder::Decode_vkGetDescriptorSetHostMappingVALVE(const ApiCallInf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.descriptorSet);
     bytes_read += args.ppData.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11873,6 +15641,12 @@ size_t VulkanDecoder::Decode_vkGetPipelineIndirectMemoryRequirementsNV(const Api
     bytes_read += args.pCreateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPipelineIndirectMemoryRequirementsNV(call_info, args);
@@ -11890,6 +15664,12 @@ size_t VulkanDecoder::Decode_vkCmdUpdatePipelineIndirectBufferNV(const ApiCallIn
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipelineBindPoint);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipeline);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11909,6 +15689,12 @@ size_t VulkanDecoder::Decode_vkGetPipelineIndirectDeviceAddressNV(const ApiCallI
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPipelineIndirectDeviceAddressNV(call_info, args);
@@ -11925,6 +15711,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthClampEnableEXT(const ApiCallInfo& call
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthClampEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11943,6 +15735,12 @@ size_t VulkanDecoder::Decode_vkCmdSetPolygonModeEXT(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.polygonMode);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetPolygonModeEXT(call_info, args);
@@ -11959,6 +15757,12 @@ size_t VulkanDecoder::Decode_vkCmdSetRasterizationSamplesEXT(const ApiCallInfo& 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.rasterizationSamples);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -11978,6 +15782,12 @@ size_t VulkanDecoder::Decode_vkCmdSetSampleMaskEXT(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.samples);
     bytes_read += args.pSampleMask.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetSampleMaskEXT(call_info, args);
@@ -11994,6 +15804,12 @@ size_t VulkanDecoder::Decode_vkCmdSetAlphaToCoverageEnableEXT(const ApiCallInfo&
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.alphaToCoverageEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12012,6 +15828,12 @@ size_t VulkanDecoder::Decode_vkCmdSetAlphaToOneEnableEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.alphaToOneEnable);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetAlphaToOneEnableEXT(call_info, args);
@@ -12028,6 +15850,12 @@ size_t VulkanDecoder::Decode_vkCmdSetLogicOpEnableEXT(const ApiCallInfo& call_in
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.logicOpEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12048,6 +15876,12 @@ size_t VulkanDecoder::Decode_vkCmdSetColorBlendEnableEXT(const ApiCallInfo& call
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.attachmentCount);
     bytes_read += args.pColorBlendEnables.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetColorBlendEnableEXT(call_info, args);
@@ -12066,6 +15900,12 @@ size_t VulkanDecoder::Decode_vkCmdSetColorBlendEquationEXT(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstAttachment);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.attachmentCount);
     bytes_read += args.pColorBlendEquations.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12086,6 +15926,12 @@ size_t VulkanDecoder::Decode_vkCmdSetColorWriteMaskEXT(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.attachmentCount);
     bytes_read += args.pColorWriteMasks.DecodeFlags((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetColorWriteMaskEXT(call_info, args);
@@ -12102,6 +15948,12 @@ size_t VulkanDecoder::Decode_vkCmdSetTessellationDomainOriginEXT(const ApiCallIn
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.domainOrigin);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12120,6 +15972,12 @@ size_t VulkanDecoder::Decode_vkCmdSetRasterizationStreamEXT(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.rasterizationStream);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetRasterizationStreamEXT(call_info, args);
@@ -12136,6 +15994,12 @@ size_t VulkanDecoder::Decode_vkCmdSetConservativeRasterizationModeEXT(const ApiC
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.conservativeRasterizationMode);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12154,6 +16018,12 @@ size_t VulkanDecoder::Decode_vkCmdSetExtraPrimitiveOverestimationSizeEXT(const A
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeFloatValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.extraPrimitiveOverestimationSize);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetExtraPrimitiveOverestimationSizeEXT(call_info, args);
@@ -12171,6 +16041,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthClipEnableEXT(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthClipEnable);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDepthClipEnableEXT(call_info, args);
@@ -12187,6 +16063,12 @@ size_t VulkanDecoder::Decode_vkCmdSetSampleLocationsEnableEXT(const ApiCallInfo&
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.sampleLocationsEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12207,6 +16089,12 @@ size_t VulkanDecoder::Decode_vkCmdSetColorBlendAdvancedEXT(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.attachmentCount);
     bytes_read += args.pColorBlendAdvanced.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetColorBlendAdvancedEXT(call_info, args);
@@ -12223,6 +16111,12 @@ size_t VulkanDecoder::Decode_vkCmdSetProvokingVertexModeEXT(const ApiCallInfo& c
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.provokingVertexMode);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12241,6 +16135,12 @@ size_t VulkanDecoder::Decode_vkCmdSetLineRasterizationModeEXT(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.lineRasterizationMode);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetLineRasterizationModeEXT(call_info, args);
@@ -12257,6 +16157,12 @@ size_t VulkanDecoder::Decode_vkCmdSetLineStippleEnableEXT(const ApiCallInfo& cal
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stippledLineEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12275,6 +16181,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthClipNegativeOneToOneEXT(const ApiCallI
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.negativeOneToOne);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetDepthClipNegativeOneToOneEXT(call_info, args);
@@ -12291,6 +16203,12 @@ size_t VulkanDecoder::Decode_vkCmdSetViewportWScalingEnableNV(const ApiCallInfo&
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.viewportWScalingEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12311,6 +16229,12 @@ size_t VulkanDecoder::Decode_vkCmdSetViewportSwizzleNV(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.viewportCount);
     bytes_read += args.pViewportSwizzles.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetViewportSwizzleNV(call_info, args);
@@ -12327,6 +16251,12 @@ size_t VulkanDecoder::Decode_vkCmdSetCoverageToColorEnableNV(const ApiCallInfo& 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.coverageToColorEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12345,6 +16275,12 @@ size_t VulkanDecoder::Decode_vkCmdSetCoverageToColorLocationNV(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.coverageToColorLocation);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetCoverageToColorLocationNV(call_info, args);
@@ -12362,6 +16298,12 @@ size_t VulkanDecoder::Decode_vkCmdSetCoverageModulationModeNV(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.coverageModulationMode);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetCoverageModulationModeNV(call_info, args);
@@ -12378,6 +16320,12 @@ size_t VulkanDecoder::Decode_vkCmdSetCoverageModulationTableEnableNV(const ApiCa
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.coverageModulationTableEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12397,6 +16345,12 @@ size_t VulkanDecoder::Decode_vkCmdSetCoverageModulationTableNV(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.coverageModulationTableCount);
     bytes_read += args.pCoverageModulationTable.DecodeFloat((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetCoverageModulationTableNV(call_info, args);
@@ -12413,6 +16367,12 @@ size_t VulkanDecoder::Decode_vkCmdSetShadingRateImageEnableNV(const ApiCallInfo&
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.shadingRateImageEnable);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12431,6 +16391,12 @@ size_t VulkanDecoder::Decode_vkCmdSetRepresentativeFragmentTestEnableNV(const Ap
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.representativeFragmentTestEnable);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdSetRepresentativeFragmentTestEnableNV(call_info, args);
@@ -12447,6 +16413,12 @@ size_t VulkanDecoder::Decode_vkCmdSetCoverageReductionModeNV(const ApiCallInfo& 
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.coverageReductionMode);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12468,6 +16440,12 @@ size_t VulkanDecoder::Decode_vkCreateTensorARM(const ApiCallInfo& call_info, con
     bytes_read += args.pTensor.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateTensorARM(call_info, args);
@@ -12485,6 +16463,12 @@ size_t VulkanDecoder::Decode_vkDestroyTensorARM(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.tensor);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12506,6 +16490,12 @@ size_t VulkanDecoder::Decode_vkCreateTensorViewARM(const ApiCallInfo& call_info,
     bytes_read += args.pView.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateTensorViewARM(call_info, args);
@@ -12524,6 +16514,12 @@ size_t VulkanDecoder::Decode_vkDestroyTensorViewARM(const ApiCallInfo& call_info
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.tensorView);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkDestroyTensorViewARM(call_info, args);
@@ -12541,6 +16537,12 @@ size_t VulkanDecoder::Decode_vkGetTensorMemoryRequirementsARM(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12561,6 +16563,12 @@ size_t VulkanDecoder::Decode_vkBindTensorMemoryARM(const ApiCallInfo& call_info,
     bytes_read += args.pBindInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkBindTensorMemoryARM(call_info, args);
@@ -12579,6 +16587,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceTensorMemoryRequirementsARM(const ApiCal
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDeviceTensorMemoryRequirementsARM(call_info, args);
@@ -12595,6 +16609,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyTensorARM(const ApiCallInfo& call_info, co
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pCopyTensorInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12614,6 +16634,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceExternalTensorPropertiesARM(cons
     bytes_read += args.pExternalTensorInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pExternalTensorProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceExternalTensorPropertiesARM(call_info, args);
@@ -12632,6 +16658,12 @@ size_t VulkanDecoder::Decode_vkGetShaderModuleIdentifierEXT(const ApiCallInfo& c
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.shaderModule);
     bytes_read += args.pIdentifier.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetShaderModuleIdentifierEXT(call_info, args);
@@ -12649,6 +16681,12 @@ size_t VulkanDecoder::Decode_vkGetShaderModuleCreateInfoIdentifierEXT(const ApiC
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pCreateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pIdentifier.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12670,6 +16708,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceOpticalFlowImageFormatsNV(const 
     bytes_read += args.pImageFormatProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceOpticalFlowImageFormatsNV(call_info, args);
@@ -12690,6 +16734,12 @@ size_t VulkanDecoder::Decode_vkCreateOpticalFlowSessionNV(const ApiCallInfo& cal
     bytes_read += args.pSession.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateOpticalFlowSessionNV(call_info, args);
@@ -12707,6 +16757,12 @@ size_t VulkanDecoder::Decode_vkDestroyOpticalFlowSessionNV(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.session);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12729,6 +16785,12 @@ size_t VulkanDecoder::Decode_vkBindOpticalFlowSessionImageNV(const ApiCallInfo& 
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.layout);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkBindOpticalFlowSessionImageNV(call_info, args);
@@ -12747,6 +16809,12 @@ size_t VulkanDecoder::Decode_vkCmdOpticalFlowExecuteNV(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.session);
     bytes_read += args.pExecuteInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdOpticalFlowExecuteNV(call_info, args);
@@ -12763,6 +16831,12 @@ size_t VulkanDecoder::Decode_vkAntiLagUpdateAMD(const ApiCallInfo& call_info, co
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pData.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12785,6 +16859,12 @@ size_t VulkanDecoder::Decode_vkCreateShadersEXT(const ApiCallInfo& call_info, co
     bytes_read += args.pShaders.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateShadersEXT(call_info, args);
@@ -12802,6 +16882,12 @@ size_t VulkanDecoder::Decode_vkDestroyShaderEXT(const ApiCallInfo& call_info, co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.shader);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12823,6 +16909,12 @@ size_t VulkanDecoder::Decode_vkGetShaderBinaryDataEXT(const ApiCallInfo& call_in
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetShaderBinaryDataEXT(call_info, args);
@@ -12842,6 +16934,12 @@ size_t VulkanDecoder::Decode_vkCmdBindShadersEXT(const ApiCallInfo& call_info, c
     bytes_read += args.pStages.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pShaders.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindShadersEXT(call_info, args);
@@ -12859,6 +16957,12 @@ size_t VulkanDecoder::Decode_vkCmdSetDepthClampRangeEXT(const ApiCallInfo& call_
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depthClampMode);
     bytes_read += args.pDepthClampRange.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12880,6 +16984,12 @@ size_t VulkanDecoder::Decode_vkGetFramebufferTilePropertiesQCOM(const ApiCallInf
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetFramebufferTilePropertiesQCOM(call_info, args);
@@ -12898,6 +17008,12 @@ size_t VulkanDecoder::Decode_vkGetDynamicRenderingTilePropertiesQCOM(const ApiCa
     bytes_read += args.pRenderingInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12918,6 +17034,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceCooperativeVectorPropertiesNV(co
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceCooperativeVectorPropertiesNV(call_info, args);
@@ -12936,6 +17058,12 @@ size_t VulkanDecoder::Decode_vkConvertCooperativeVectorMatrixNV(const ApiCallInf
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkConvertCooperativeVectorMatrixNV(call_info, args);
@@ -12953,6 +17081,12 @@ size_t VulkanDecoder::Decode_vkCmdConvertCooperativeVectorMatrixNV(const ApiCall
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.infoCount);
     bytes_read += args.pInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -12973,6 +17107,12 @@ size_t VulkanDecoder::Decode_vkSetLatencySleepModeNV(const ApiCallInfo& call_inf
     bytes_read += args.pSleepModeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkSetLatencySleepModeNV(call_info, args);
@@ -12992,6 +17132,12 @@ size_t VulkanDecoder::Decode_vkLatencySleepNV(const ApiCallInfo& call_info, cons
     bytes_read += args.pSleepInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkLatencySleepNV(call_info, args);
@@ -13009,6 +17155,12 @@ size_t VulkanDecoder::Decode_vkSetLatencyMarkerNV(const ApiCallInfo& call_info, 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapchain);
     bytes_read += args.pLatencyMarkerInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13028,6 +17180,12 @@ size_t VulkanDecoder::Decode_vkGetLatencyTimingsNV(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.swapchain);
     bytes_read += args.pLatencyMarkerInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetLatencyTimingsNV(call_info, args);
@@ -13044,6 +17202,12 @@ size_t VulkanDecoder::Decode_vkQueueNotifyOutOfBandNV(const ApiCallInfo& call_in
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queue);
     bytes_read += args.pQueueTypeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13068,6 +17232,12 @@ size_t VulkanDecoder::Decode_vkCreateDataGraphPipelinesARM(const ApiCallInfo& ca
     bytes_read += args.pPipelines.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateDataGraphPipelinesARM(call_info, args);
@@ -13087,6 +17257,12 @@ size_t VulkanDecoder::Decode_vkCreateDataGraphPipelineSessionARM(const ApiCallIn
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSession.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13108,6 +17284,12 @@ size_t VulkanDecoder::Decode_vkGetDataGraphPipelineSessionBindPointRequirementsA
     bytes_read += args.pBindPointRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDataGraphPipelineSessionBindPointRequirementsARM(call_info, args);
@@ -13125,6 +17307,12 @@ size_t VulkanDecoder::Decode_vkGetDataGraphPipelineSessionMemoryRequirementsARM(
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13145,6 +17333,12 @@ size_t VulkanDecoder::Decode_vkBindDataGraphPipelineSessionMemoryARM(const ApiCa
     bytes_read += args.pBindInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkBindDataGraphPipelineSessionMemoryARM(call_info, args);
@@ -13163,6 +17357,12 @@ size_t VulkanDecoder::Decode_vkDestroyDataGraphPipelineSessionARM(const ApiCallI
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.session);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkDestroyDataGraphPipelineSessionARM(call_info, args);
@@ -13180,6 +17380,12 @@ size_t VulkanDecoder::Decode_vkCmdDispatchDataGraphARM(const ApiCallInfo& call_i
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.session);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13201,6 +17407,12 @@ size_t VulkanDecoder::Decode_vkGetDataGraphPipelineAvailablePropertiesARM(const 
     bytes_read += args.pProperties.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetDataGraphPipelineAvailablePropertiesARM(call_info, args);
@@ -13220,6 +17432,12 @@ size_t VulkanDecoder::Decode_vkGetDataGraphPipelinePropertiesARM(const ApiCallIn
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.propertiesCount);
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13241,6 +17459,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesAR
     bytes_read += args.pQueueFamilyDataGraphProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(call_info, args);
@@ -13259,6 +17483,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEn
     bytes_read += args.pQueueFamilyDataGraphProcessingEngineInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pQueueFamilyDataGraphProcessingEngineProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(call_info, args);
@@ -13275,6 +17505,12 @@ size_t VulkanDecoder::Decode_vkCmdSetAttachmentFeedbackLoopEnableEXT(const ApiCa
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeFlagsValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.aspectMask);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13293,6 +17529,12 @@ size_t VulkanDecoder::Decode_vkCmdBindTileMemoryQCOM(const ApiCallInfo& call_inf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pTileMemoryBindInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBindTileMemoryQCOM(call_info, args);
@@ -13309,6 +17551,12 @@ size_t VulkanDecoder::Decode_vkCmdDecompressMemoryEXT(const ApiCallInfo& call_in
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pDecompressMemoryInfoEXT.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13331,6 +17579,12 @@ size_t VulkanDecoder::Decode_vkCmdDecompressMemoryIndirectCountEXT(const ApiCall
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.maxDecompressionCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDecompressMemoryIndirectCountEXT(call_info, args);
@@ -13349,6 +17603,12 @@ size_t VulkanDecoder::Decode_vkGetPartitionedAccelerationStructuresBuildSizesNV(
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSizeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPartitionedAccelerationStructuresBuildSizesNV(call_info, args);
@@ -13365,6 +17625,12 @@ size_t VulkanDecoder::Decode_vkCmdBuildPartitionedAccelerationStructuresNV(const
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pBuildInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13384,6 +17650,12 @@ size_t VulkanDecoder::Decode_vkGetGeneratedCommandsMemoryRequirementsEXT(const A
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMemoryRequirements.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetGeneratedCommandsMemoryRequirementsEXT(call_info, args);
@@ -13402,6 +17674,12 @@ size_t VulkanDecoder::Decode_vkCmdPreprocessGeneratedCommandsEXT(const ApiCallIn
     bytes_read += args.pGeneratedCommandsInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stateCommandBuffer);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdPreprocessGeneratedCommandsEXT(call_info, args);
@@ -13419,6 +17697,12 @@ size_t VulkanDecoder::Decode_vkCmdExecuteGeneratedCommandsEXT(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.isPreprocessed);
     bytes_read += args.pGeneratedCommandsInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13440,6 +17724,12 @@ size_t VulkanDecoder::Decode_vkCreateIndirectCommandsLayoutEXT(const ApiCallInfo
     bytes_read += args.pIndirectCommandsLayout.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateIndirectCommandsLayoutEXT(call_info, args);
@@ -13457,6 +17747,12 @@ size_t VulkanDecoder::Decode_vkDestroyIndirectCommandsLayoutEXT(const ApiCallInf
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.indirectCommandsLayout);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13478,6 +17774,12 @@ size_t VulkanDecoder::Decode_vkCreateIndirectExecutionSetEXT(const ApiCallInfo& 
     bytes_read += args.pIndirectExecutionSet.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateIndirectExecutionSetEXT(call_info, args);
@@ -13495,6 +17797,12 @@ size_t VulkanDecoder::Decode_vkDestroyIndirectExecutionSetEXT(const ApiCallInfo&
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.indirectExecutionSet);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13515,6 +17823,12 @@ size_t VulkanDecoder::Decode_vkUpdateIndirectExecutionSetPipelineEXT(const ApiCa
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.executionSetWriteCount);
     bytes_read += args.pExecutionSetWrites.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkUpdateIndirectExecutionSetPipelineEXT(call_info, args);
@@ -13533,6 +17847,12 @@ size_t VulkanDecoder::Decode_vkUpdateIndirectExecutionSetShaderEXT(const ApiCall
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.indirectExecutionSet);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.executionSetWriteCount);
     bytes_read += args.pExecutionSetWrites.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13553,6 +17873,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensi
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(call_info, args);
@@ -13571,6 +17897,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryMetalHandleEXT(const ApiCallInfo& call_i
     bytes_read += args.pGetMetalHandleInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pHandle.DecodeVoidPtr((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13591,6 +17923,12 @@ size_t VulkanDecoder::Decode_vkGetMemoryMetalHandlePropertiesEXT(const ApiCallIn
     bytes_read += ValueDecoder::DecodeAddress((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pHandle);
     bytes_read += args.pMemoryMetalHandleProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13613,6 +17951,12 @@ size_t VulkanDecoder::Decode_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCoun
     bytes_read += args.pCounterDescriptions.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(call_info, args);
@@ -13630,6 +17974,12 @@ size_t VulkanDecoder::Decode_vkCmdEndRendering2EXT(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pRenderingEndInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdEndRendering2EXT(call_info, args);
@@ -13646,6 +17996,12 @@ size_t VulkanDecoder::Decode_vkCmdBeginCustomResolveEXT(const ApiCallInfo& call_
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pBeginCustomResolveInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13669,6 +18025,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowI
     bytes_read += args.pImageFormatProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(call_info, args);
@@ -13689,6 +18051,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperat
     bytes_read += args.pProperties.DecodeBaseHeader((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM(call_info, args);
@@ -13705,6 +18073,12 @@ size_t VulkanDecoder::Decode_vkCmdSetComputeOccupancyPriorityNV(const ApiCallInf
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pParameters.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13726,6 +18100,12 @@ size_t VulkanDecoder::Decode_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT(
     bytes_read += args.pProperties.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT(call_info, args);
@@ -13742,6 +18122,12 @@ size_t VulkanDecoder::Decode_vkCmdSetPrimitiveRestartIndexEXT(const ApiCallInfo&
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.primitiveRestartIndex);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13763,6 +18149,12 @@ size_t VulkanDecoder::Decode_vkCreateAccelerationStructureKHR(const ApiCallInfo&
     bytes_read += args.pAccelerationStructure.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCreateAccelerationStructureKHR(call_info, args);
@@ -13780,6 +18172,12 @@ size_t VulkanDecoder::Decode_vkDestroyAccelerationStructureKHR(const ApiCallInfo
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.accelerationStructure);
     bytes_read += args.pAllocator.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13799,6 +18197,12 @@ size_t VulkanDecoder::Decode_vkCmdBuildAccelerationStructuresKHR(const ApiCallIn
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.infoCount);
     bytes_read += args.pInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.ppBuildRangeInfos.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13821,6 +18225,12 @@ size_t VulkanDecoder::Decode_vkCmdBuildAccelerationStructuresIndirectKHR(const A
     bytes_read += args.pIndirectStrides.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.ppMaxPrimitiveCounts.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdBuildAccelerationStructuresIndirectKHR(call_info, args);
@@ -13840,6 +18250,12 @@ size_t VulkanDecoder::Decode_vkCopyAccelerationStructureToMemoryKHR(const ApiCal
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCopyAccelerationStructureToMemoryKHR(call_info, args);
@@ -13858,6 +18274,12 @@ size_t VulkanDecoder::Decode_vkCopyMemoryToAccelerationStructureKHR(const ApiCal
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.deferredOperation);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13882,6 +18304,12 @@ size_t VulkanDecoder::Decode_vkWriteAccelerationStructuresPropertiesKHR(const Ap
     bytes_read += ValueDecoder::DecodeSizeTValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkWriteAccelerationStructuresPropertiesKHR(call_info, args);
@@ -13898,6 +18326,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyAccelerationStructureKHR(const ApiCallInfo
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13916,6 +18350,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyAccelerationStructureToMemoryKHR(const Api
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdCopyAccelerationStructureToMemoryKHR(call_info, args);
@@ -13932,6 +18372,12 @@ size_t VulkanDecoder::Decode_vkCmdCopyMemoryToAccelerationStructureKHR(const Api
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13950,6 +18396,12 @@ size_t VulkanDecoder::Decode_vkGetAccelerationStructureDeviceAddressKHR(const Ap
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -13972,6 +18424,12 @@ size_t VulkanDecoder::Decode_vkCmdWriteAccelerationStructuresPropertiesKHR(const
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.queryPool);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.firstQuery);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdWriteAccelerationStructuresPropertiesKHR(call_info, args);
@@ -13989,6 +18447,12 @@ size_t VulkanDecoder::Decode_vkGetDeviceAccelerationStructureCompatibilityKHR(co
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.device);
     bytes_read += args.pVersionInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pCompatibility.DecodeEnum((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -14009,6 +18473,12 @@ size_t VulkanDecoder::Decode_vkGetAccelerationStructureBuildSizesKHR(const ApiCa
     bytes_read += args.pBuildInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pMaxPrimitiveCounts.DecodeUInt32((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pSizeInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -14033,6 +18503,12 @@ size_t VulkanDecoder::Decode_vkCmdTraceRaysKHR(const ApiCallInfo& call_info, con
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.height);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.depth);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdTraceRaysKHR(call_info, args);
@@ -14055,6 +18531,12 @@ size_t VulkanDecoder::Decode_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR(c
     bytes_read += args.pData.DecodeVoid((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR(call_info, args);
@@ -14076,6 +18558,12 @@ size_t VulkanDecoder::Decode_vkCmdTraceRaysIndirectKHR(const ApiCallInfo& call_i
     bytes_read += args.pCallableShaderBindingTable.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.indirectDeviceAddress);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdTraceRaysIndirectKHR(call_info, args);
@@ -14096,6 +18584,12 @@ size_t VulkanDecoder::Decode_vkGetRayTracingShaderGroupStackSizeKHR(const ApiCal
     bytes_read += ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupShader);
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkGetRayTracingShaderGroupStackSizeKHR(call_info, args);
@@ -14112,6 +18606,12 @@ size_t VulkanDecoder::Decode_vkCmdSetRayTracingPipelineStackSizeKHR(const ApiCal
 
     bytes_read += ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.commandBuffer);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.pipelineStackSize);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -14132,6 +18632,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawMeshTasksEXT(const ApiCallInfo& call_info,
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupCountY);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.groupCountZ);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_vkCmdDrawMeshTasksEXT(call_info, args);
@@ -14151,6 +18657,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawMeshTasksIndirectEXT(const ApiCallInfo& ca
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.offset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.drawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -14173,6 +18685,12 @@ size_t VulkanDecoder::Decode_vkCmdDrawMeshTasksIndirectCountEXT(const ApiCallInf
     bytes_read += ValueDecoder::DecodeUInt64Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.countBufferOffset);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.maxDrawCount);
     bytes_read += ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.stride);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {

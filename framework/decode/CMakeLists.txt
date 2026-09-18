@@ -150,6 +150,8 @@ target_sources(gfxrecon_decode
                     ${CMAKE_CURRENT_LIST_DIR}/struct_pointer_decoder.h
                     ${CMAKE_CURRENT_LIST_DIR}/swapchain_image_tracker.h
                     ${CMAKE_CURRENT_LIST_DIR}/value_decoder.h
+                    ${CMAKE_CURRENT_LIST_DIR}/parameter_decode_error.h
+                    ${CMAKE_CURRENT_LIST_DIR}/parameter_decode_error.cpp
                     $<$<BOOL:${GFXRECON_TOCPP_SUPPORT}>:${CMAKE_CURRENT_LIST_DIR}/vulkan_cpp_consumer_base.h>
                     $<$<BOOL:${GFXRECON_TOCPP_SUPPORT}>:${CMAKE_CURRENT_LIST_DIR}/vulkan_cpp_consumer_base.cpp>
                     $<$<BOOL:${GFXRECON_TOCPP_SUPPORT}>:${CMAKE_CURRENT_LIST_DIR}/vulkan_cpp_loader_generator.h>

@@ -24,6 +24,11 @@
 #define GFXRECON_DECODE_FILE_PROCESSOR_VISITORS_H
 
 // Implementation header: include only from .cpp files that use DispatchVisitor or ProcessVisitor.
+#include "decode/parameter_decode_error.h"
+#include "util/logging.h"
+
+#include <cinttypes>
+#include <string>
 #include "decode/decode_allocator.h"
 #include "decode/file_processor.h"
 
@@ -185,6 +190,17 @@ class DispatchVisitor
                 std::apply(dispatch_call, args->GetTuple());
             }
         }
+
+        // A decoder that found less in the parameter buffer than the call needs reported it here.
+        // The block is corrupt, and processing stops, because what follows it cannot be trusted.
+        std::string decode_error;
+        if (ParameterDecodeError::GetPendingMessage(&decode_error))
+        {
+            GFXRECON_LOG_ERROR("Invalid block content: %s (block %" PRIu64 ")", decode_error.c_str(), block_index_);
+            SetReplayResult(ProcessBlocksResult{ ProcessBlockState::kError, kErrorReadingBlockData });
+            return ProcessBlockState::kError;
+        }
+
         // NOTE: If future decoders can updata state, this should be updated to forward that information.
         return ProcessBlockState::kContinue;
     }
