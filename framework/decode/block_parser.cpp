@@ -27,6 +27,7 @@
 #include "decode/file_processor_types.h"
 #include "format/format_util.h"
 
+#include <cinttypes>
 #include <cstring>
 #include <numeric>
 #include <sstream>
@@ -81,6 +82,21 @@ BlockIOError BlockParser::ReadBlockBuffer(FileInputStreamPtr& input_stream, Bloc
                 status = kErrorReadingBlockData;
             }
         }
+
+        // A block cannot hold more bytes than the file. A header that claims more is corrupt, and
+        // the allocator must not see its size: a size like 2^56 throws std::bad_alloc, which the
+        // tools do not catch. A smaller size that still passes the end of the file fails at the
+        // read below, which is the same path a truncated file takes.
+        const int64_t file_size = input_stream->GetFileSize();
+        if ((status == kErrorNone) && (file_size >= 0) && (total_block_size > static_cast<uint64_t>(file_size)))
+        {
+            GFXRECON_LOG_ERROR("Invalid block header: the block claims %" PRIu64 " bytes and the file holds %" PRId64
+                               " bytes",
+                               static_cast<uint64_t>(block_header.size),
+                               file_size);
+            status = kErrorReadingBlockHeader;
+        }
+
         if (status == kErrorNone)
         {
             // The allocator needs to know how much linear allocation will be needed for this block

@@ -52,6 +52,13 @@ class FStreamFileInputStream
 
     const std::string& GetFilename() const { return filename_; }
 
+    // The size of the open file in bytes, or -1 when it is not known. A block that claims more
+    // bytes than this is a corrupt block, and the parser refuses it before it allocates.
+    int64_t GetFileSize() const
+    {
+        return file_size_;
+    }
+
     bool IsOpen() const;
     bool IsEof() const;
     bool IsError() const;
@@ -103,6 +110,9 @@ class FStreamFileInputStream
 
     size_t        read_ahead_bytes_  = 0U;
     size_t        read_ahead_offset_ = 0U;
+
+    // Set at Open. -1 when the size is not known.
+    int64_t file_size_ = -1;
 };
 
 GFXRECON_END_NAMESPACE(util)
