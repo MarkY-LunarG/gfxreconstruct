@@ -111,6 +111,11 @@ A variable that you export in your shell does not override an entry in these lis
 `verify_gfxr(name)` runs the app with the capture layer on, converts the new capture to JSON,
 converts `known_good/<name>.gfxr` to JSON, drops the fields that differ between runs, and
 compares the two documents.
+Every file that a case writes goes to `results/<case name>/` under the test directory, and the
+harness empties that directory first.
+The case name is the gtest name, such as `CaptureApps_Serialized.CorrectGFXR_triangle`, so two
+cases never share a file and `ctest -j` is safe.
+`known_good/` is read only.
 The list of dropped fields is in `verify-gfxr.cpp`, with a reason next to each entry.
 `json-normalizer.cpp` tests that list.
 
@@ -144,7 +149,7 @@ The known-good file is a capture of the app on the mock ICD.
 
 1. Delete `known_good/<name>.gfxr` if one exists, then build and install.
 2. Run the case once.
-   It fails, and it leaves `<name>.gfxr` in `<install>/test`.
+   It fails, and it leaves `<name>.gfxr` in `<install>/test/results/<Suite>.<Case>/`.
 3. Copy that file to `test/known_good/<name>.gfxr`, then install again.
 4. Run the case two more times.
    Both must pass.
@@ -171,11 +176,15 @@ Disable the code that your test covers, then run the test.
 If the test still passes, it does not test that code.
 
 Prove a harness assertion before you trust it.
-Start the runner with an empty environment, so the app runs with no capture layer:
+Start the runner with the mock driver and no capture layer.
+The app needs the headless flag, or it stops at window creation and the case fails too early:
 
 ```bash
 cd build/linux/x64/output/test
-env -i PATH="$PATH" HOME="$HOME" ./gfxrecon-testapp-runner --gtest_filter=Triangle.CorrectGFXR
+env -i PATH="$PATH" HOME="$HOME" GFXRECON_TESTAPP_HEADLESS=true \
+    VK_DRIVER_FILES="$PWD/test_apps/VkICD_mock_icd.json" \
+    GFXRECON_TESTAPP_MOCK_ICD="$PWD/test_apps/libVkICD_mock_icd.so" \
+    ./gfxrecon-testapp-runner --gtest_filter=Triangle.CorrectGFXR
 ```
 
 The case must fail at "capture file was not produced".
