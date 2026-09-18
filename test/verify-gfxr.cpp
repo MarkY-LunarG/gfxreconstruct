@@ -1,3 +1,10 @@
+// stb_image decodes the PNG screenshots for the pixel comparison. This is the one translation unit
+// that holds its implementation.
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_PNG
+#include <stb_image.h>
+
+#include <cmath>
 #include "verify-gfxr.h"
 
 #include <gtest/gtest.h>
@@ -332,6 +339,68 @@ static void prepare_case_directory(const Paths& paths)
     std::filesystem::remove_all(paths.case_directory, error);
     std::filesystem::create_directories(paths.case_directory, error);
     ASSERT_FALSE(error) << "could not create the results directory " << paths.case_directory << ": " << error.message();
+}
+
+// The driver that the suite runs on. The ctest environment list sets it. A runner started by hand
+// without it is on the mock.
+static std::string test_driver()
+{
+    const char* driver = std::getenv("GFXRECON_TEST_DRIVER");
+    return (driver != nullptr && driver[0] != '\0') ? driver : "mock";
+}
+
+// The threshold comes from imageutils.py in VulkanTests. Differences under it are hard to see.
+// Differences over it are visible.
+const double kRmsThresholdPercent = 1.18;
+
+struct DecodedImage
+{
+    int                  width  = 0;
+    int                  height = 0;
+    std::vector<uint8_t> rgb;
+};
+
+static bool load_rgb(const std::string& path, DecodedImage& image, std::string& error)
+{
+    int      channels = 0;
+    uint8_t* pixels   = stbi_load(path.c_str(), &image.width, &image.height, &channels, 3);
+    if (pixels == nullptr)
+    {
+        error = path + ": " + (stbi_failure_reason() != nullptr ? stbi_failure_reason() : "load failed");
+        return false;
+    }
+    image.rgb.assign(pixels, pixels + static_cast<size_t>(image.width) * image.height * 3);
+    stbi_image_free(pixels);
+    return true;
+}
+
+double rms_difference_percent(const std::string& image_path, const std::string& reference_path, std::string& error)
+{
+    DecodedImage image;
+    DecodedImage reference;
+    if (!load_rgb(image_path, image, error) || !load_rgb(reference_path, reference, error))
+    {
+        return 100.0;
+    }
+    if (image.width != reference.width || image.height != reference.height)
+    {
+        error = image_path + " is " + std::to_string(image.width) + "x" + std::to_string(image.height) + " and " +
+                reference_path + " is " + std::to_string(reference.width) + "x" + std::to_string(reference.height);
+        return 100.0;
+    }
+    const size_t component_count = image.rgb.size();
+    if (component_count == 0)
+    {
+        return 0.0;
+    }
+    double total_square_difference = 0.0;
+    for (size_t i = 0; i < component_count; ++i)
+    {
+        const double difference = static_cast<double>(image.rgb[i]) - static_cast<double>(reference.rgb[i]);
+        total_square_difference += difference * difference;
+    }
+    const double rms = std::sqrt(total_square_difference / static_cast<double>(component_count));
+    return 100.0 * rms / 255.0;
 }
 
 void run_in_background(const char* test_name)
@@ -712,4 +781,41 @@ void capture_and_verify_screenshots(const char* test_name, std::vector<std::stri
                 << "screenshot file reported as written is missing: " << file_path;
         }
     }
+}
+
+void verify_screenshot(const char* test_name, unsigned int frame)
+{
+    EnvironmentVariables env_vars;
+    Paths                paths{ test_name, nullptr, false };
+
+    const std::string     image_name      = test_name + std::string("_frame_") + std::to_string(frame) + ".png";
+    std::filesystem::path screenshot_path = paths.case_directory / image_name;
+    std::filesystem::path reference_path  = paths.base_path / "known_good" / test_driver() / image_name;
+    ASSERT_TRUE(std::filesystem::exists(reference_path))
+        << "no reference image for this driver: " << reference_path << ". Run the case, then copy the screenshot from "
+        << paths.case_directory << " to test/known_good/" << test_driver() << "/ if it is correct.";
+
+    ASSERT_NO_FATAL_FAILURE(run_capture_app(env_vars, paths, test_name));
+
+    // The capture layer is still in the environment. A throwaway capture path keeps a layer that
+    // loads in the replayer from writing over the capture that it reads.
+    std::filesystem::path replay_capture_path = paths.case_directory / (paths.output_stem + "_replay.gfxr");
+    env_vars.SetEnv("GFXRECON_CAPTURE_FILE", replay_capture_path.string().c_str());
+
+    ASSERT_NO_FATAL_FAILURE(run_replay(paths,
+                                       { "--screenshots",
+                                         std::to_string(frame),
+                                         "--screenshot-format",
+                                         "png",
+                                         "--screenshot-dir",
+                                         paths.case_directory.string(),
+                                         "--screenshot-prefix",
+                                         test_name }));
+    ASSERT_TRUE(std::filesystem::exists(screenshot_path)) << "screenshot was not produced: " << screenshot_path;
+
+    std::string  error;
+    const double rms = rms_difference_percent(screenshot_path.string(), reference_path.string(), error);
+    ASSERT_TRUE(error.empty()) << error;
+    ASSERT_LE(rms, kRmsThresholdPercent) << "screenshot " << screenshot_path << " differs from " << reference_path
+                                         << " by " << rms << " percent";
 }
