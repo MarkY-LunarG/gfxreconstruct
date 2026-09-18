@@ -159,29 +159,51 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
         "VK_ICD_FILENAMES=${GFXRECON_TEST_APPS_DIR}/VkICD_mock_icd.json"
         "GFXRECON_TESTAPP_MOCK_ICD=${GFXRECON_TEST_MOCK_ICD_LIBRARY}")
 
-    # Lavapipe, the Mesa software rasterizer. The manifest comes from the mesa-vulkan-drivers
-    # package on Linux. Another platform, or another install location, sets the cache variable.
-    # An empty value makes the lavapipe driver unavailable, and the switch reports that.
-    if (CMAKE_SYSTEM_NAME MATCHES "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
-        set(GFXRECON_TEST_LAVAPIPE_ICD_JSON_DEFAULT /usr/share/vulkan/icd.d/lvp_icd.aarch64.json)
-    elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
-        set(GFXRECON_TEST_LAVAPIPE_ICD_JSON_DEFAULT /usr/share/vulkan/icd.d/lvp_icd.x86_64.json)
+    # Lavapipe, the Mesa software rasterizer. Mesa installs no CMake package configuration and
+    # no pkg-config file for its ICDs, and FindVulkan locates the loader, the headers and the
+    # tools but never a driver, so the manifest is found by name. The name carries the
+    # architecture on some distributions and not on others, and the directory differs between a
+    # distribution package and a local Mesa build, so search both spellings over the usual
+    # prefixes. find_file caches the result, retries the search while the value is NOTFOUND, and
+    # leaves an explicit -DGFXRECON_TEST_LAVAPIPE_ICD_JSON=<path> alone.
+    if (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+        set(lavapipe_icd_names lvp_icd.aarch64.json lvp_icd.json)
     else ()
-        set(GFXRECON_TEST_LAVAPIPE_ICD_JSON_DEFAULT "")
+        set(lavapipe_icd_names lvp_icd.x86_64.json lvp_icd.json)
     endif ()
-    set(GFXRECON_TEST_LAVAPIPE_ICD_JSON ${GFXRECON_TEST_LAVAPIPE_ICD_JSON_DEFAULT} CACHE FILEPATH
-        "The lavapipe ICD manifest that GFXRECON_TEST_DRIVER=lavapipe selects")
+    find_file(GFXRECON_TEST_LAVAPIPE_ICD_JSON
+        NAMES ${lavapipe_icd_names}
+        HINTS ENV VULKAN_SDK
+        PATHS /etc/vulkan/icd.d
+        PATH_SUFFIXES share/vulkan/icd.d vulkan/icd.d
+        DOC "The lavapipe ICD manifest that GFXRECON_TEST_DRIVER=lavapipe selects")
+    mark_as_advanced(CLEAR GFXRECON_TEST_LAVAPIPE_ICD_JSON)
+
+    # An empty manifest makes the lavapipe driver unavailable, and the switch reports that. A
+    # manifest that names a file which is not there would instead leave the loader with no driver
+    # and fail every lavapipe case inside vkCreateInstance, so treat that as empty and say so.
+    set(lavapipe_icd_manifest "")
+    if (NOT GFXRECON_TEST_LAVAPIPE_ICD_JSON)
+        message(STATUS "No lavapipe ICD manifest found. GFXRECON_TEST_DRIVER=lavapipe needs the "
+                       "mesa-vulkan-drivers package, or GFXRECON_TEST_LAVAPIPE_ICD_JSON set to "
+                       "the manifest path.")
+    elseif (NOT EXISTS ${GFXRECON_TEST_LAVAPIPE_ICD_JSON})
+        message(WARNING "GFXRECON_TEST_LAVAPIPE_ICD_JSON names a file that does not exist: "
+                        "${GFXRECON_TEST_LAVAPIPE_ICD_JSON}. The lavapipe driver is unavailable.")
+    else ()
+        set(lavapipe_icd_manifest ${GFXRECON_TEST_LAVAPIPE_ICD_JSON})
+    endif ()
     set(GFXRECON_TEST_ENVIRONMENT_LAVAPIPE
         "GFXRECON_TEST_DRIVER=lavapipe"
-        "VK_DRIVER_FILES=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}"
-        "VK_ICD_FILENAMES=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}")
+        "VK_DRIVER_FILES=${lavapipe_icd_manifest}"
+        "VK_ICD_FILENAMES=${lavapipe_icd_manifest}")
 
     # A cross-driver case captures on one driver and replays on the other, so the harness needs
     # both manifests whatever the current driver is. An empty lavapipe manifest skips those cases.
     list(APPEND GFXRECON_TEST_ENVIRONMENT
         "GFXRECON_TEST_MOCK_ICD_JSON=${GFXRECON_TEST_APPS_DIR}/VkICD_mock_icd.json"
         "GFXRECON_TEST_MOCK_ICD_LIBRARY=${GFXRECON_TEST_MOCK_ICD_LIBRARY}"
-        "GFXRECON_TEST_LAVAPIPE_ICD_JSON=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}")
+        "GFXRECON_TEST_LAVAPIPE_ICD_JSON=${lavapipe_icd_manifest}")
 
     # ctest reads this file after the discovery file, so it sees GFXRECON_TESTAPP_TESTS.
     configure_file(test_environment.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_environment.cmake @ONLY)
