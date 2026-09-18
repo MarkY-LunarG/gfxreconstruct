@@ -128,7 +128,7 @@ jobs:
         # No sudo. The loader only ignores VK_LAYER_PATH and VK_DRIVER_FILES when the effective
         # user differs from the real user, and the tests need neither root nor a capability.
         cd ${{matrix.config.build_dir}}/linux/x64/output/test
-        ./run-tests.sh
+        GFXRECON_TEST_DRIVER=mock ./run-tests.sh
     - name: Run test app test cases on lavapipe
       id: test_apps_lavapipe
       # The second tier. ctest disables the cases that hold on the mock only, so this runs the
