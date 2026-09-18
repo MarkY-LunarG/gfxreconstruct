@@ -1,3 +1,10 @@
+// stb_image decodes the PNG screenshots for the pixel comparison. This is the one translation unit
+// that holds its implementation.
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_PNG
+#include <stb_image.h>
+
+#include <cmath>
 #include "verify-gfxr.h"
 
 #include <gtest/gtest.h>
@@ -341,6 +348,98 @@ static void prepare_case_directory(const Paths& paths)
     ASSERT_FALSE(error) << "could not create the results directory " << paths.case_directory << ": " << error.message();
 }
 
+// The driver that the suite runs on. The ctest environment list sets it. A runner started by hand
+// without it is on the mock.
+static std::string test_driver()
+{
+    const char* driver = std::getenv("GFXRECON_TEST_DRIVER");
+    return (driver != nullptr && driver[0] != '\0') ? driver : "mock";
+}
+
+// Capture the app. The layer writes to paths.capture_path.
+static void capture_app(EnvironmentVariables& env_vars, const Paths& paths, const char* test_name)
+{
+    env_vars.SetEnv("GFXRECON_CAPTURE_FILE", paths.capture_path.string().c_str());
+    int result = run_command(paths.working_directory, paths.full_executable_path, { test_name });
+    ASSERT_EQ(result, 0) << "capture command failed " << paths.full_executable_path << " " << test_name << " in path "
+                         << paths.working_directory;
+    ASSERT_TRUE(std::filesystem::exists(paths.capture_path)) << "capture file was not produced: " << paths.capture_path;
+}
+
+// Replay the capture with an offscreen swapchain and the given extra arguments. The capture layer
+// is still in the environment, so GFXRECON_CAPTURE_FILE points at a throwaway path, and a layer
+// that loads in the replayer cannot write over the capture it reads.
+static void replay_capture(EnvironmentVariables&           env_vars,
+                           const Paths&                    paths,
+                           const char*                     test_name,
+                           const std::vector<std::string>& extra_replay_args)
+{
+    std::filesystem::path replay_capture_path = paths.case_directory / (test_name + std::string("_replay.gfxr"));
+    env_vars.SetEnv("GFXRECON_CAPTURE_FILE", replay_capture_path.string().c_str());
+
+    std::vector<std::string> replay_args = { "--swapchain", "offscreen" };
+    replay_args.insert(replay_args.end(), extra_replay_args.begin(), extra_replay_args.end());
+    replay_args.push_back(paths.capture_path.string());
+
+    int result = run_command(paths.base_path, paths.replay_path, replay_args);
+    ASSERT_EQ(result, 0) << "replay command failed " << paths.replay_path << " for capture " << paths.capture_path
+                         << " in path " << paths.base_path;
+}
+
+// The threshold comes from imageutils.py in VulkanTests. Differences under it are hard to see.
+// Differences over it are visible.
+const double kRmsThresholdPercent = 1.18;
+
+struct DecodedImage
+{
+    int                  width  = 0;
+    int                  height = 0;
+    std::vector<uint8_t> rgb;
+};
+
+static bool load_rgb(const std::string& path, DecodedImage& image, std::string& error)
+{
+    int      channels = 0;
+    uint8_t* pixels   = stbi_load(path.c_str(), &image.width, &image.height, &channels, 3);
+    if (pixels == nullptr)
+    {
+        error = path + ": " + (stbi_failure_reason() != nullptr ? stbi_failure_reason() : "load failed");
+        return false;
+    }
+    image.rgb.assign(pixels, pixels + static_cast<size_t>(image.width) * image.height * 3);
+    stbi_image_free(pixels);
+    return true;
+}
+
+double rms_difference_percent(const std::string& image_path, const std::string& reference_path, std::string& error)
+{
+    DecodedImage image;
+    DecodedImage reference;
+    if (!load_rgb(image_path, image, error) || !load_rgb(reference_path, reference, error))
+    {
+        return 100.0;
+    }
+    if (image.width != reference.width || image.height != reference.height)
+    {
+        error = image_path + " is " + std::to_string(image.width) + "x" + std::to_string(image.height) + " and " +
+                reference_path + " is " + std::to_string(reference.width) + "x" + std::to_string(reference.height);
+        return 100.0;
+    }
+    const size_t component_count = image.rgb.size();
+    if (component_count == 0)
+    {
+        return 0.0;
+    }
+    double total_square_difference = 0.0;
+    for (size_t i = 0; i < component_count; ++i)
+    {
+        const double difference = static_cast<double>(image.rgb[i]) - static_cast<double>(reference.rgb[i]);
+        total_square_difference += difference * difference;
+    }
+    const double rms = std::sqrt(total_square_difference / static_cast<double>(component_count));
+    return 100.0 * rms / 255.0;
+}
+
 void run_in_background(const char* test_name)
 {
     Paths paths{ test_name, nullptr, false };
@@ -483,34 +582,52 @@ void capture_and_replay(const char* test_name, std::vector<std::string> extra_re
     EnvironmentVariables env_vars;
 
     Paths paths{ test_name, nullptr, false };
-    int   result;
 
     bool working_directory_exists = std::filesystem::exists(paths.working_directory);
     ASSERT_TRUE(working_directory_exists) << "working directory does not exist: " << paths.working_directory;
 
-    std::filesystem::path replay_capture_path = paths.case_directory / (test_name + std::string("_replay.gfxr"));
     prepare_case_directory(paths);
 
-    // Run the app with capture enabled to produce the gfxr to replay.
-    env_vars.SetEnv("GFXRECON_CAPTURE_FILE", paths.capture_path.string().c_str());
-    result = run_command(paths.working_directory, paths.full_executable_path, { test_name });
-    ASSERT_EQ(result, 0) << "capture command failed " << paths.full_executable_path << " " << test_name << " in path "
-                         << paths.working_directory;
+    // Asserts only that the replay tool exits 0: no crash, no assertion, no replay error.
+    ASSERT_NO_FATAL_FAILURE(capture_app(env_vars, paths, test_name));
+    ASSERT_NO_FATAL_FAILURE(replay_capture(env_vars, paths, test_name, extra_replay_args));
+}
 
-    ASSERT_TRUE(std::filesystem::exists(paths.capture_path)) << "capture file was not produced: " << paths.capture_path;
+void verify_screenshot(const char* test_name, unsigned int frame)
+{
+    EnvironmentVariables env_vars;
 
-    // The gfxreconstruct capture layer is still enabled in the environment, so point GFXRECON_CAPTURE_FILE at a
-    // throwaway path for the replay step. This keeps the layer (if it loads during replay) from re-capturing over the
-    // input gfxr we are about to read.
-    env_vars.SetEnv("GFXRECON_CAPTURE_FILE", replay_capture_path.string().c_str());
+    Paths paths{ test_name, nullptr, false };
 
-    // Replay the capture headless (offscreen swapchain) against the mock ICD, forwarding any extra arguments.
-    // Asserts the replay tool exits successfully (no crash, assertion, or replay error).
-    std::vector<std::string> replay_args = { "--swapchain", "offscreen" };
-    replay_args.insert(replay_args.end(), extra_replay_args.begin(), extra_replay_args.end());
-    replay_args.push_back(paths.capture_path.string());
+    bool working_directory_exists = std::filesystem::exists(paths.working_directory);
+    ASSERT_TRUE(working_directory_exists) << "working directory does not exist: " << paths.working_directory;
 
-    result = run_command(paths.base_path, paths.replay_path, replay_args);
-    ASSERT_EQ(result, 0) << "replay command failed " << paths.replay_path << " for capture " << paths.capture_path
-                         << " in path " << paths.base_path;
+    const std::string     image_name      = test_name + std::string("_frame_") + std::to_string(frame) + ".png";
+    std::filesystem::path screenshot_path = paths.case_directory / image_name;
+    std::filesystem::path reference_path  = paths.base_path / "known_good" / test_driver() / image_name;
+    ASSERT_TRUE(std::filesystem::exists(reference_path))
+        << "no reference image for this driver: " << reference_path << ". Run the case, then copy the screenshot from "
+        << paths.case_directory << " to test/known_good/" << test_driver() << "/ if it is correct.";
+
+    prepare_case_directory(paths);
+
+    ASSERT_NO_FATAL_FAILURE(capture_app(env_vars, paths, test_name));
+    ASSERT_NO_FATAL_FAILURE(replay_capture(env_vars,
+                                           paths,
+                                           test_name,
+                                           { "--screenshots",
+                                             std::to_string(frame),
+                                             "--screenshot-format",
+                                             "png",
+                                             "--screenshot-dir",
+                                             paths.case_directory.string(),
+                                             "--screenshot-prefix",
+                                             test_name }));
+    ASSERT_TRUE(std::filesystem::exists(screenshot_path)) << "screenshot was not produced: " << screenshot_path;
+
+    std::string  error;
+    const double rms = rms_difference_percent(screenshot_path.string(), reference_path.string(), error);
+    ASSERT_TRUE(error.empty()) << error;
+    ASSERT_LE(rms, kRmsThresholdPercent) << "screenshot " << screenshot_path << " differs from " << reference_path
+                                         << " by " << rms << " percent";
 }

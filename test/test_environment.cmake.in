@@ -31,9 +31,10 @@ if (GFXRECON_TESTAPP_TESTS)
     set_tests_properties(${GFXRECON_TESTAPP_TESTS} PROPERTIES ENVIRONMENT "${environment}")
 
     # Label every case by the driver it needs, next to the "smoke" label from discovery. A case
-    # whose name matches one of these patterns is "mock-only". Every other case is "any-driver".
-    # A "real-driver" label comes with the first pixel test. When the driver is not the mock, a
-    # mock-only case is disabled, so ctest reports it as not run and the run passes on what holds.
+    # whose name matches one of the mock-only patterns is "mock-only". A case that matches the
+    # real-driver pattern is "real-driver". Every other case is "any-driver". A case whose driver
+    # is not the current one is disabled, so ctest reports it as not run and the run passes on
+    # what holds.
     set(mock_only_patterns
         # A known-good file is a capture on the mock, so a comparison against it holds there only.
         "CorrectGFXR"
@@ -46,6 +47,9 @@ if (GFXRECON_TESTAPP_TESTS)
         # The app faults on lavapipe in a write to memory from vkMapMemory. Remove when it is fixed.
         "^SerializeComputeAndTransfer[.]" "/serialize_compute_and_transfer$")
 
+    # The pixel comparisons. The mock draws nothing, so they need a driver that executes shaders.
+    set(real_driver_pattern "^RealDriverApps/Screenshot[.]")
+
     foreach (test IN LISTS GFXRECON_TESTAPP_TESTS)
         set(driver_label "any-driver")
         foreach (pattern IN LISTS mock_only_patterns)
@@ -54,8 +58,12 @@ if (GFXRECON_TESTAPP_TESTS)
                 break()
             endif ()
         endforeach ()
+        if (test MATCHES "${real_driver_pattern}")
+            set(driver_label "real-driver")
+        endif ()
         set_tests_properties(${test} PROPERTIES LABELS "smoke;${driver_label}")
-        if (driver_label STREQUAL "mock-only" AND NOT driver STREQUAL "mock")
+        if ((driver_label STREQUAL "mock-only" AND NOT driver STREQUAL "mock") OR
+            (driver_label STREQUAL "real-driver" AND driver STREQUAL "mock"))
             set_tests_properties(${test} PROPERTIES DISABLED TRUE)
         endif ()
     endforeach ()

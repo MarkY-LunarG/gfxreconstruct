@@ -59,6 +59,7 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
         test_cases/triangle-extra-device.cpp
         test_cases/json-normalizer.cpp
         test_cases/reruns.cpp
+        test_cases/screenshots.cpp
         verify-gfxr.cpp)
 
     if(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
@@ -70,7 +71,8 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
     add_executable(gfxrecon-testapp-runner ${GFXRECON_TESTCASES})
 
     add_dependencies(gfxrecon-testapp-runner gfxrecon-test-launcher VkICD_mock_icd gfxrecon-convert gfxrecon-replay VkLayer_gfxreconstruct)
-    target_include_directories(gfxrecon-testapp-runner PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+    # stb_image decodes the PNG screenshots for the pixel comparison.
+    target_include_directories(gfxrecon-testapp-runner PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${GFXRECON_SOURCE_DIR}/external/stb)
     target_link_libraries(gfxrecon-testapp-runner
             gfxrecon_util
             GTest::gtest GTest::gtest_main)
@@ -135,7 +137,9 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
 
     # The mock driver. GFXRECON_TESTAPP_MOCK_ICD lets a test app open the mock library and change
     # its test configuration. A test app treats a missing variable as "no mock".
+    # Each driver list also names its driver, so the harness finds known_good/<driver>/.
     set(GFXRECON_TEST_ENVIRONMENT_MOCK
+        "GFXRECON_TEST_DRIVER=mock"
         "VK_DRIVER_FILES=${GFXRECON_TEST_APPS_DIR}/VkICD_mock_icd.json"
         "VK_ICD_FILENAMES=${GFXRECON_TEST_APPS_DIR}/VkICD_mock_icd.json"
         "GFXRECON_TESTAPP_MOCK_ICD=${GFXRECON_TEST_MOCK_ICD_LIBRARY}")
@@ -153,6 +157,7 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
     set(GFXRECON_TEST_LAVAPIPE_ICD_JSON ${GFXRECON_TEST_LAVAPIPE_ICD_JSON_DEFAULT} CACHE FILEPATH
         "The lavapipe ICD manifest that GFXRECON_TEST_DRIVER=lavapipe selects")
     set(GFXRECON_TEST_ENVIRONMENT_LAVAPIPE
+        "GFXRECON_TEST_DRIVER=lavapipe"
         "VK_DRIVER_FILES=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}"
         "VK_ICD_FILENAMES=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}")
 
@@ -201,6 +206,20 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
             DESTINATION ${GFXRECON_INSTALL_TESTDIR})
 
     install(TARGETS gfxrecon-testapp-runner RUNTIME DESTINATION ${GFXRECON_INSTALL_TESTDIR})
+    # The reference files are binaries that change with every header update, and every image
+    # golden adds to them. test/README.md states the budget. The check runs at configure time, so a
+    # file that breaks the budget fails the build before it reaches a pull request.
+    set(GFXRECON_KNOWN_GOOD_BUDGET_BYTES 5242880)
+    file(GLOB_RECURSE known_good_files LIST_DIRECTORIES false ${CMAKE_CURRENT_LIST_DIR}/known_good/*)
+    set(known_good_bytes 0)
+    foreach (known_good_file IN LISTS known_good_files)
+        file(SIZE ${known_good_file} known_good_file_bytes)
+        math(EXPR known_good_bytes "${known_good_bytes} + ${known_good_file_bytes}")
+    endforeach ()
+    if (known_good_bytes GREATER GFXRECON_KNOWN_GOOD_BUDGET_BYTES)
+        message(FATAL_ERROR "test/known_good is ${known_good_bytes} bytes, over the budget of "
+                            "${GFXRECON_KNOWN_GOOD_BUDGET_BYTES} bytes. See test/README.md.")
+    endif ()
     install(DIRECTORY known_good DESTINATION ${GFXRECON_INSTALL_TESTDIR})
     install(TARGETS gfxrecon-convert RUNTIME DESTINATION ${GFXRECON_INSTALL_TESTDIR})
     install(TARGETS gfxrecon-replay RUNTIME DESTINATION ${GFXRECON_INSTALL_TESTDIR})

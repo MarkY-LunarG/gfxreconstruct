@@ -68,4 +68,17 @@ void verify_no_capture(const char* test_name);
  */
 void capture_and_replay(const char* test_name, std::vector<std::string> extra_replay_args = {});
 
+// Capture the app, replay it with a screenshot of one frame, and compare the screenshot against
+// known_good/<driver>/<name>_frame_<frame>.png with the RMS rule. The driver is the value of
+// GFXRECON_TEST_DRIVER, "mock" when unset.
+void verify_screenshot(const char* test_name, unsigned int frame);
+
+// The root mean square difference of two images as a percentage, 0 for identical images and 100
+// for black against white. Alpha is dropped. On a load error or a size mismatch, the function
+// returns 100 and puts the reason in error.
+double rms_difference_percent(const std::string& image_path, const std::string& reference_path, std::string& error);
+
+// Images that differ by no more than this percentage count as the same image.
+extern const double kRmsThresholdPercent;
+
 #endif // GFXRECONSTRUCT_VERIFY_GFXR_H
