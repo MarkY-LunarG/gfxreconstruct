@@ -70,11 +70,16 @@ class Dx12DecoderBase : public ApiDecoder
         return (api == format::ApiFamilyId::ApiFamily_Dxgi) || (api == format::ApiFamilyId::ApiFamily_D3D12);
     }
 
+    // The generated decoder calls this for a call id its switch does not know.
     virtual void DecodeFunctionCall(format::ApiCallId  call_id,
-                                    const ApiCallInfo& call_options,
+                                    const ApiCallInfo& call_info,
                                     const uint8_t*     parameter_buffer,
                                     size_t             buffer_size) override
-    {}
+    {
+        GFXRECON_UNREFERENCED_PARAMETER(parameter_buffer);
+        GFXRECON_UNREFERENCED_PARAMETER(buffer_size);
+        ReportUnknownApiCall(call_id, call_info);
+    }
 
     virtual void DecodeMethodCall(format::ApiCallId  call_id,
                                   format::HandleId   object_id,
