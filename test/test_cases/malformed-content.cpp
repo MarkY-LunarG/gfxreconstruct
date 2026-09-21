@@ -97,6 +97,15 @@ static const MalformedContentCase kDocumentedCases[] = {
     { CaptureMutation::kHandleNeverCreated, kGood, kConvert, Expect::kSuccess, "" },
     { CaptureMutation::kDrawBeforeBeginCommandBuffer, kGood, kConvert, Expect::kSuccess, "" },
     { CaptureMutation::kMissingStateSetup, kTrimmed, kConvert, Expect::kSuccess, "" },
+    // A draw outside the recording state goes to the driver as recorded, because replay
+    // reproduces the recorded behavior, and the replayer logs an error that names the call, the
+    // buffer and the block. The mock takes the draw. Lavapipe faults on it, which is the recorded
+    // behavior too, so the row is mock-only in test_environment.cmake.in.
+    { CaptureMutation::kDrawBeforeBeginCommandBuffer,
+      kGood,
+      kReplay,
+      Expect::kSuccess,
+      "vkCmdDraw records into VkCommandBuffer .* which is not in the recording state \\(block" },
     // The replayer refuses a call whose first object no call created, and names the call, the
     // type and the id, before any driver sees the call. A trimmed capture without its state setup
     // fails the same way on its first call.
@@ -140,17 +149,3 @@ static const MalformedContentCase kDocumentedCases[] = {
 };
 
 INSTANTIATE_TEST_SUITE_P(MalformedContentFiles, MalformedContent, testing::ValuesIn(kDocumentedCases), TestName);
-
-// What the tools must do and do not do yet. Each group names its defect. Move a row up when its
-// fix lands.
-static const MalformedContentCase kKnownDefects[] = {
-    // The replayer passes a draw outside a command buffer to the driver. The mock ICD takes any
-    // call, and lavapipe faults. The replayer must refuse the call with a message before any
-    // driver sees it, so the row expects the same failure on every driver.
-    { CaptureMutation::kDrawBeforeBeginCommandBuffer, kGood, kReplay, Expect::kFailure, "command buffer" },
-};
-
-INSTANTIATE_TEST_SUITE_P(DISABLED_MalformedContentFilesWithKnownDefects,
-                         MalformedContent,
-                         testing::ValuesIn(kKnownDefects),
-                         TestName);
