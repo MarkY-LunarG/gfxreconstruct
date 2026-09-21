@@ -13,8 +13,9 @@ GFXRECON_BEGIN_NAMESPACE(decode)
 // and pointer decoders add a pending message here, because their return value is a byte count
 // that the generated decoders add up and never test. The dispatch visitor gets the pending
 // message after each block and fails the block with its index, so a call is never processed
-// with parameters that were never decoded. The state is per thread, and one block is decoded
-// on one thread.
+// with parameters that were never decoded. The generated replay consumers add a message for the
+// same reason when the object that selects a call's dispatch table is not in the object table.
+// The state is per thread, and one block is decoded on one thread.
 class ParameterDecodeError
 {
   public:

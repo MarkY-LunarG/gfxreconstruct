@@ -21,6 +21,7 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+import re
 from khronos_base_generator import ValueInfo, write
 
 
@@ -207,6 +208,23 @@ class KhronosReplayConsumerBodyGenerator():
         if not self.is_core_type(name):
             object_name = args[0]
             object_name_is_handle = False
+
+            # The object that selects the dispatch table must be in the table, or the call cannot
+            # run. The guard follows the line that maps the object and precedes every use of it.
+            if self.is_handle_like(values[0].base_type):
+                guard = 'if (!handle_mapping::DispatchObjectIsMapped("{}", "{}", {}, {})) {{ return; }}'.format(
+                    name, values[0].base_type, values[0].prefixed_name,
+                    object_name
+                )
+                declaration = re.compile(
+                    r'\b{}\s*=\s*'.format(re.escape(object_name))
+                )
+                index = next(
+                    i for i, line in enumerate(preexpr)
+                    if declaration.search(line)
+                )
+                preexpr.insert(index + 1, guard)
+
             if self.use_instance_table(name, values[0].base_type):
                 dispatchfunc = 'GetInstanceTable'
                 if api_data.has_device and values[0].base_type == api_data.device_type:

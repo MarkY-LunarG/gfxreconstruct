@@ -97,6 +97,19 @@ static const MalformedContentCase kDocumentedCases[] = {
     { CaptureMutation::kHandleNeverCreated, kGood, kConvert, Expect::kSuccess, "" },
     { CaptureMutation::kDrawBeforeBeginCommandBuffer, kGood, kConvert, Expect::kSuccess, "" },
     { CaptureMutation::kMissingStateSetup, kTrimmed, kConvert, Expect::kSuccess, "" },
+    // The replayer refuses a call whose first object no call created, and names the call, the
+    // type and the id, before any driver sees the call. A trimmed capture without its state setup
+    // fails the same way on its first call.
+    { CaptureMutation::kHandleNeverCreated,
+      kGood,
+      kReplay,
+      Expect::kFailure,
+      "vkCmdDraw names a VkCommandBuffer with id .* that no call created" },
+    { CaptureMutation::kMissingStateSetup,
+      kTrimmed,
+      kReplay,
+      Expect::kFailure,
+      "names a Vk[A-Za-z]* with id .* that no call created" },
     // A length field that cannot fit in the parameter buffer is refused before any allocation.
     { CaptureMutation::kCountBomb, kGood, kConvert, Expect::kFailure, "cannot fit in the .* bytes that remain" },
     { CaptureMutation::kCountBomb, kGood, kReplay, Expect::kFailure, "cannot fit in the .* bytes that remain" },
@@ -126,12 +139,6 @@ INSTANTIATE_TEST_SUITE_P(MalformedContentFiles, MalformedContent, testing::Value
 // What the tools must do and do not do yet. Each group names its defect. Move a row up when its
 // fix lands.
 static const MalformedContentCase kKnownDefects[] = {
-    // The replayer faults on a command buffer handle that no call created, instead of reporting
-    // the id.
-    { CaptureMutation::kHandleNeverCreated, kGood, kReplay, Expect::kFailure, "handle|id" },
-    // The replayer faults on a trimmed capture whose state setup is gone, instead of reporting
-    // the resources it cannot find.
-    { CaptureMutation::kMissingStateSetup, kTrimmed, kReplay, Expect::kFailure, "handle|id|resource" },
     // The replayer passes a draw outside a command buffer to the driver. The mock ICD takes any
     // call, and lavapipe faults. The replayer must refuse the call with a message before any
     // driver sees it, so the row expects the same failure on every driver.

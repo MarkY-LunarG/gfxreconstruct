@@ -24,15 +24,44 @@
 #define GFXRECON_DECODE_COMMON_HANDLE_MAPPING_UTIL_H
 
 #include "decode/common_object_info_table.h"
+#include "decode/parameter_decode_error.h"
 #include "format/format.h"
 #include "util/defines.h"
 #include "util/logging.h"
 
 #include <cassert>
+#include <string>
 
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(decode)
 GFXRECON_BEGIN_NAMESPACE(handle_mapping)
+
+// The first parameter of a call names the object that selects the dispatch table and the replay
+// state, so the call cannot run when that object is not in the table. A generated replay consumer
+// calls this after it maps that parameter, with the mapped handle or the object info, and returns
+// when the result is false. A mapped value equal to its default is not in the table. The message
+// goes to ParameterDecodeError, so the dispatch visitor fails the block with its index instead of
+// the call dereferencing a null object.
+template <typename Mapped>
+static bool DispatchObjectIsMapped(const char* call_name, const char* type_name, format::HandleId id, Mapped mapped)
+{
+    if (mapped != Mapped{})
+    {
+        return true;
+    }
+
+    std::string message = std::string(call_name) + " names a " + type_name;
+    if (id == format::kNullHandleId)
+    {
+        message += " that is null";
+    }
+    else
+    {
+        message += " with id " + std::to_string(id) + " that no call created or that a call destroyed";
+    }
+    ParameterDecodeError::AddPendingMessage(message);
+    return false;
+}
 
 template <typename T>
 static typename T::HandleType MapHandle(format::HandleId             id,
