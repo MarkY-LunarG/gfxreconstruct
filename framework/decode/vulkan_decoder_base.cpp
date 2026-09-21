@@ -24,6 +24,7 @@
 #include "decode/vulkan_decoder_base.h"
 
 #include "decode/descriptor_update_template_decoder.h"
+#include "decode/parameter_decode_error.h"
 #include "decode/pointer_decoder.h"
 #include "decode/value_decoder.h"
 
@@ -367,6 +368,12 @@ size_t VulkanDecoderBase::Decode_vkUpdateDescriptorSetWithTemplate(const ApiCall
         (parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.descriptorUpdateTemplate);
     bytes_read += args.pData.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : consumers_)
     {
         consumer->Process_vkUpdateDescriptorSetWithTemplate(call_info, args);
@@ -393,6 +400,12 @@ size_t VulkanDecoderBase::Decode_vkCmdPushDescriptorSetWithTemplateKHR(const Api
         ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.set);
     bytes_read += args.pData.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : consumers_)
     {
         consumer->Process_vkCmdPushDescriptorSetWithTemplateKHR(call_info, args);
@@ -415,6 +428,12 @@ size_t VulkanDecoderBase::Decode_vkCmdPushDescriptorSetWithTemplate2KHR(const Ap
         args.pPushDescriptorSetWithTemplateInfo.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read += args.pPushDescriptorSetWithTemplateInfo.GetMetaStructPointer()->pData.Decode(
         (parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : consumers_)
     {
@@ -439,6 +458,12 @@ size_t VulkanDecoderBase::Decode_vkUpdateDescriptorSetWithTemplateKHR(const ApiC
     bytes_read += ValueDecoder::DecodeHandleIdValue(
         (parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.descriptorUpdateTemplate);
     bytes_read += args.pData.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : consumers_)
     {
@@ -469,6 +494,12 @@ size_t VulkanDecoderBase::Decode_vkCreateRayTracingPipelinesKHR(const ApiCallInf
     bytes_read += args.pPipelines.Decode((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read +=
         ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -501,6 +532,12 @@ size_t VulkanDecoderBase::Decode_vkDeferredOperationJoinKHR(const ApiCallInfo& c
         ValueDecoder::DecodeHandleIdValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.operation);
     bytes_read +=
         ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &args.result);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
@@ -593,6 +630,12 @@ void VulkanDecoderBase::DispatchVulkanAccelerationStructuresBuildMetaCommand(con
     bytes_read += pInfos.Decode(parameter_buffer + bytes_read, buffer_size - bytes_read);
     ppRangeInfos.Decode(parameter_buffer + bytes_read, buffer_size - bytes_read);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the command.
+        return;
+    }
+
     for (auto consumer : consumers_)
     {
         consumer->ProcessVulkanBuildAccelerationStructuresCommand(
@@ -609,6 +652,12 @@ void VulkanDecoderBase::DispatchVulkanAccelerationStructuresCopyMetaCommand(cons
     std::size_t bytes_read = ValueDecoder::DecodeHandleIdValue(parameter_buffer, buffer_size, &device_id);
     bytes_read += pInfos.Decode(parameter_buffer + bytes_read, buffer_size - bytes_read);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the command.
+        return;
+    }
+
     for (auto consumer : consumers_)
     {
         consumer->ProcessVulkanCopyAccelerationStructuresCommand(device_id, &pInfos);
@@ -622,10 +671,16 @@ void VulkanDecoderBase::DispatchVulkanAccelerationStructuresWritePropertiesMetaC
     VkQueryType      query_type;
     format::HandleId acceleration_structure_id;
 
-    std::size_t bytes_read = ValueDecoder::DecodeHandleIdValue(parameter_buffer, sizeof(format::HandleId), &device_id);
-    bytes_read += ValueDecoder::DecodeEnumValue(parameter_buffer + bytes_read, sizeof(VkQueryType), &query_type);
+    std::size_t bytes_read = ValueDecoder::DecodeHandleIdValue(parameter_buffer, buffer_size, &device_id);
+    bytes_read += ValueDecoder::DecodeEnumValue(parameter_buffer + bytes_read, buffer_size - bytes_read, &query_type);
     bytes_read += ValueDecoder::DecodeHandleIdValue(
-        parameter_buffer + bytes_read, sizeof(format::HandleId), &acceleration_structure_id);
+        parameter_buffer + bytes_read, buffer_size - bytes_read, &acceleration_structure_id);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the command.
+        return;
+    }
 
     for (auto consumer : consumers_)
     {

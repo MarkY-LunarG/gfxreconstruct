@@ -25,6 +25,7 @@
 #define GFXRECON_DECODE_DX12_DECODER_BASE_H
 
 #include "decode/api_decoder.h"
+#include "decode/parameter_decode_error.h"
 #include "decode/struct_pointer_decoder.h"
 #include "generated/generated_dx12_consumer.h"
 #include "decoder_util.h"
@@ -249,6 +250,13 @@ class Dx12DecoderBase : public ApiDecoder
             (parameter_buffer + bytes_read), (buffer_size - bytes_read), &feature_data_size);
         bytes_read +=
             ValueDecoder::DecodeInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+        if (ParameterDecodeError::Pending())
+        {
+            // Not every parameter was decoded. The dispatch fails the block, and no allocation and no consumer call
+            // follow.
+            return bytes_read;
+        }
 
         auto* capture_data = feature_data.GetPointer();
         if (capture_data != nullptr)

@@ -26,6 +26,7 @@
 #include "decode/openxr_decoder_base.h"
 
 #include "decode/descriptor_update_template_decoder.h"
+#include "decode/parameter_decode_error.h"
 #include "decode/pointer_decoder.h"
 #include "decode/value_decoder.h"
 
@@ -178,6 +179,12 @@ size_t OpenXrDecoderBase::Decode_xrEnumerateSwapchainImages(const ApiCallInfo& c
     bytes_read +=
         ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
+
     for (auto consumer : GetConsumers())
     {
         consumer->Process_xrEnumerateSwapchainImages(
@@ -208,6 +215,12 @@ OpenXrDecoderBase::Decode_xrPollEvent(const ApiCallInfo& call_info, const uint8_
     bytes_read += event_data_base_header->DecodeBaseHeader((parameter_buffer + bytes_read), (buffer_size - bytes_read));
     bytes_read +=
         ValueDecoder::DecodeEnumValue((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
