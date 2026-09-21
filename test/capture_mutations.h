@@ -43,13 +43,15 @@ enum class CaptureMutation
     kBadCompressedPayload, // The payload of a compressed block is garbage.
 
     // Content. The block that each one edits is written back uncompressed, so the edit is exact.
-    kHandleNeverCreated,            // The command buffer of the first vkCmdDraw is an id that no call created.
-    kSecondHandleNeverCreated,      // The swapchain of the first vkGetSwapchainImagesKHR is an id that no call created.
-    kParameterBufferShortByOne,     // The parameter buffer of the first vkCmdDraw loses its last byte.
-    kParameterBufferShortByHalf,    // The parameter buffer of the first vkCmdDraw loses its second half.
-    kCountBomb,                     // The viewport array of the first vkCmdSetViewport claims 0x7fffffff elements.
-    kUnknownApiCallId,              // The first vkCmdDraw carries an ApiCallId that this build does not know.
-    kUnknownStructureType,          // The debug messenger in the pNext chain of vkCreateInstance has an unknown sType.
+    kHandleNeverCreated,         // The command buffer of the first vkCmdDraw is an id that no call created.
+    kSecondHandleNeverCreated,   // The swapchain of the first vkGetSwapchainImagesKHR is an id that no call created.
+    kParameterBufferShortByOne,  // The parameter buffer of the first vkCmdDraw loses its last byte.
+    kParameterBufferShortByHalf, // The parameter buffer of the first vkCmdDraw loses its second half.
+    kCountBomb,                  // The viewport array of the first vkCmdSetViewport claims 0x7fffffff elements.
+    kUnknownApiCallId,           // The first vkCmdDraw carries an ApiCallId that this build does not know.
+    kUnknownStructureType,       // The debug messenger in the pNext chain of vkCreateInstance has an unknown sType.
+    kPNextChainOverTheBound, // The pNext chain of vkCreateDevice is spliced into itself until it passes the decoder's
+                             // bound.
     kDrawBeforeBeginCommandBuffer,  // The first vkCmdDraw moves before the first vkBeginCommandBuffer.
     kAnnotationLabelPastBlock,      // The label of the first annotation block claims 0x7fffffff bytes.
     kCompressionFlagOnUncompressed, // The first vkEndCommandBuffer, an uncompressed block, gets the compressed bit.

@@ -61,11 +61,16 @@ const MutationName kNames[] = {
     { CaptureMutation::kCountBomb, "count-bomb" },
     { CaptureMutation::kUnknownApiCallId, "unknown-api-call-id" },
     { CaptureMutation::kUnknownStructureType, "unknown-structure-type" },
+    { CaptureMutation::kPNextChainOverTheBound, "pnext-chain-over-the-bound" },
     { CaptureMutation::kDrawBeforeBeginCommandBuffer, "draw-before-begin-command-buffer" },
     { CaptureMutation::kAnnotationLabelPastBlock, "annotation-label-past-block" },
     { CaptureMutation::kCompressionFlagOnUncompressed, "compression-flag-on-uncompressed" },
     { CaptureMutation::kMissingStateSetup, "missing-state-setup" },
 };
+
+// The depth at which the extension chain decoders refuse a block. Keep it equal to
+// ChainDepthGuard::kMaxDepth in framework/decode/parameter_decode_error.h.
+static const size_t kPNextChainDepthBound = 1024;
 
 // One block of the source file, as bytes. The file is a list of these after the file header and
 // its options, so a mutation that removes, moves or rewrites a block edits the list.
@@ -450,6 +455,63 @@ bool apply_content_mutation(CaptureMutation mutation, CaptureFile& file, std::st
                     }
                     error = "vkCreateInstance has no debug messenger in its pNext chain";
                     return false;
+                },
+                error);
+        case CaptureMutation::kPNextChainOverTheBound:
+            // The source is the deep-pnext-chain capture, whose vkCreateDevice carries a chain of
+            // VkDevicePrivateDataCreateInfo structs. Each struct is encoded as a pointer preamble,
+            // the sType, the encoded pNext and the count, so the chain is N preambles and sTypes,
+            // one null pointer, and N counts. The mutation replaces the null pointer with a copy of
+            // the whole chain, and repeats that until the depth passes the decoder's bound.
+            return edit_call(
+                file,
+                ApiCallId::ApiCall_vkCreateDevice,
+                [](DecodedCall& call, std::string& error) {
+                    const uint32_t              stype = VK_STRUCTURE_TYPE_DEVICE_PRIVATE_DATA_CREATE_INFO;
+                    std::vector<size_t>         stype_offsets;
+                    const std::vector<uint8_t>& p = call.parameters;
+                    for (size_t i = 0; i + sizeof(stype) <= p.size(); ++i)
+                    {
+                        if (std::memcmp(p.data() + i, &stype, sizeof(stype)) == 0)
+                        {
+                            stype_offsets.push_back(i);
+                        }
+                    }
+                    if (stype_offsets.size() < 2)
+                    {
+                        error = "the source has no pNext chain of VkDevicePrivateDataCreateInfo in vkCreateDevice";
+                        return false;
+                    }
+                    const size_t count       = stype_offsets.size();
+                    const size_t preamble    = stype_offsets[1] - stype_offsets[0] - sizeof(stype);
+                    const size_t chain_start = stype_offsets.front() - preamble;
+                    const size_t null_offset = stype_offsets.back() + sizeof(stype); // The innermost pNext.
+                    const size_t chain_end   = null_offset + sizeof(uint32_t) + count * sizeof(uint32_t);
+                    if (chain_end > p.size())
+                    {
+                        error = "the pNext chain of vkCreateDevice does not have the expected layout";
+                        return false;
+                    }
+                    const std::vector<uint8_t> chain(p.begin() + chain_start, p.begin() + chain_end);
+                    const size_t               null_in_chain = null_offset - chain_start;
+
+                    // Each splice nests a copy at the innermost null pointer, so after k splices the
+                    // innermost null pointer sits k times deeper.
+                    std::vector<uint8_t> expanded = chain;
+                    size_t               depth    = count;
+                    for (size_t k = 1; depth <= kPNextChainDepthBound; ++k)
+                    {
+                        const size_t pos = k * null_in_chain;
+                        expanded.erase(expanded.begin() + pos, expanded.begin() + pos + sizeof(uint32_t));
+                        expanded.insert(expanded.begin() + pos, chain.begin(), chain.end());
+                        depth += count;
+                    }
+
+                    std::vector<uint8_t> result(p.begin(), p.begin() + chain_start);
+                    result.insert(result.end(), expanded.begin(), expanded.end());
+                    result.insert(result.end(), p.begin() + chain_end, p.end());
+                    call.parameters = std::move(result);
+                    return true;
                 },
                 error);
         case CaptureMutation::kDrawBeforeBeginCommandBuffer:

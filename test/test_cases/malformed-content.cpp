@@ -77,6 +77,7 @@ static const char* const kConvert = "gfxrecon-convert";
 static const char* const kReplay  = "gfxrecon-replay";
 static const char* const kGood    = "known_good/triangle.gfxr";
 static const char* const kTrimmed = "known_good/trigger-trimming_trim_trigger.gfxr";
+static const char* const kDeep    = "known_good/deep-pnext-chain.gfxr";
 
 // What the tools do, and must keep doing.
 static const MalformedContentCase kDocumentedCases[] = {
@@ -153,6 +154,18 @@ static const MalformedContentCase kDocumentedCases[] = {
     // An extension struct this build does not know cannot be skipped, so the block stops there.
     { CaptureMutation::kUnknownStructureType, kGood, kConvert, Expect::kFailure, "unrecognized VkStructureType" },
     { CaptureMutation::kUnknownStructureType, kGood, kReplay, Expect::kFailure, "unrecognized VkStructureType" },
+    // The chain decoders use one recursion level per struct, so a chain past the bound is refused
+    // before the stack runs out.
+    { CaptureMutation::kPNextChainOverTheBound,
+      kDeep,
+      kConvert,
+      Expect::kFailure,
+      "pNext chain has more than 1024 structs" },
+    { CaptureMutation::kPNextChainOverTheBound,
+      kDeep,
+      kReplay,
+      Expect::kFailure,
+      "pNext chain has more than 1024 structs" },
 };
 
 INSTANTIATE_TEST_SUITE_P(MalformedContentFiles, MalformedContent, testing::ValuesIn(kDocumentedCases), TestName);
