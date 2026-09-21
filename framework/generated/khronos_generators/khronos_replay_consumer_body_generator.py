@@ -1142,6 +1142,29 @@ class KhronosReplayConsumerBodyGenerator():
                     )
                     preexpr.append(expr)
 
+                    # The override reads this object. An id that is not in the table stops the
+                    # call, except in a destroy or free, whose override accepts a null object.
+                    # The first parameter has its own guard.
+                    if value is not values[0] and self.is_handle(
+                        value.base_type
+                    ):
+                        if name[2:].startswith(('Destroy', 'Free')):
+                            preexpr.append(
+                                'handle_mapping::WarnIfObjectIsUnmapped("{}", "{}", {}, {});'
+                                .format(
+                                    name, value.base_type, value.prefixed_name,
+                                    arg_name
+                                )
+                            )
+                        else:
+                            preexpr.append(
+                                'if (!handle_mapping::ObjectIsMappedOrNull("{}", "{}", {}, {})) {{ return; }}'
+                                .format(
+                                    name, value.base_type, value.prefixed_name,
+                                    arg_name
+                                )
+                            )
+
                     if self.is_special_case_value(value, True):
                         preexpr_special = self.handle_special_case_pointer_array(
                             value, is_override

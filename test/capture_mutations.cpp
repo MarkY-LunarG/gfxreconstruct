@@ -55,6 +55,7 @@ const MutationName kNames[] = {
     { CaptureMutation::kBadVersion, "bad-version" },
     { CaptureMutation::kBadCompressedPayload, "bad-compressed-payload" },
     { CaptureMutation::kHandleNeverCreated, "handle-never-created" },
+    { CaptureMutation::kSecondHandleNeverCreated, "second-handle-never-created" },
     { CaptureMutation::kParameterBufferShortByOne, "parameter-buffer-short-by-one" },
     { CaptureMutation::kParameterBufferShortByHalf, "parameter-buffer-short-by-half" },
     { CaptureMutation::kCountBomb, "count-bomb" },
@@ -357,6 +358,18 @@ bool apply_content_mutation(CaptureMutation mutation, CaptureFile& file, std::st
                 [](DecodedCall& call, std::string&) {
                     const format::HandleId never_created = 0xDEADBEEF;
                     std::memcpy(call.parameters.data(), &never_created, sizeof(never_created));
+                    return true;
+                },
+                error);
+        case CaptureMutation::kSecondHandleNeverCreated:
+            // The parameters of vkGetSwapchainImagesKHR start with the device id and the swapchain id.
+            return edit_call(
+                file,
+                ApiCallId::ApiCall_vkGetSwapchainImagesKHR,
+                [](DecodedCall& call, std::string&) {
+                    const format::HandleId never_created = 0xDEADBEEF;
+                    std::memcpy(
+                        call.parameters.data() + sizeof(format::HandleId), &never_created, sizeof(never_created));
                     return true;
                 },
                 error);

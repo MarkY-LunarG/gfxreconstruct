@@ -36,6 +36,21 @@ GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(decode)
 GFXRECON_BEGIN_NAMESPACE(handle_mapping)
 
+// The text of the message for an id that is not in the object table.
+inline std::string UnmappedObjectMessage(const char* call_name, const char* type_name, format::HandleId id)
+{
+    std::string message = std::string(call_name) + " names a " + type_name;
+    if (id == format::kNullHandleId)
+    {
+        message += " that is null";
+    }
+    else
+    {
+        message += " with id " + std::to_string(id) + " that no call created or that a call destroyed";
+    }
+    return message;
+}
+
 // The first parameter of a call names the object that selects the dispatch table and the replay
 // state, so the call cannot run when that object is not in the table. A generated replay consumer
 // calls this after it maps that parameter, with the mapped handle or the object info, and returns
@@ -49,18 +64,35 @@ static bool DispatchObjectIsMapped(const char* call_name, const char* type_name,
     {
         return true;
     }
-
-    std::string message = std::string(call_name) + " names a " + type_name;
-    if (id == format::kNullHandleId)
-    {
-        message += " that is null";
-    }
-    else
-    {
-        message += " with id " + std::to_string(id) + " that no call created or that a call destroyed";
-    }
-    ParameterDecodeError::AddPendingMessage(message);
+    ParameterDecodeError::AddPendingMessage(UnmappedObjectMessage(call_name, type_name, id));
     return false;
+}
+
+// A later parameter of a call names an object that the replay override reads. A null id is a null
+// handle, which the call may allow, so it passes. An id that is not in the table is an object that
+// no call created or that a call destroyed, and the call cannot be made as recorded, so the message
+// goes to ParameterDecodeError and the generated consumer returns when the result is false.
+template <typename Info>
+static bool ObjectIsMappedOrNull(const char* call_name, const char* type_name, format::HandleId id, const Info* info)
+{
+    if ((id == format::kNullHandleId) || (info != nullptr))
+    {
+        return true;
+    }
+    ParameterDecodeError::AddPendingMessage(UnmappedObjectMessage(call_name, type_name, id));
+    return false;
+}
+
+// The same test for a destroy or free call, whose override accepts a null object and passes a null
+// handle to the driver. The call proceeds, and the log names the id, so a corrupt capture is seen.
+template <typename Info>
+static void WarnIfObjectIsUnmapped(const char* call_name, const char* type_name, format::HandleId id, const Info* info)
+{
+    if ((id != format::kNullHandleId) && (info == nullptr))
+    {
+        GFXRECON_LOG_WARNING("%s, so the call proceeds with a null handle",
+                             UnmappedObjectMessage(call_name, type_name, id).c_str());
+    }
 }
 
 template <typename T>

@@ -44,6 +44,7 @@ enum class CaptureMutation
 
     // Content. The block that each one edits is written back uncompressed, so the edit is exact.
     kHandleNeverCreated,            // The command buffer of the first vkCmdDraw is an id that no call created.
+    kSecondHandleNeverCreated,      // The swapchain of the first vkGetSwapchainImagesKHR is an id that no call created.
     kParameterBufferShortByOne,     // The parameter buffer of the first vkCmdDraw loses its last byte.
     kParameterBufferShortByHalf,    // The parameter buffer of the first vkCmdDraw loses its second half.
     kCountBomb,                     // The viewport array of the first vkCmdSetViewport claims 0x7fffffff elements.
