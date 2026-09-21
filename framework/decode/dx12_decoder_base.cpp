@@ -24,6 +24,7 @@
 #include "decode/dx12_decoder_base.h"
 
 #include "decode/custom_dx12_struct_decoders.h"
+#include "decode/parameter_decode_error.h"
 #include "generated/generated_dx12_struct_decoders.h"
 
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
@@ -603,6 +604,12 @@ size_t Dx12DecoderBase::Decode_IDXGIFactory5_CheckFeatureSupport(format::HandleI
             bytes_read += ValueDecoder::DecodeInt32Value(
                 (parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
 
+            if (ParameterDecodeError::Pending())
+            {
+                // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+                return bytes_read;
+            }
+
             for (auto consumer : GetConsumers())
             {
                 consumer->Process_IDXGIFactory5_CheckFeatureSupport(object_id,
@@ -647,6 +654,12 @@ size_t Dx12DecoderBase::Decode_ID3D12Resource_WriteToSubresource(format::HandleI
         ValueDecoder::DecodeUInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &SrcDepthPitch);
     bytes_read +=
         ValueDecoder::DecodeInt32Value((parameter_buffer + bytes_read), (buffer_size - bytes_read), &return_value);
+
+    if (ParameterDecodeError::Pending())
+    {
+        // Not every parameter was decoded. The dispatch fails the block, and no consumer sees the call.
+        return bytes_read;
+    }
 
     for (auto consumer : GetConsumers())
     {
