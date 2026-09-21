@@ -95,6 +95,7 @@ static const MalformedContentCase kDocumentedCases[] = {
     // The converter does not map handles or track state, so a wrong handle id, a draw outside a
     // command buffer and a missing state setup convert as they are. The JSON shows them.
     { CaptureMutation::kHandleNeverCreated, kGood, kConvert, Expect::kSuccess, "" },
+    { CaptureMutation::kSecondHandleNeverCreated, kGood, kConvert, Expect::kSuccess, "" },
     { CaptureMutation::kDrawBeforeBeginCommandBuffer, kGood, kConvert, Expect::kSuccess, "" },
     { CaptureMutation::kMissingStateSetup, kTrimmed, kConvert, Expect::kSuccess, "" },
     // A draw outside the recording state goes to the driver as recorded, because replay
@@ -107,13 +108,19 @@ static const MalformedContentCase kDocumentedCases[] = {
       Expect::kSuccess,
       "vkCmdDraw records into VkCommandBuffer .* which is not in the recording state \\(block" },
     // The replayer refuses a call whose first object no call created, and names the call, the
-    // type and the id, before any driver sees the call. A trimmed capture without its state setup
-    // fails the same way on its first call.
+    // type and the id, before any driver sees the call. A later object that a replay override
+    // reads gets the same refusal. A trimmed capture without its state setup fails the same way on
+    // its first call.
     { CaptureMutation::kHandleNeverCreated,
       kGood,
       kReplay,
       Expect::kFailure,
       "vkCmdDraw names a VkCommandBuffer with id .* that no call created" },
+    { CaptureMutation::kSecondHandleNeverCreated,
+      kGood,
+      kReplay,
+      Expect::kFailure,
+      "vkGetSwapchainImagesKHR names a VkSwapchainKHR with id .* that no call created" },
     { CaptureMutation::kMissingStateSetup,
       kTrimmed,
       kReplay,
