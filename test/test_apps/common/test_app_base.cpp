@@ -2963,6 +2963,15 @@ TestAppBase::~TestAppBase() {}
 
 void TestAppBase::run(const std::string& window_name)
 {
+    // A test-only leak. The leak check case in test_cases/leak-check.cpp sets this variable and
+    // requires the app to fail at exit with the LeakSanitizer report, which proves that the check
+    // runs. The write through a volatile pointer keeps the allocation in the program.
+    if (std::getenv("GFXRECON_TESTAPP_LEAK") != nullptr)
+    {
+        volatile char* leaked = new char[64];
+        leaked[0]             = 1;
+    }
+
     device_initialization_phase_1(*app, init);
 
     init.test_config = try_load_test_config();

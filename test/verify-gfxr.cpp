@@ -322,12 +322,29 @@ class EnvironmentVariables
     }
 };
 
+// True when the build has the leak check, so every process runs under AddressSanitizer with
+// LeakSanitizer. The ctest environment sets the variable, see test/CMakeLists.txt.
+static bool leak_check_is_on()
+{
+    return std::getenv("GFXRECON_TEST_LEAK_CHECK") != nullptr;
+}
+
 int run_command(std::filesystem::path const& working_directory,
                 std::filesystem::path const& command,
                 std::vector<std::string>     args,
                 const std::string&           command_prefix = "")
 {
-    std::string command_string = command_prefix;
+    std::string command_string;
+#if !defined(_WIN32)
+    if (leak_check_is_on())
+    {
+        // AddressSanitizer makes every stack frame larger, and the pNext decoder uses one frame
+        // per struct in a chain, so the deep-pnext-chain capture overflows the default stack in
+        // the tools. Give every process a larger stack. See defect 42 in the test plan.
+        command_string += "ulimit -s 262144 && ";
+    }
+#endif
+    command_string += command_prefix;
     command_string += command.string();
     for (auto& arg : args)
     {
@@ -532,7 +549,9 @@ static ProcessEnd decode_status(int status)
 // Run a tool with its output in log_path. The redirection goes through the shell that
 // std::system uses on every platform. On POSIX the tool runs under a cap on its address space,
 // so a tool that trusts a count from a damaged file and asks for gigabytes fails with
-// std::bad_alloc in the tool and not with the out-of-memory killer in the runner.
+// std::bad_alloc in the tool and not with the out-of-memory killer in the runner. The cap is off
+// under the leak check, because AddressSanitizer reserves terabytes of address space for its
+// shadow memory, and its own allocator refuses an allocation of gigabytes with a report.
 static ProcessEnd run_tool(const char*                     tool,
                            const std::vector<std::string>& args,
                            const std::filesystem::path&    log_path,
@@ -544,7 +563,7 @@ static ProcessEnd run_tool(const char*                     tool,
     tool_path += ".exe";
     const std::string prefix;
 #else
-    const std::string prefix = "ulimit -v 4194304 && ";
+    const std::string prefix = leak_check_is_on() ? "" : "ulimit -v 4194304 && ";
 #endif
     std::vector<std::string> full_args = args;
     full_args.push_back(">");

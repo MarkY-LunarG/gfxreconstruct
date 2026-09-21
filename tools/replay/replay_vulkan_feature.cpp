@@ -203,24 +203,26 @@ InitRealignAllocatorCreateFunc(const std::string&                              f
     gfxrecon::decode::FileProcessor file_processor_resource_tracking;
     gfxrecon::decode::VulkanDecoder decoder;
 
-    auto resource_tracking_consumer =
-        new gfxrecon::decode::VulkanResourceTrackingConsumer(replay_options, tracked_object_info_table);
+    // The consumer writes into tracked_object_info_table, which outlives this pass. The consumer
+    // itself ends with the pass.
+    gfxrecon::decode::VulkanResourceTrackingConsumer resource_tracking_consumer(replay_options,
+                                                                                tracked_object_info_table);
 
     if (file_processor_resource_tracking.Initialize(filename))
     {
-        decoder.AddConsumer(resource_tracking_consumer);
+        decoder.AddConsumer(&resource_tracking_consumer);
         file_processor_resource_tracking.AddDecoder(&decoder);
         file_processor_resource_tracking.InitializeFrameProcessing();
         file_processor_resource_tracking.ProcessAllFrames();
         file_processor_resource_tracking.RemoveDecoder(&decoder);
-        decoder.RemoveConsumer(resource_tracking_consumer);
+        decoder.RemoveConsumer(&resource_tracking_consumer);
     }
 
     // Sort the bound resources according to the binding offsets.
-    resource_tracking_consumer->SortMemoriesBoundResourcesByOffset();
+    resource_tracking_consumer.SortMemoriesBoundResourcesByOffset();
 
     // calculate the replay binding offset of the bound resources and replay memory allocation size
-    resource_tracking_consumer->CalculateReplayBindingOffsetAndMemoryAllocationSize();
+    resource_tracking_consumer.CalculateReplayBindingOffsetAndMemoryAllocationSize();
 
     GFXRECON_WRITE_CONSOLE("First pass of replay resource tracking done.");
 

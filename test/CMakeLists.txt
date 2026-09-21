@@ -66,6 +66,7 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
         test_cases/malformed-content.cpp
         test_cases/replay-command-line.cpp
         test_cases/layer-faults.cpp
+        test_cases/leak-check.cpp
         capture_mutations.cpp
         verify-gfxr.cpp)
 
@@ -175,6 +176,18 @@ if (NOT DEFINED ENV{GFXRECON_NO_TEST_APPS})
         "GFXRECON_TEST_DRIVER=lavapipe"
         "VK_DRIVER_FILES=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}"
         "VK_ICD_FILENAMES=${GFXRECON_TEST_LAVAPIPE_ICD_JSON}")
+
+    # The leak check. In a sanitizer build on Linux, LeakSanitizer runs in every process of a case
+    # and reports the allocations that are not freed at exit. The exit code of 23 turns the report
+    # into a failed case at the exit-code assertion of the harness. The suppression file names the
+    # one-time allocations of libraries that are not ours. GFXRECON_TEST_LEAK_CHECK tells the
+    # proof case in leak-check.cpp that the check is on. Without the option the case skips.
+    if (GFXRECON_ENABLE_SANITIZERS AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        list(APPEND GFXRECON_TEST_ENVIRONMENT
+            "LSAN_OPTIONS=suppressions=${GFXRECON_INSTALL_TESTDIR}/leaks/lsan-linux.supp:exitcode=23:print_suppressions=0"
+            "GFXRECON_TEST_LEAK_CHECK=1")
+    endif ()
+    install(FILES leaks/lsan-linux.supp DESTINATION ${GFXRECON_INSTALL_TESTDIR}/leaks)
 
     # A cross-driver case captures on one driver and replays on the other, so the harness needs
     # both manifests whatever the current driver is. An empty lavapipe manifest skips those cases.

@@ -1,0 +1,7 @@
+# LeakSanitizer suppressions for the Linux test run. The ctest environment names this file in
+# LSAN_OPTIONS when the build has GFXRECON_ENABLE_SANITIZERS on. One entry per line, with the
+# reason above it. An entry names a library that is not ours, never a GFXReconstruct frame, so a
+# leak in the layer, the tools, the test apps or the mock driver is always reported.
+#
+# The format is "leak:<pattern>". The pattern matches a function name, a library name or a source
+# file name in the stack of the leaked allocation.

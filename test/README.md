@@ -117,6 +117,21 @@ same lists.
 `test_environment.cmake` picks the driver list at ctest time from `GFXRECON_TEST_DRIVER`.
 A variable that you export in your shell does not override an entry in these lists.
 
+## The leak check
+
+A build with `-DGFXRECON_ENABLE_SANITIZERS=ON` on Linux has AddressSanitizer and LeakSanitizer in
+every binary: the layer, the tools, the test apps, the mock driver and the test runner.
+The common environment list then holds `LSAN_OPTIONS`, so every process of a case reports the
+allocations that it did not free at exit, and exits with code 23.
+The case fails at its exit-code assertion, and the report is in the ctest output or in the
+process log of the case.
+`leaks/lsan-linux.supp` names the one-time allocations of libraries that are not ours.
+Add an entry there with its reason, and never for a GFXReconstruct frame.
+`LeakCheck.LeakedBlockFailsTheApp` proves that the check runs: the app leaks one block on request,
+and the case requires the failure.
+The case skips in a build without sanitizers.
+The CI job "Ubuntu GCC Debug Sanitizers" runs the suite this way on the mock.
+
 ## What a case does
 
 `verify_gfxr(name)` runs the app with the capture layer on, converts the new capture to JSON,
