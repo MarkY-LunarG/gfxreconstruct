@@ -521,8 +521,6 @@ void VulkanDecoderBase::DecodeFunctionCall(format::ApiCallId  call_id,
                                            const uint8_t*     parameter_buffer,
                                            size_t             buffer_size)
 {
-    GFXRECON_UNREFERENCED_PARAMETER(call_info);
-
     switch (call_id)
     {
         case format::ApiCallId::ApiCall_vkUpdateDescriptorSetWithTemplate:
@@ -544,6 +542,7 @@ void VulkanDecoderBase::DecodeFunctionCall(format::ApiCallId  call_id,
             Decode_vkDeferredOperationJoinKHR(call_info, parameter_buffer, buffer_size);
             break;
         default:
+            ReportUnknownApiCall(call_id, call_info);
             break;
     }
 }

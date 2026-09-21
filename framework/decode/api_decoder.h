@@ -28,10 +28,13 @@
 #include "format/api_call_id.h"
 #include "format/format.h"
 #include "util/defines.h"
+#include "util/logging.h"
 
 #include "vulkan/vulkan.h"
 
+#include <cinttypes>
 #include <string>
+#include <unordered_set>
 
 GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(decode)
@@ -228,6 +231,23 @@ class ApiDecoder
 
     virtual void SetCurrentBlockIndex(uint64_t block_index){};
 
+    // A decoder that gets a call id its switch does not know calls this from its default branch.
+    // Such a block comes from a newer layer, or from a corrupt file, and the decoder skips it.
+    // Without a message the tool output has one call fewer and nothing says so. The message
+    // names the id and the first block, once per id, because a capture from a newer layer can
+    // hold the same unknown call thousands of times.
+    void ReportUnknownApiCall(format::ApiCallId call_id, const ApiCallInfo& call_info)
+    {
+        if (reported_unknown_call_ids_.insert(call_id).second)
+        {
+            GFXRECON_LOG_WARNING("Unknown ApiCallId 0x%08" PRIx32 " (block %" PRIu64
+                                 "): this build does not know the call and skips the block, and it skips every "
+                                 "later block with this id without a message",
+                                 static_cast<uint32_t>(call_id),
+                                 call_info.index);
+        }
+    }
+
     // Expects zero-based frame_number to match the way FileProcessor::current_frame_number_ works
     virtual void SetCurrentFrameNumber(uint64_t frame_number){};
 
@@ -262,6 +282,9 @@ class ApiDecoder
     virtual void DispatchExtendedMetaDataBlock(format::MetaDataId meta_data_id,
                                                const uint8_t*     parameter_buffer,
                                                size_t             buffer_size){};
+
+  private:
+    std::unordered_set<format::ApiCallId> reported_unknown_call_ids_;
 };
 
 GFXRECON_END_NAMESPACE(decode)

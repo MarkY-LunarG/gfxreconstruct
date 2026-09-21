@@ -662,8 +662,6 @@ void Dx12DecoderBase::DecodeMethodCall(format::ApiCallId  call_id,
                                        const uint8_t*     parameter_buffer,
                                        size_t             buffer_size)
 {
-    GFXRECON_UNREFERENCED_PARAMETER(call_options);
-
     switch (call_id)
     {
         case format::ApiCallId::ApiCall_ID3D12Device_CheckFeatureSupport:
@@ -676,6 +674,7 @@ void Dx12DecoderBase::DecodeMethodCall(format::ApiCallId  call_id,
             Decode_ID3D12Resource_WriteToSubresource(object_id, parameter_buffer, buffer_size);
             break;
         default:
+            ReportUnknownApiCall(call_id, call_options);
             break;
     }
 }

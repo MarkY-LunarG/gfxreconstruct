@@ -129,6 +129,11 @@ static const MalformedContentCase kDocumentedCases[] = {
       kReplay,
       Expect::kFailure,
       "the parameter buffer holds .* bytes where a value needs" },
+    // A block with an ApiCallId that this build does not know is skipped, and the tool says so
+    // once with the id and the block, so a capture from a newer layer is not read as a capture
+    // with fewer calls.
+    { CaptureMutation::kUnknownApiCallId, kGood, kConvert, Expect::kSuccess, "Unknown ApiCallId 0x0001ffff \\(block" },
+    { CaptureMutation::kUnknownApiCallId, kGood, kReplay, Expect::kSuccess, "Unknown ApiCallId 0x0001ffff \\(block" },
     // An extension struct this build does not know cannot be skipped, so the block stops there.
     { CaptureMutation::kUnknownStructureType, kGood, kConvert, Expect::kFailure, "unrecognized VkStructureType" },
     { CaptureMutation::kUnknownStructureType, kGood, kReplay, Expect::kFailure, "unrecognized VkStructureType" },
@@ -143,11 +148,6 @@ static const MalformedContentCase kKnownDefects[] = {
     // call, and lavapipe faults. The replayer must refuse the call with a message before any
     // driver sees it, so the row expects the same failure on every driver.
     { CaptureMutation::kDrawBeforeBeginCommandBuffer, kGood, kReplay, Expect::kFailure, "command buffer" },
-    // A block with an ApiCallId that this build does not know is dropped without a word. The
-    // tools must say so once, with the id, so a capture from a newer layer is not read as a
-    // capture with fewer calls.
-    { CaptureMutation::kUnknownApiCallId, kGood, kConvert, Expect::kSuccess, "[Uu]nknown|[Uu]nrecognized" },
-    { CaptureMutation::kUnknownApiCallId, kGood, kReplay, Expect::kSuccess, "[Uu]nknown|[Uu]nrecognized" },
 };
 
 INSTANTIATE_TEST_SUITE_P(DISABLED_MalformedContentFilesWithKnownDefects,
