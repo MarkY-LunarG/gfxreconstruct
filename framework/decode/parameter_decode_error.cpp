@@ -7,6 +7,7 @@ namespace
 {
 thread_local bool        pending = false;
 thread_local std::string pending_message;
+thread_local size_t      chain_depth = 0;
 } // namespace
 
 void ParameterDecodeError::AddPendingMessage(const std::string& message)
@@ -36,6 +37,22 @@ bool ParameterDecodeError::GetPendingMessage(std::string* message)
     pending = false;
     pending_message.clear();
     return true;
+}
+
+ChainDepthGuard::ChainDepthGuard(const char* member_name)
+{
+    ++chain_depth;
+    if (chain_depth > kMaxDepth)
+    {
+        too_deep_ = true;
+        ParameterDecodeError::AddPendingMessage(std::string("a ") + member_name + " chain has more than " +
+                                                std::to_string(kMaxDepth) + " structs");
+    }
+}
+
+ChainDepthGuard::~ChainDepthGuard()
+{
+    --chain_depth;
 }
 
 GFXRECON_END_NAMESPACE(decode)

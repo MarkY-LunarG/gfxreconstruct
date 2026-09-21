@@ -97,6 +97,21 @@ class KhronosDecodeExtendedStructGenerator():
         write('        // An earlier parameter of this call was corrupt. Decode nothing more.', file=self.outFile)
         write('        return 0;', file=self.outFile)
         write('    }', file=self.outFile)
+        write(
+            '    ChainDepthGuard depth_guard("{}");'.format(
+                current_api_data.extended_struct_variable
+            ),
+            file=self.outFile
+        )
+        write('    if (depth_guard.TooDeep())', file=self.outFile)
+        write('    {', file=self.outFile)
+        write(
+            '        // The chain is deeper than any driver accepts. The guard added the message, and the',
+            file=self.outFile
+        )
+        write('        // dispatch fails the block.', file=self.outFile)
+        write('        return 0;', file=self.outFile)
+        write('    }', file=self.outFile)
         write('    uint32_t attrib = 0;', file=self.outFile)
         self.newline()
 

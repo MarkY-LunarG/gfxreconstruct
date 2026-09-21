@@ -60,6 +60,13 @@ size_t DecodeNextStruct(const uint8_t* parameter_buffer, size_t buffer_size, Ope
         // An earlier parameter of this call was corrupt. Decode nothing more.
         return 0;
     }
+    ChainDepthGuard depth_guard("next");
+    if (depth_guard.TooDeep())
+    {
+        // The chain is deeper than any driver accepts. The guard added the message, and the
+        // dispatch fails the block.
+        return 0;
+    }
     uint32_t attrib = 0;
 
     if ((parameter_buffer != nullptr) && (buffer_size >= sizeof(attrib)))

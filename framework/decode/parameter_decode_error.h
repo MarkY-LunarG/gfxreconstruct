@@ -30,6 +30,29 @@ class ParameterDecodeError
     static bool GetPendingMessage(std::string* message);
 };
 
+// The extension chain decoders use one recursion level per struct in a chain. This guard counts
+// the depth on the thread. A chain deeper than the bound is not one that a driver accepted, and
+// its decode would exhaust the stack, so the constructor adds the pending message and the decoder
+// returns. The bound is far above any chain an application builds. The state is per thread.
+class ChainDepthGuard
+{
+  public:
+    static constexpr size_t kMaxDepth = 1024;
+
+    // member_name is the chain member, "pNext" or "next", for the message.
+    explicit ChainDepthGuard(const char* member_name);
+    ~ChainDepthGuard();
+
+    ChainDepthGuard(const ChainDepthGuard&)            = delete;
+    ChainDepthGuard& operator=(const ChainDepthGuard&) = delete;
+
+    // True when this level is past the bound. The constructor has added the message.
+    bool TooDeep() const { return too_deep_; }
+
+  private:
+    bool too_deep_{ false };
+};
+
 GFXRECON_END_NAMESPACE(decode)
 GFXRECON_END_NAMESPACE(gfxrecon)
 
