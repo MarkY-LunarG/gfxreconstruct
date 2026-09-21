@@ -179,6 +179,30 @@ class VulkanReplayConsumerBodyGenerator(
                 break
         return body
 
+    def make_first_object_checks(self, name, values):
+        """
+        Method override.
+        A command must record into a command buffer in the recording state, and vkEndCommandBuffer
+        must end one. The check logs an error and the call proceeds, because replay reproduces
+        the recorded behavior. vkEndCommandBuffer then leaves the recording state.
+        vkBeginCommandBuffer and the resets set the state in their overrides.
+        """
+        checks = []
+        if values[0].base_type == 'VkCommandBuffer' and (
+            name.startswith('vkCmd') or name == 'vkEndCommandBuffer'
+        ):
+            checks.append(
+                'CheckCommandBufferIsRecording("{}", {}, call_info.index);'.
+                format(name, values[0].prefixed_name)
+            )
+        if name == 'vkEndCommandBuffer':
+            checks.append(
+                'MarkCommandBufferRecordingEnded({});'.format(
+                    values[0].prefixed_name
+                )
+            )
+        return checks
+
     def handle_instance_device_items(self):
         """Method override."""
         device_items = []

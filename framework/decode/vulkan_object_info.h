@@ -781,6 +781,10 @@ struct VulkanCommandBufferInfo : public VulkanPoolObjectInfo<VkCommandBuffer>
     // flag indicating if the command-buffer is currently recording a VkRenderpass or VK_KHR_dynamic_rendering scope
     bool in_rendering_scope = false;
 
+    // True between vkBeginCommandBuffer and vkEndCommandBuffer, false after a reset of the buffer or
+    // its pool. A command recorded while this is false is invalid API use that the capture holds.
+    bool is_recording = false;
+
     // ordered vkCmdSetEvent/vkCmdResetEvent recorded here (event capture-id, is-set);
     // applied to VulkanEventInfo::latched_set at submit-time.
     std::vector<std::pair<format::HandleId, bool>> recorded_event_ops;

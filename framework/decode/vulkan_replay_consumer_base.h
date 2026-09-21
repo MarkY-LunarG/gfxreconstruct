@@ -1442,6 +1442,14 @@ class VulkanReplayConsumerBase : public VulkanConsumer
 
     void ClearCommandBufferInfo(VulkanCommandBufferInfo* command_buffer_info);
 
+    // A command recorded while the command buffer is not in the recording state is invalid API
+    // use. Replay makes the call as the capture recorded it, because the recorded behavior is
+    // what replay reproduces, and logs an error that names the call, the buffer and the block,
+    // because a driver can fault on the call and the message then names the cause.
+    void CheckCommandBufferIsRecording(const char* call_name, format::HandleId command_buffer_id, uint64_t block_index);
+
+    void MarkCommandBufferRecordingEnded(format::HandleId command_buffer_id);
+
     // apply a command-buffer's recorded set/reset event ops to the tracked VulkanEventInfo::latched_set
     void ApplyRecordedEventOps(const VulkanCommandBufferInfo* command_buffer_info);
 

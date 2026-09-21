@@ -11103,6 +11103,7 @@ void VulkanReplayConsumerBase::ClearCommandBufferInfo(VulkanCommandBufferInfo* c
     command_buffer_info->addresses_to_replace.clear();
     command_buffer_info->addresses_to_resolve.clear();
     command_buffer_info->in_rendering_scope = false;
+    command_buffer_info->is_recording       = false;
     command_buffer_info->recorded_event_ops.clear();
     command_buffer_info->recorded_query_ops.clear();
 
@@ -11110,6 +11111,31 @@ void VulkanReplayConsumerBase::ClearCommandBufferInfo(VulkanCommandBufferInfo* c
     auto* device_info = GetObjectInfoTable().GetVkDeviceInfo(command_buffer_info->parent_id);
     GFXRECON_ASSERT(device_info != nullptr);
     GetDeviceAddressReplacer(device_info).DestroyShadowResources(command_buffer_info->handle);
+}
+
+void VulkanReplayConsumerBase::CheckCommandBufferIsRecording(const char*      call_name,
+                                                             format::HandleId command_buffer_id,
+                                                             uint64_t         block_index)
+{
+    const VulkanCommandBufferInfo* command_buffer_info = object_info_table_->GetVkCommandBufferInfo(command_buffer_id);
+    if ((command_buffer_info != nullptr) && !command_buffer_info->is_recording)
+    {
+        GFXRECON_LOG_ERROR("%s records into VkCommandBuffer %" PRIu64
+                           ", which is not in the recording state (block %" PRIu64
+                           "). The capture holds the call, so replay makes it as recorded.",
+                           call_name,
+                           command_buffer_id,
+                           block_index);
+    }
+}
+
+void VulkanReplayConsumerBase::MarkCommandBufferRecordingEnded(format::HandleId command_buffer_id)
+{
+    VulkanCommandBufferInfo* command_buffer_info = object_info_table_->GetVkCommandBufferInfo(command_buffer_id);
+    if (command_buffer_info != nullptr)
+    {
+        command_buffer_info->is_recording = false;
+    }
 }
 
 VkResult VulkanReplayConsumerBase::OverrideBeginCommandBuffer(
@@ -11127,6 +11153,7 @@ VkResult VulkanReplayConsumerBase::OverrideBeginCommandBuffer(
     }
 
     ClearCommandBufferInfo(command_buffer_info);
+    command_buffer_info->is_recording = true;
 
     VkCommandBuffer                 command_buffer = command_buffer_info->handle;
     const VkCommandBufferBeginInfo* begin_info     = begin_info_decoder->GetPointer();
@@ -11231,6 +11258,7 @@ VkResult VulkanReplayConsumerBase::OverrideResetCommandPool(PFN_vkResetCommandPo
         {
             VulkanCommandBufferInfo* cb_info = object_info_table_->GetVkCommandBufferInfo(cb_id);
             GFXRECON_ASSERT(cb_info != nullptr);
+            cb_info->is_recording = false;
 
             if (options_.dumping_resources)
             {

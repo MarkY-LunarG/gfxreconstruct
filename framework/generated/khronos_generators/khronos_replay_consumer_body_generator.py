@@ -55,6 +55,13 @@ class KhronosReplayConsumerBodyGenerator():
         """Method may be overriden. """
         return ''
 
+    def make_first_object_checks(self, name, values):
+        """
+        Lines that check or track the state of the object that selects the dispatch table. They
+        follow the line that maps the object. May be overridden.
+        """
+        return []
+
     def check_skip_extended_struct_handling(self, struct, struct_type):
         """Method may be overriden. """
         return False
@@ -224,6 +231,10 @@ class KhronosReplayConsumerBodyGenerator():
                     if declaration.search(line)
                 )
                 preexpr.insert(index + 1, guard)
+                for offset, check in enumerate(
+                    self.make_first_object_checks(name, values)
+                ):
+                    preexpr.insert(index + 2 + offset, check)
 
             if self.use_instance_table(name, values[0].base_type):
                 dispatchfunc = 'GetInstanceTable'
