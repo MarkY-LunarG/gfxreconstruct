@@ -87,6 +87,18 @@ jobs:
             build_dir: "dbuild",
             cc: "gcc", cxx: "g++"
           }
+          # The leak check. Every process of a test case runs under LeakSanitizer, and a leak
+          # fails the case. This row runs the cases on the mock only and uploads no build.
+          - {
+            name: "Ubuntu GCC Debug Sanitizers",
+            os: ubuntu-latest,
+            artifact: "gfxreconstruct-dev-ubuntu-gcc-debug-sanitizers",
+            test_failure_artifact: "gfxreconstruct-dev-test-failure-ubuntu-gcc-debug-sanitizers",
+            type: "debug",
+            build_dir: "sbuild",
+            cc: "gcc", cxx: "g++",
+            sanitizers: true
+          }
     steps:
     - name: Require Python 3.10
       uses: actions/setup-python@v5
@@ -117,7 +129,7 @@ jobs:
         git diff --exit-code || { echo "Generated code differs from branch contents"; exit 1; }
     - name: Run build script
       run: |
-        python3 scripts/build.py --config ${{ matrix.config.type }} --skip-check-code-style --parallel 0 --test-apps --cmake-extra "GFXRECON_ENABLE_RELEASE_ASSERTS=ON"
+        python3 scripts/build.py --config ${{ matrix.config.type }} --skip-check-code-style --parallel 0 --test-apps --cmake-extra "GFXRECON_ENABLE_RELEASE_ASSERTS=ON" --cmake-extra "GFXRECON_ENABLE_SANITIZERS=${{ matrix.config.sanitizers && 'ON' || 'OFF' }}"
       env:
         SCCACHE_GHA_ENABLED: on
         CMAKE_C_COMPILER_LAUNCHER: sccache
@@ -133,7 +145,8 @@ jobs:
       id: test_apps_lavapipe
       # The second tier. ctest disables the cases that hold on the mock only, so this runs the
       # "any-driver" cases. It runs after a failure of the mock step, so both reports appear.
-      if: ${{ !cancelled() && steps.test_apps.outcome != 'skipped' }}
+      # The sanitizer row runs on the mock only.
+      if: ${{ !cancelled() && steps.test_apps.outcome != 'skipped' && !matrix.config.sanitizers }}
       run: |
         dpkg-query -W -f='mesa-vulkan-drivers ${Version}\n' mesa-vulkan-drivers
         grep api_version /usr/share/vulkan/icd.d/lvp_icd.x86_64.json
@@ -155,6 +168,8 @@ jobs:
         name: ${{ matrix.config.test_failure_artifact }}
         path: ${{matrix.config.build_dir}}/linux/x64/output/test
     - name: Prepare artifacts
+      # A sanitizer build is for the tests, not for a user, so the sanitizer row uploads none.
+      if: ${{ !matrix.config.sanitizers }}
       run: |
         cp LICENSES/LICENSE.txt ${{ matrix.config.build_dir }}/linux/x64/output/bin/
         cp LICENSES/LICENSE_ThirdParty.txt ${{ matrix.config.build_dir }}/linux/x64/output/bin/
@@ -165,6 +180,7 @@ jobs:
         mv ${{ matrix.config.build_dir }}/linux/x64/output/share/vulkan/explicit_layer.d/*.json gfxreconstruct-dev/
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
+      if: ${{ !matrix.config.sanitizers }}
       with:
         name: ${{ matrix.config.artifact }}
         path: ./gfxreconstruct-dev

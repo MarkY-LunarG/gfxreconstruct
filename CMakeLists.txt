@@ -53,6 +53,21 @@ if (USE_STRICT_COMPILER_WARNINGS)
     endif ()
 endif (USE_STRICT_COMPILER_WARNINGS)
 
+# AddressSanitizer with LeakSanitizer, for a debug build that the tests run under. Every target
+# gets the flags, so the layer, the tools, the test apps and the mock driver report together.
+# The test directory adds LSAN_OPTIONS to the ctest environment when this is on, so a leak in
+# any process of a case fails the case. See test/README.md.
+option(GFXRECON_ENABLE_SANITIZERS "Build with AddressSanitizer and LeakSanitizer (GCC and Clang)" OFF)
+
+if (GFXRECON_ENABLE_SANITIZERS)
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+        add_link_options(-fsanitize=address)
+    else ()
+        message(FATAL_ERROR "GFXRECON_ENABLE_SANITIZERS needs GCC or Clang")
+    endif ()
+endif ()
+
 # Version info
 set(GFXRECONSTRUCT_PROJECT_VERSION_MAJOR 1)
 set(GFXRECONSTRUCT_PROJECT_VERSION_MINOR 0)
